@@ -1,0 +1,18 @@
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\bin\Debug\net8.0\EduCore.Presentation.deps.json
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\bin\Debug\net8.0\EduCore.Presentation.dll
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\bin\Debug\net8.0\EduCore.Presentation.pdb
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\bin\Debug\net8.0\EduCore.Services Abstraction.dll
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\bin\Debug\net8.0\EduCore.Shared.dll
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\bin\Debug\net8.0\EduCore.Services Abstraction.pdb
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\bin\Debug\net8.0\EduCore.Shared.pdb
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\obj\Debug\net8.0\EduCore.Presentation.csproj.AssemblyReference.cache
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\obj\Debug\net8.0\EduCore.Presentation.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\obj\Debug\net8.0\EduCore.Presentation.AssemblyInfoInputs.cache
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\obj\Debug\net8.0\EduCore.Presentation.AssemblyInfo.cs
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\obj\Debug\net8.0\EduCore.Presentation.csproj.CoreCompileInputs.cache
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\obj\Debug\net8.0\EduCore.Presentation.sourcelink.json
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\obj\Debug\net8.0\EduCore..25F828A8.Up2Date
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\obj\Debug\net8.0\EduCore.Presentation.dll
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\obj\Debug\net8.0\refint\EduCore.Presentation.dll
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\obj\Debug\net8.0\EduCore.Presentation.pdb
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Presentation\obj\Debug\net8.0\ref\EduCore.Presentation.dll

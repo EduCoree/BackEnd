@@ -1,0 +1,161 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{AA6E6872-4B5B-489E-AE92-FBE30DF494E2}|EduCore\\EduCore.Web.csproj|c:\\users\\arady\\onedrive\\desktop\\educore\\back-end\\educoresolution\\educore\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AA6E6872-4B5B-489E-AE92-FBE30DF494E2}|EduCore\\EduCore.Web.csproj|solutionrelative:educore\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9A3BB56-D129-411B-B42D-354739C1EEAB}|EduCore.Domain\\EduCore.Domain.csproj|c:\\users\\arady\\onedrive\\desktop\\educore\\back-end\\educoresolution\\educore.domain\\entities\\coursemodule\\course.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9A3BB56-D129-411B-B42D-354739C1EEAB}|EduCore.Domain\\EduCore.Domain.csproj|solutionrelative:educore.domain\\entities\\coursemodule\\course.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9A3BB56-D129-411B-B42D-354739C1EEAB}|EduCore.Domain\\EduCore.Domain.csproj|c:\\users\\arady\\onedrive\\desktop\\educore\\back-end\\educoresolution\\educore.domain\\educore.domain.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{D9A3BB56-D129-411B-B42D-354739C1EEAB}|EduCore.Domain\\EduCore.Domain.csproj|solutionrelative:educore.domain\\educore.domain.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA6E6872-4B5B-489E-AE92-FBE30DF494E2}|EduCore\\EduCore.Web.csproj|c:\\users\\arady\\onedrive\\desktop\\educore\\back-end\\educoresolution\\educore\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{AA6E6872-4B5B-489E-AE92-FBE30DF494E2}|EduCore\\EduCore.Web.csproj|solutionrelative:educore\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E671931A-0DD0-446E-9388-733F9C7AE3DA}|EduCore.Persistencs\\EduCore.Persistencs.csproj|c:\\users\\arady\\onedrive\\desktop\\educore\\back-end\\educoresolution\\educore.persistencs\\data\\dbcontexts\\educoredbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E671931A-0DD0-446E-9388-733F9C7AE3DA}|EduCore.Persistencs\\EduCore.Persistencs.csproj|solutionrelative:educore.persistencs\\data\\dbcontexts\\educoredbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E671931A-0DD0-446E-9388-733F9C7AE3DA}|EduCore.Persistencs\\EduCore.Persistencs.csproj|c:\\users\\arady\\onedrive\\desktop\\educore\\back-end\\educoresolution\\educore.persistencs\\data\\configurations\\courseconfigurations.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E671931A-0DD0-446E-9388-733F9C7AE3DA}|EduCore.Persistencs\\EduCore.Persistencs.csproj|solutionrelative:educore.persistencs\\data\\configurations\\courseconfigurations.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9A3BB56-D129-411B-B42D-354739C1EEAB}|EduCore.Domain\\EduCore.Domain.csproj|c:\\users\\arady\\onedrive\\desktop\\educore\\back-end\\educoresolution\\educore.domain\\entities\\baseentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9A3BB56-D129-411B-B42D-354739C1EEAB}|EduCore.Domain\\EduCore.Domain.csproj|solutionrelative:educore.domain\\entities\\baseentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2106106A-8ED8-4E0A-A2DE-5DE664CC6A8A}|EduCore.Services Abstraction\\EduCore.Services Abstraction.csproj|c:\\users\\arady\\onedrive\\desktop\\educore\\back-end\\educoresolution\\educore.services abstraction\\educore.services abstraction.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{2106106A-8ED8-4E0A-A2DE-5DE664CC6A8A}|EduCore.Services Abstraction\\EduCore.Services Abstraction.csproj|solutionrelative:educore.services abstraction\\educore.services abstraction.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 9,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "EduCore.Domain.csproj",
+              "DocumentMoniker": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\EduCore.Domain\\EduCore.Domain.csproj",
+              "RelativeDocumentMoniker": "EduCore.Domain\\EduCore.Domain.csproj",
+              "ToolTip": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\EduCore.Domain\\EduCore.Domain.csproj",
+              "RelativeToolTip": "EduCore.Domain\\EduCore.Domain.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-03-28T13:15:35.425Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\EduCore\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "EduCore\\appsettings.Development.json",
+              "ToolTip": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\EduCore\\appsettings.Development.json",
+              "RelativeToolTip": "EduCore\\appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-03-28T09:42:24.788Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "EduCoreDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\EduCore.Persistencs\\Data\\DbContexts\\EduCoreDbContext.cs",
+              "RelativeDocumentMoniker": "EduCore.Persistencs\\Data\\DbContexts\\EduCoreDbContext.cs",
+              "ToolTip": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\EduCore.Persistencs\\Data\\DbContexts\\EduCoreDbContext.cs",
+              "RelativeToolTip": "EduCore.Persistencs\\Data\\DbContexts\\EduCoreDbContext.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAxwBUAAABcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-28T09:16:17.189Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Course.cs",
+              "DocumentMoniker": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\EduCore.Domain\\Entities\\CourseModule\\Course.cs",
+              "RelativeDocumentMoniker": "EduCore.Domain\\Entities\\CourseModule\\Course.cs",
+              "ToolTip": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\EduCore.Domain\\Entities\\CourseModule\\Course.cs",
+              "RelativeToolTip": "EduCore.Domain\\Entities\\CourseModule\\Course.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-28T09:09:57.822Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CourseConfigurations.cs",
+              "DocumentMoniker": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\EduCore.Persistencs\\Data\\Configurations\\CourseConfigurations.cs",
+              "RelativeDocumentMoniker": "EduCore.Persistencs\\Data\\Configurations\\CourseConfigurations.cs",
+              "ToolTip": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\EduCore.Persistencs\\Data\\Configurations\\CourseConfigurations.cs",
+              "RelativeToolTip": "EduCore.Persistencs\\Data\\Configurations\\CourseConfigurations.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-28T09:02:59.76Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "BaseEntity.cs",
+              "DocumentMoniker": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\EduCore.Domain\\Entities\\BaseEntity.cs",
+              "RelativeDocumentMoniker": "EduCore.Domain\\Entities\\BaseEntity.cs",
+              "ToolTip": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\EduCore.Domain\\Entities\\BaseEntity.cs",
+              "RelativeToolTip": "EduCore.Domain\\Entities\\BaseEntity.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-28T08:48:05.551Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\EduCore\\Program.cs",
+              "RelativeDocumentMoniker": "EduCore\\Program.cs",
+              "ToolTip": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\EduCore\\Program.cs",
+              "RelativeToolTip": "EduCore\\Program.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAAAAcAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-28T08:34:54.001Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "EduCore.Services Abstraction.csproj",
+              "DocumentMoniker": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\EduCore.Services Abstraction\\EduCore.Services Abstraction.csproj",
+              "RelativeDocumentMoniker": "EduCore.Services Abstraction\\EduCore.Services Abstraction.csproj",
+              "ToolTip": "C:\\Users\\arady\\OneDrive\\Desktop\\EduCore\\Back-End\\EduCoreSolution\\EduCore.Services Abstraction\\EduCore.Services Abstraction.csproj",
+              "RelativeToolTip": "EduCore.Services Abstraction\\EduCore.Services Abstraction.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-03-28T08:30:52.212Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

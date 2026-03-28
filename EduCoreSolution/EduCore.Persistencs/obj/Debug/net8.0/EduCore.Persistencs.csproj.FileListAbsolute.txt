@@ -1,0 +1,22 @@
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\bin\Debug\net8.0\EduCore.Persistencs.deps.json
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\bin\Debug\net8.0\EduCore.Persistencs.dll
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\bin\Debug\net8.0\EduCore.Persistencs.pdb
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\bin\Debug\net8.0\EduCore.Domain.dll
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\bin\Debug\net8.0\EduCore.Services Abstraction.dll
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\bin\Debug\net8.0\EduCore.Services.dll
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\bin\Debug\net8.0\EduCore.Shared.dll
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\bin\Debug\net8.0\EduCore.Services.pdb
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\bin\Debug\net8.0\EduCore.Domain.pdb
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\bin\Debug\net8.0\EduCore.Services Abstraction.pdb
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\bin\Debug\net8.0\EduCore.Shared.pdb
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\obj\Debug\net8.0\EduCore.Persistencs.csproj.AssemblyReference.cache
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\obj\Debug\net8.0\EduCore.Persistencs.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\obj\Debug\net8.0\EduCore.Persistencs.AssemblyInfoInputs.cache
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\obj\Debug\net8.0\EduCore.Persistencs.AssemblyInfo.cs
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\obj\Debug\net8.0\EduCore.Persistencs.csproj.CoreCompileInputs.cache
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\obj\Debug\net8.0\EduCore.Persistencs.sourcelink.json
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\obj\Debug\net8.0\EduCore..7086BABD.Up2Date
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\obj\Debug\net8.0\EduCore.Persistencs.dll
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\obj\Debug\net8.0\refint\EduCore.Persistencs.dll
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\obj\Debug\net8.0\EduCore.Persistencs.pdb
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Persistencs\obj\Debug\net8.0\ref\EduCore.Persistencs.dll

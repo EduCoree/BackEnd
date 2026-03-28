@@ -1,0 +1,12 @@
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Domain\bin\Debug\net8.0\EduCore.Domain.deps.json
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Domain\bin\Debug\net8.0\EduCore.Domain.dll
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Domain\bin\Debug\net8.0\EduCore.Domain.pdb
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Domain\obj\Debug\net8.0\EduCore.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Domain\obj\Debug\net8.0\EduCore.Domain.AssemblyInfoInputs.cache
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Domain\obj\Debug\net8.0\EduCore.Domain.AssemblyInfo.cs
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Domain\obj\Debug\net8.0\EduCore.Domain.csproj.CoreCompileInputs.cache
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Domain\obj\Debug\net8.0\EduCore.Domain.sourcelink.json
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Domain\obj\Debug\net8.0\EduCore.Domain.dll
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Domain\obj\Debug\net8.0\refint\EduCore.Domain.dll
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Domain\obj\Debug\net8.0\EduCore.Domain.pdb
+C:\Users\arady\OneDrive\Desktop\EduCore\Back-End\EduCoreSolution\EduCore.Domain\obj\Debug\net8.0\ref\EduCore.Domain.dll
