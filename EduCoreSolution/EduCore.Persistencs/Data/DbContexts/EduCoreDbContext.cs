@@ -1,4 +1,4 @@
-﻿using EduCore.Domain.Entities.CourseModule;
+﻿using EduCore.Domain.Entities.CourseModel;
 using EduCore.Persistencs.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -21,7 +21,7 @@ namespace EduCore.Persistencs.Data.DbContexts
         {
             //modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             //Access To All Configrations
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(CourseConfigurations).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(CourseConfiguration).Assembly);
         }
 
         #region Dbsets
