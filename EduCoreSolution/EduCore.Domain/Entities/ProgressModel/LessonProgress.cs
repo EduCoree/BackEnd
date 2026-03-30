@@ -10,7 +10,7 @@ namespace EduCore.Domain.Entities.ProgressModel
 {
     public class LessonProgress : BaseEntity<int>
     {
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
         public int LessonId { get; set; }
         public bool IsCompleted { get; set; } = false;
         public DateTime? CompletedAt { get; set; }

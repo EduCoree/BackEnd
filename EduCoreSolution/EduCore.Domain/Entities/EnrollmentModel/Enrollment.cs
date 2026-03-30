@@ -13,7 +13,7 @@ namespace EduCore.Domain.Entities.EnrollmentModel
 
     public class Enrollment: BaseEntity<int>
     {
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
         public int CourseId { get; set; }
         public EnrollmentType Type { get; set; }
         public DateTime EnrolledAt { get; set; }

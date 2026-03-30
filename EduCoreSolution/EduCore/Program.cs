@@ -1,5 +1,7 @@
 
+using EduCore.Domain.Entities.AuthModel;
 using EduCore.Persistencs.Data.DbContexts;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace EduCore
@@ -20,7 +22,20 @@ namespace EduCore
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+            builder.Services.AddIdentity<User, IdentityRole>(options =>
+            {
+                // Password settings
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = false;
 
+                // User settings
+                options.User.RequireUniqueEmail = true;
+
+            })
+                .AddEntityFrameworkStores<EduCoreDbContext>()
+                .AddDefaultTokenProviders();
 
 
             var app = builder.Build();

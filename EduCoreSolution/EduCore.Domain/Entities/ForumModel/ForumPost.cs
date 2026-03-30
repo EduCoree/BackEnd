@@ -11,7 +11,7 @@ namespace EduCore.Domain.Entities.ForumModel
     public class ForumPost : BaseEntity<int>
     {
         public int CourseId { get; set; }
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
         public string Title { get; set; } = null!;
         public string Body { get; set; } = null!;
         public int UpvoteCount { get; set; } = 0;

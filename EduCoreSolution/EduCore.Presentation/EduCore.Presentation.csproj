@@ -10,4 +10,8 @@
     <ProjectReference Include="..\EduCore.Services Abstraction\EduCore.Services Abstraction.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>

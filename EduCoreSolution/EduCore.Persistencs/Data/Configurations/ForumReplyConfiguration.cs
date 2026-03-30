@@ -24,12 +24,12 @@ namespace EduCore.Persistencs.Data.Configurations
             builder.HasOne(r => r.Post)
                    .WithMany(p => p.Replies)
                    .HasForeignKey(r => r.PostId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne(r => r.User)
                    .WithMany(u => u.ForumReplies)
                    .HasForeignKey(r => r.UserId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

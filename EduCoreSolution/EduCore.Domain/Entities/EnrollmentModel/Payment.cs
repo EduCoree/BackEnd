@@ -13,7 +13,7 @@ namespace EduCore.Domain.Entities.EnrollmentModel
     public class Payment : BaseEntity<int>
     {
         public int EnrollmentId { get; set; }
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
         public decimal Amount { get; set; }
         public string Currency { get; set; } = "USD";
         public PaymentMethod Method { get; set; }

@@ -16,7 +16,7 @@ namespace EduCore.Domain.Entities.AuthModel
 {
     public enum UserRole { Student, Teacher, Admin }
 
-    public class User : IdentityUser<int>
+    public class User : IdentityUser
     {
         public int CenterId { get; set; }
         public string Name { get; set; } = null!;

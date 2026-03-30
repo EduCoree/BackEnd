@@ -10,7 +10,7 @@ namespace EduCore.Domain.Entities.ProgressModel
 {
     public class CourseReview : BaseEntity<int>
     {
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
         public int CourseId { get; set; }
         public byte Rating { get; set; }   // 1–5
         public string? Comment { get; set; }

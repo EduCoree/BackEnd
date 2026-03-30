@@ -10,7 +10,7 @@ namespace EduCore.Domain.Entities.ForumModel
     public class ForumReply : BaseEntity<int>
     {
         public int PostId { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public string Body { get; set; } = null!;
         public int UpvoteCount { get; set; } = 0;
         public bool IsRemoved { get; set; } = false;

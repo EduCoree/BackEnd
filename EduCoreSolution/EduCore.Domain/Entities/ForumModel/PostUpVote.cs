@@ -9,7 +9,7 @@ namespace EduCore.Domain.Entities.ForumModel
 {
     public class PostUpvote : BaseEntity<int>
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public int PostId { get; set; }
         public DateTime CreatedAt { get; set; }
 

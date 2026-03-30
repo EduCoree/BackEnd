@@ -8,7 +8,7 @@ namespace EduCore.Domain.Entities.AuthModel
 {
     public class AuditLog : BaseEntity<int>
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public string Action { get; set; } = null!;   // e.g. "course.create"
         public string EntityType { get; set; } = null!;   // e.g. "Course"
         public int? EntityId { get; set; }

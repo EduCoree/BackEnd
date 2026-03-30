@@ -9,7 +9,7 @@ namespace EduCore.Domain.Entities.QuizModel
 {
     public class QuizAttempt : BaseEntity<int>
     {
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
         public int QuizId { get; set; }
         public decimal? Score { get; set; }
         public DateTime StartedAt { get; set; }

@@ -30,7 +30,7 @@ namespace EduCore.Persistencs.Data.Configurations
             builder.HasOne(p => p.Student)
                    .WithMany(u => u.ForumPosts)
                    .HasForeignKey(p => p.StudentId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

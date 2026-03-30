@@ -10,7 +10,7 @@ namespace EduCore.Domain.Entities.ProgressModel
 {
     public class Certificate : BaseEntity<int>
     {
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
         public int CourseId { get; set; }
         public DateTime IssuedAt { get; set; }
         public string? CertificateUrl { get; set; }

@@ -12,7 +12,7 @@ namespace EduCore.Domain.Entities.ProgressModel
 
     public class AttendanceRecord : BaseEntity<int>
     {
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
         public int LiveSessionId { get; set; }
         public DateTime JoinedAt { get; set; }
         public AttendanceStatus Status { get; set; }

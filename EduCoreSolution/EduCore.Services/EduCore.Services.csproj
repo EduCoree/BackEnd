@@ -11,4 +11,8 @@
     <ProjectReference Include="..\EduCore.Services Abstraction\EduCore.Services Abstraction.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="MappingProfiles\" />
+  </ItemGroup>
+
 </Project>
