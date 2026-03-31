@@ -1,6 +1,12 @@
 
+using EduCore.Domain.Contracts;
+using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities.AuthModel;
 using EduCore.Persistencs.Data.DbContexts;
+using EduCore.Persistencs.Repositories;
+using EduCore.Services;
+using EduCore.Services.MappingProfiles;
+using EduCore.Services_Abstraction;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +28,10 @@ namespace EduCore
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+            builder.Services.AddAutoMapper(typeof(QuizMappingProfile).Assembly);
+            builder.Services.AddScoped<IQuizService, QuizService>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IQuizRepository, QuizRepository>();
             builder.Services.AddIdentity<User, IdentityRole>(options =>
             {
                 // Password settings

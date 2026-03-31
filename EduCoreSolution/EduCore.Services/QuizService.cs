@@ -28,7 +28,7 @@ namespace EduCore.Services
         public async Task<QuizDto> CreateQuizAsync(int courseId,CreateQuizDto request)
         {
           
-                var courseExists = _unitOfWork.GetRepository<Course, int>().GetByIdAsync(courseId);
+                var courseExists = await _unitOfWork.GetRepository<Course, int>().GetByIdAsync(courseId);
                 if (courseExists == null)
                 throw new NotFoundException($"Course with id {courseId} not found.");
                 var quiz = _mapper.Map<Quiz>(request);
