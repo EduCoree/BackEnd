@@ -1,6 +1,11 @@
 
+using EduCore.Domain.Contracts;
 using EduCore.Domain.Entities.AuthModel;
 using EduCore.Persistencs.Data.DbContexts;
+using EduCore.Persistencs.Repositories;
+using EduCore.Services;
+using EduCore.Services.MappingProfiles;
+using EduCore.Services_Abstraction;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,7 +41,9 @@ namespace EduCore
             })
                 .AddEntityFrameworkStores<EduCoreDbContext>()
                 .AddDefaultTokenProviders();
-
+            builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+            builder.Services.AddAutoMapper(x => x.AddProfile<CourseProfile>());
+            builder.Services.AddScoped<ICourseService ,CourseService>();
 
             var app = builder.Build();
 
