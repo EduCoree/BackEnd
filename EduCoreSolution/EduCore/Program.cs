@@ -38,7 +38,6 @@ namespace EduCore
 
             builder.Services.AddAutoMapper(typeof(CenterMappingProfile).Assembly);
 
-
             builder.Services.AddIdentity<User, IdentityRole>(options =>
             {
                 // Password settings
@@ -53,9 +52,75 @@ namespace EduCore
             })
                 .AddEntityFrameworkStores<EduCoreDbContext>()
                 .AddDefaultTokenProviders();
-            builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
-            builder.Services.AddAutoMapper(x => x.AddProfile<CourseProfile>());
-            builder.Services.AddScoped<ICourseService ,CourseService>();
+
+            //Hala from 56 to 66
+
+
+
+
+
+
+
+
+
+
+            //Samir from 67 to 77
+
+
+
+
+
+
+
+
+
+
+            // Tawfik from 78 to 88
+
+
+
+
+
+
+
+
+
+
+            // Abdelbadea from 89 to 99
+
+
+
+
+
+
+
+
+
+
+            // Menna from 100 to 110
+
+
+
+
+
+
+
+
+
+
+            // Badr from 111 to 121
+
+
+
+
+
+
+
+
+
+
+
+            // End
 
             var app = builder.Build();
 

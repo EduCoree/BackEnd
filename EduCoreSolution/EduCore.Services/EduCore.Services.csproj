@@ -6,14 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\EduCore.Domain\EduCore.Domain.csproj" />
     <ProjectReference Include="..\EduCore.Services Abstraction\EduCore.Services Abstraction.csproj" />
-    <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="AutoMapper" Version="164.0.0" />
   </ItemGroup>
 
 </Project>
