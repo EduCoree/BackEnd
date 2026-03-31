@@ -52,7 +52,9 @@ namespace EduCore
             })
                 .AddEntityFrameworkStores<EduCoreDbContext>()
                 .AddDefaultTokenProviders();
-
+            builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+            builder.Services.AddAutoMapper(x => x.AddProfile<CourseProfile>());
+            builder.Services.AddScoped<ICourseService ,CourseService>();
 
             var app = builder.Build();
 

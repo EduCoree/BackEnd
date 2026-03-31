@@ -9,10 +9,8 @@
   <ItemGroup>
     <ProjectReference Include="..\EduCore.Services Abstraction\EduCore.Services Abstraction.csproj" />
   </ItemGroup>
-
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App"/>
 	</ItemGroup>
-
 
 </Project>
