@@ -5,14 +5,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\EduCore.Domain\EduCore.Domain.csproj" />
-    <ProjectReference Include="..\EduCore.Services Abstraction\EduCore.Services Abstraction.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="MappingProfiles\" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\EduCore.Domain\EduCore.Domain.csproj" />
+		<ProjectReference Include="..\EduCore.Services Abstraction\EduCore.Services Abstraction.csproj" />
+		<PackageReference Include="AutoMapper" Version="14.0.0" />
+	</ItemGroup>
 
 </Project>

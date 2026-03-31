@@ -1,4 +1,5 @@
 ﻿using EduCore.Domain.Contracts;
+using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities;
 using EduCore.Persistencs.Data.DbContexts;
 using System;
@@ -18,6 +19,9 @@ namespace EduCore.Persistencs.Repositories
         {
             _eduCoreDbContext = eduCoreDbContext;
         }
+
+        public IQuizRepository QuizRepository{ get; }
+
         public IGenericRepository<TEntity, Tkey> GetRepository<TEntity, Tkey>() where TEntity : BaseEntity<Tkey>
         {
             var EntityType = typeof(TEntity);

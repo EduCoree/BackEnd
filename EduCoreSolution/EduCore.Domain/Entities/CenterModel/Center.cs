@@ -17,10 +17,10 @@ namespace EduCore.Domain.Entities.CenterModel
             public string ContactEmail { get; set; } = null!;
             public string? Phone { get; set; }
             public string? Address { get; set; }
-            public string? SocialLinks { get; set; }   // stored as JSON string
+            public string? SocialLinks { get; set; }  
             public DateTime CreatedAt { get; set; }
 
-            // Navigation
+          
             public ICollection<User> Users { get; set; } = new List<User>();
             public ICollection<Category> Categories { get; set; } = new List<Category>();
         }
