@@ -1,5 +1,6 @@
 
 using EduCore.Domain.Contracts;
+using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities.AuthModel;
 using EduCore.Persistencs.Data.DbContexts;
 using EduCore.Persistencs.Repositories;
