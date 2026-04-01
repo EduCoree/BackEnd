@@ -16,4 +16,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.25" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EduCore.Shared\EduCore.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

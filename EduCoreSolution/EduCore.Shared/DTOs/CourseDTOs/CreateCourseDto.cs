@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using EduCore.Shared.Enums;
 namespace EduCore.Shared.DTOs.CourseDTOs
 {
     public class CreateCourseDto
@@ -15,7 +15,7 @@ namespace EduCore.Shared.DTOs.CourseDTOs
         public string? Description { get; set; }
 
         [Required]
-        public string Level { get; set; } = string.Empty; 
+        public CourseLevel? Level { get; set; }
 
         [Required]
         public decimal Price { get; set; }
@@ -23,7 +23,7 @@ namespace EduCore.Shared.DTOs.CourseDTOs
         public decimal? DiscountedPrice { get; set; }
 
         [Required]
-        public string PricingType { get; set; } = string.Empty; 
+        public CoursePricingType? PricingType { get; set; }
 
         [Required]
         public int CategoryId { get; set; }
