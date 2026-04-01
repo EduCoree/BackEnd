@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EduCore.Shared.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,7 @@ namespace EduCore.Shared.DTOs.CourseDTOs
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
-        public int Type { get; set; }
+        public LessonType Type { get; set; }
         public int SortOrder { get; set; }
         public int? DurationSeconds { get; set; }
         public bool IsFreePreview { get; set; }

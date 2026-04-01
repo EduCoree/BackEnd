@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EduCore.Shared.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace EduCore.Shared.DTOs.CourseDTOs
     public class UpdatePricingDto
     {
         [Required]
-        public string PricingType { get; set; } = string.Empty; 
+        public CoursePricingType PricingType { get; set; }
         public decimal Price { get; set; }
         public decimal? DiscountedPrice { get; set; }
     }

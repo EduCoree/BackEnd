@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EduCore.Shared.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,11 +13,11 @@ namespace EduCore.Shared.DTOs.CourseDTOs
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
         public string? CoverImage { get; set; }
-        public string Level { get; set; } = string.Empty;
+        public CourseLevel Level { get; set; }
         public decimal Price { get; set; }
         public decimal? DiscountedPrice { get; set; }
-        public string PricingType { get; set; } = string.Empty;
-        public string Status { get; set; } = string.Empty;
+        public CoursePricingType PricingType { get; set; }
+        public CourseStatus Status { get; set; }
         public string CategoryName { get; set; } = string.Empty;
         public string TeacherId { get; set; } = string.Empty;
         public string TeacherName { get; set; } = string.Empty;
