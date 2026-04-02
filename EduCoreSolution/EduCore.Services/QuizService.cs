@@ -38,12 +38,49 @@ namespace EduCore.Services
                 return _mapper.Map<QuizDto>(quiz);
         }
 
-        public async Task<QuizDto> GetQuizByIdAsync(int quizId)
+        public async Task<QuizDto> GetQuizByIdAsync(int courseId,int quizId)
         {
-            var quiz = await _unitOfWork.QuizRepository.GetQuizWithDetails(quizId);
-            if (quiz == null)
-                throw new NotFoundException ($"Quiz with id {quizId} not found.");
+            var quiz = await _unitOfWork.QuizRepository.GetByIdAsync(quizId);
+            if (quiz is null || quiz.CourseId != courseId)
+                throw new NotFoundException($"Quiz {quizId} not found in CourseId {courseId}.");
             return _mapper.Map<QuizDto>(quiz);
         }
+
+        public async Task<IEnumerable<QuizDto>> GetQuizzesByCourseAsync(int courseId)
+        {
+            var course =await _unitOfWork.GetRepository<Course, int>().GetByIdAsync(courseId);
+            if (course == null)
+                throw new NotFoundException($"Course with id {courseId} not found.");
+            var quizzes = await _unitOfWork.QuizRepository.GetQuizzesByCourseAsync(courseId);
+            return _mapper.Map<IEnumerable<QuizDto>>(quizzes);
+
+        }
+        public async Task<QuizDto> UpdateQuizAsync(int courseId,int quizId, CreateQuizDto request)
+        {
+            var quiz = await _unitOfWork.QuizRepository.GetByIdAsync(quizId);
+            if (quiz is null || quiz.CourseId!= courseId)
+                throw new NotFoundException($"Quiz {quizId} not found in CourseId {courseId}.");
+            var hasAttempts =await _unitOfWork.QuizRepository.HasAttemptsAsync(quizId);
+            if(hasAttempts)
+                throw new BadRequestException("Cannot update a quiz that already has attempts.");
+            _mapper.Map(request, quiz);
+            _unitOfWork.QuizRepository.Update(quiz);
+            await _unitOfWork.SaveChangesAsync();
+
+            return _mapper.Map<QuizDto>(quiz);
+        }
+
+        public async Task DeleteQuizAsync(int courseId, int quizId)
+        {
+            var quiz = await _unitOfWork.QuizRepository.GetByIdAsync(quizId);
+            if (quiz is null || quiz.CourseId != courseId)
+                throw new NotFoundException($"Quiz {quizId} not found in CourseId {courseId}.");
+            var hasAttempts = await _unitOfWork.QuizRepository.HasAttemptsAsync(quizId);
+            if (hasAttempts)
+                throw new BadRequestException("Cannot update a quiz that already has attempts.");
+            _unitOfWork.QuizRepository.Remove(quiz);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
     }
 }

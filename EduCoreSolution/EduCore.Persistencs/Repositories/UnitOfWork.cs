@@ -15,9 +15,11 @@ namespace EduCore.Persistencs.Repositories
         private readonly Dictionary<Type, object> _repositories = [];
         private readonly EduCoreDbContext _eduCoreDbContext;
 
+
         public UnitOfWork(EduCoreDbContext eduCoreDbContext)
         {
             _eduCoreDbContext = eduCoreDbContext;
+                QuizRepository = new QuizRepository(_eduCoreDbContext);
         }
 
         public IQuizRepository QuizRepository{ get; }

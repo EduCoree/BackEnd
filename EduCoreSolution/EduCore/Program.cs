@@ -8,15 +8,17 @@ using EduCore.Persistencs.Repositories;
 using EduCore.Services;
 using EduCore.Services.MappingProfiles;
 using EduCore.Services_Abstraction;
+using EduCore.Web.CustomMiddlewares;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace EduCore
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -76,7 +78,7 @@ namespace EduCore
 
 
             // Tawfik from 78 to 88
-
+            builder.Services.AddScoped<IQuestionService, QuestionService>();
 
 
 
@@ -123,6 +125,13 @@ namespace EduCore
             // End
 
             var app = builder.Build();
+            using (var scope = app.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<EduCoreDbContext>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                await  QuizDataSeed.SeedAsync(context, userManager);
+            }
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
             using var scope = app.Services.CreateScope();
             var IdentityDataInitializerService = scope.ServiceProvider.GetRequiredKeyedService<IDataInitializer>("Identity");
