@@ -57,10 +57,9 @@ namespace EduCore
                 .AddDefaultTokenProviders();
 
             //Hala from 56 to 66
-
-
-
-
+           
+            builder.Services.AddKeyedScoped<IDataInitializer, IdentityDataInitializer>("Identity");
+            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
 
 
@@ -133,6 +132,10 @@ namespace EduCore
                 await  QuizDataSeed.SeedAsync(context, userManager);
             }
             app.UseMiddleware<ExceptionHandlerMiddleware>();
+
+            using var scope = app.Services.CreateScope();
+            var IdentityDataInitializerService = scope.ServiceProvider.GetRequiredKeyedService<IDataInitializer>("Identity");
+            IdentityDataInitializerService.InitializeAsync().Wait();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
