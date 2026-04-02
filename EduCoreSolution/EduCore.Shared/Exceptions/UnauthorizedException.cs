@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace EduCore.Shared.Exceptions
 {
-    public class BadRequestException : Exception
+    public class UnauthorizedException : Exception
     {
-        public BadRequestException(string message) : base(message) { }
+        public UnauthorizedException(string message = "UnAuthorized")
+            : base(message) { }
     }
 }

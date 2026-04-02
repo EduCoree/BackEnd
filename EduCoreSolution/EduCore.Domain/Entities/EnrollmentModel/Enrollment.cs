@@ -5,12 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using EduCore.Shared.Enums;
 namespace EduCore.Domain.Entities.EnrollmentModel
 {
-    public enum EnrollmentType { Purchase, Free, Gift }
-    public enum EnrollmentStatus { Active, Expired, Cancelled }
-
     public class Enrollment: BaseEntity<int>
     {
         public string StudentId { get; set; }

@@ -2,12 +2,14 @@
 using EduCore.Domain.Contracts;
 using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities.AuthModel;
+using EduCore.Middlewares;
 using EduCore.Persistencs.Data.DataSeed;
 using EduCore.Persistencs.Data.DbContexts;
 using EduCore.Persistencs.Repositories;
 using EduCore.Services;
 using EduCore.Services.MappingProfiles;
 using EduCore.Services_Abstraction;
+using EduCore.Shared.Settings;
 using EduCore.Web.CustomMiddlewares;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
@@ -67,9 +69,9 @@ namespace EduCore
 
 
             //Samir from 67 to 77
-
-
-
+            builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
+            builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+            builder.Services.AddScoped<IImageService, ImageService>();
 
 
 
@@ -125,6 +127,7 @@ namespace EduCore
             // End
 
             var app = builder.Build();
+            app.UseMiddleware<ExceptionMiddleware>();
             using (var scope = app.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<EduCoreDbContext>();
@@ -144,7 +147,7 @@ namespace EduCore
             }
 
             app.UseHttpsRedirection();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
