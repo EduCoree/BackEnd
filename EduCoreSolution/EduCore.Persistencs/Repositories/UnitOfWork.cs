@@ -20,6 +20,7 @@ namespace EduCore.Persistencs.Repositories
         {
             _eduCoreDbContext = eduCoreDbContext;
             CourseRepository = new CourseRepository(eduCoreDbContext);
+                QuizRepository = new QuizRepository(_eduCoreDbContext);
         }
 
         public IQuizRepository QuizRepository{ get; }

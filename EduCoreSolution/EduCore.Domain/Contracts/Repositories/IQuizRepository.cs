@@ -10,5 +10,7 @@ namespace EduCore.Domain.Contracts.Repositories
     public interface IQuizRepository:IGenericRepository<Quiz,int>
     {
         Task<Quiz?> GetQuizWithDetails(int quizId);
+        Task<IEnumerable<Quiz>> GetQuizzesByCourseAsync(int courseId);
+         Task<bool> HasAttemptsAsync(int quizId);
     }
 }

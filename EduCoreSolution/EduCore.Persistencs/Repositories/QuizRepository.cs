@@ -22,5 +22,16 @@ namespace EduCore.Persistencs.Repositories
                 .ThenInclude(q => q.AnswerOptions)
                 .FirstOrDefaultAsync(q => q.Id == quizId);
         }
+        public async Task<IEnumerable<Quiz>> GetQuizzesByCourseAsync(int courseId)
+        {
+            return await _EduCoreDbContext.Set<Quiz>()
+                .Where(q => q.CourseId == courseId)
+                .ToListAsync();
+        }
+        public async Task<bool> HasAttemptsAsync(int quizId)
+        {
+            return await _EduCoreDbContext.Set<QuizAttempt>()
+                .AnyAsync(a => a.QuizId == quizId);
+        }
     }
 }
