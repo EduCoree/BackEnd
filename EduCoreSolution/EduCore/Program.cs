@@ -10,7 +10,6 @@ using EduCore.Services;
 using EduCore.Services.MappingProfiles;
 using EduCore.Services_Abstraction;
 using EduCore.Shared.Settings;
-using EduCore.Web.CustomMiddlewares;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -130,15 +129,15 @@ namespace EduCore
 
             var app = builder.Build();
             app.UseMiddleware<ExceptionMiddleware>();
-            using (var scope = app.Services.CreateScope())
-            {
+            using var scope = app.Services.CreateScope();
+            
                 var context = scope.ServiceProvider.GetRequiredService<EduCoreDbContext>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
                 await  QuizDataSeed.SeedAsync(context, userManager);
-            }
-            app.UseMiddleware<ExceptionHandlerMiddleware>();
+            
+   
 
-            using var scope = app.Services.CreateScope();
+            //using var scope = app.Services.CreateScope();
             var IdentityDataInitializerService = scope.ServiceProvider.GetRequiredKeyedService<IDataInitializer>("Identity");
             IdentityDataInitializerService.InitializeAsync().Wait();
             // Configure the HTTP request pipeline.

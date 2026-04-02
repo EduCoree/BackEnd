@@ -42,7 +42,8 @@ namespace EduCore.Services
                 Name = registerDto.Name,
                 UserName = registerDto.UserName,
                 Email = registerDto.Email,
-                PhoneNumber = registerDto.PhoneNumber
+                PhoneNumber = registerDto.PhoneNumber,
+                CenterId = 2
             };
             var IdentityResult = await userManager.CreateAsync(user, registerDto.Password);
 
