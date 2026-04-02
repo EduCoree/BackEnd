@@ -14,5 +14,10 @@ namespace EduCore.Services_Abstraction
         Task<CenterDto> CreateCenterAsync(CreateCenterDto dto);
         Task<CenterDto?> UpdateCenterAsync(int id, UpdateCenterDto dto);
         Task<bool> DeleteCenterAsync(int id);
+
+        Task<CenterDto?> UpdateSocialLinksAsync(int id, SocialLinksDto dto);
+        Task<CenterDto?> UpdateLogoAsync(int id, string logoUrl);
+
+        Task<CenterDto?> UpdateSettingsAsync(int id, CenterSettingsDto dto, string userId);
     }
 }

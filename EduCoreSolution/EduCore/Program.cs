@@ -36,7 +36,9 @@ namespace EduCore
             builder.Services.AddScoped<ICourseService, CourseService>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            builder.Services.AddAutoMapper(typeof(CenterMappingProfile).Assembly);
+            //builder.Services.AddAutoMapper(typeof(CenterMappingProfile).Assembly);
+            builder.Services.AddAutoMapper(typeof(ServicesAssemblyReference).Assembly);
+            builder.Services.AddTransient<CenterLogoUrlResolver>();
 
             builder.Services.AddIdentity<User, IdentityRole>(options =>
             {
@@ -132,7 +134,7 @@ namespace EduCore
             }
 
             app.UseHttpsRedirection();
-
+            app.UseStaticFiles();
             app.UseAuthorization();
 
 
