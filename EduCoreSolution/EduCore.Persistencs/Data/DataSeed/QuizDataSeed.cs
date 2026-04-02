@@ -3,6 +3,7 @@ using EduCore.Domain.Entities.CenterModel;
 using EduCore.Domain.Entities.CourseModel;
 using EduCore.Domain.Entities.QuizModel;
 using EduCore.Persistencs.Data.DbContexts;
+using EduCore.Shared.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
