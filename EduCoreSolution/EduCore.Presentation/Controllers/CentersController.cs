@@ -67,6 +67,45 @@ namespace EduCore.Presentation.Controllers
             var deleted = await _centerService.DeleteCenterAsync(id);
             return deleted ? NoContent() : NotFound();
         }
+
+        // PUT api/centers/5/social-links
+        [HttpPut("{id:int}/social-links")]
+        public async Task<IActionResult> UpdateSocialLinks(int id, [FromBody] SocialLinksDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var updated = await _centerService.UpdateSocialLinksAsync(id, dto);
+            return updated is null ? NotFound() : Ok(updated);
+        }
+
+
+        // PUT api/centers/5/settings/logo
+        [HttpPut("{id:int}/settings/logo")]
+        public async Task<IActionResult> UpdateLogo(int id, [FromBody] UpdateLogoDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var updated = await _centerService.UpdateLogoAsync(id, dto.LogoUrl);
+            return updated is null ? NotFound() : Ok(updated);
+        }
+
+
+        // PUT api/centers/5/settings
+        [HttpPut("{id:int}/settings")]
+        public async Task<IActionResult> UpdateSettings(int id, [FromBody] CenterSettingsDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (userId is null) return Unauthorized();
+
+            var updated = await _centerService.UpdateSettingsAsync(id, dto, userId);
+            return updated is null ? NotFound() : Ok(updated);
+        }
     }
 }
 
