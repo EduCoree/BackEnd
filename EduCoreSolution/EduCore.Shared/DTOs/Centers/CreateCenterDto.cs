@@ -23,6 +23,6 @@ namespace EduCore.Shared.DTOs.Centers
 
         public string? Address { get; set; }
 
-        public string? SocialLinks { get; set; }
+        public SocialLinksDto? SocialLinks { get; set; }
     }
 }
