@@ -2,6 +2,7 @@
 using EduCore.Domain.Contracts;
 using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities.AuthModel;
+using EduCore.Persistencs.Data.DataSeed;
 using EduCore.Persistencs.Data.DbContexts;
 using EduCore.Persistencs.Repositories;
 using EduCore.Services;
@@ -54,10 +55,9 @@ namespace EduCore
                 .AddDefaultTokenProviders();
 
             //Hala from 56 to 66
-
-
-
-
+           
+            builder.Services.AddKeyedScoped<IDataInitializer, IdentityDataInitializer>("Identity");
+            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
 
 
@@ -124,6 +124,9 @@ namespace EduCore
 
             var app = builder.Build();
 
+            using var scope = app.Services.CreateScope();
+            var IdentityDataInitializerService = scope.ServiceProvider.GetRequiredKeyedService<IDataInitializer>("Identity");
+            IdentityDataInitializerService.InitializeAsync().Wait();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
