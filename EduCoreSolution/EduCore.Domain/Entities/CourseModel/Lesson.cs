@@ -1,5 +1,6 @@
 ﻿using EduCore.Domain.Entities.ContentModel;
 using EduCore.Domain.Entities.ProgressModel;
+using EduCore.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,17 +9,7 @@ using System.Threading.Tasks;
 
 namespace EduCore.Domain.Entities.CourseModel
 {
-    // SET type — a lesson can combine multiple content types
-    // e.g. "video,pdf" or "live" or "video,live"
-    [Flags]
-    public enum LessonType
-    {
-        None = 0,
-        Video = 1,
-        Pdf = 2,
-        Live = 4,
-    }
-
+    
     public class Lesson: BaseEntity<int>
     {
         public int SectionId { get; set; }

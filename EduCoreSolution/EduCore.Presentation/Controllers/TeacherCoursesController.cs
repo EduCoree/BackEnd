@@ -23,7 +23,6 @@ namespace EduCore.Presentation.Controllers
             _imageService = imageService;
         }
 
-        // Identity Cookie
         private string TeacherId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
         [HttpGet]
@@ -94,7 +93,6 @@ namespace EduCore.Presentation.Controllers
             return Ok(ApiResponse<bool>.SuccessResult(true, "The course has been stopped"));
         }
 
-        // Sections 
 
         [HttpGet("{id:int}/sections")]
         public async Task<IActionResult> GetSections(int id)

@@ -8,13 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using EduCore.Shared.Enums;
 namespace EduCore.Domain.Entities.CourseModel
 {
-    public enum CourseLevel { Beginner, Intermediate, Advanced }
-    public enum CoursePricingType { Free, Paid, Subscription }
-    public enum CourseStatus { Draft, Published, Archived }
-
     public class Course:BaseEntity<int>
     {
         public int CategoryId { get; set; }

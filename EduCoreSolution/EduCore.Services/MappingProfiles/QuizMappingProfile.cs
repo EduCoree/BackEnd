@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EduCore.Domain.Entities.QuizModel;
 using EduCore.Shared.Dtos.Quiz;
+using EduCore.Shared.DTOs.Quiz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,9 @@ namespace EduCore.Services.MappingProfiles
          {
             CreateMap<CreateQuizDto, Quiz>();
             CreateMap<Quiz, QuizDto>();
-               
+            CreateMap<Quiz, QuizDetailsDto>();
+            CreateMap<CreateQuestionDto, Question>();
+
         }
 
     }
