@@ -41,12 +41,11 @@ namespace EduCore.Services
         {
             var course = await _uow.CourseRepository.GetWithSectionsAsync(id);
 
-            // بترمي Exception والـ Middleware بيمسكها ويرجع 404
             if (course is null)
-                throw new NotFoundException("الكورس مش موجود");
+                throw new NotFoundException("Corse Not Found");
 
             if (course.Status != CourseStatus.Published)
-                throw new NotFoundException("الكورس مش متاح");
+                throw new NotFoundException("Cours Not Avilable");
 
             return _mapper.Map<CourseDetailDto>(course);
         }
@@ -66,7 +65,6 @@ namespace EduCore.Services
             var courses = await _uow.CourseRepository.GetByTeacherAsync(teacherId);
             var total = courses.Count();
 
-            // Pagination في الـ Memory هنا — المدرس مش هيكون عنده آلاف الكورسيز
             var paged = courses
                 .Skip((pagination.PageNumber - 1) * pagination.PageSize)
                 .Take(pagination.PageSize);
@@ -85,9 +83,8 @@ namespace EduCore.Services
             var course = await _uow.CourseRepository.GetWithSectionsAsync(courseId);
 
             if (course is null)
-                throw new NotFoundException("الكورس مش موجود");
+                throw new NotFoundException("Course Not Found");
 
-            // المدرس يشوف بس كورساته هو
             if (course.TeacherId != teacherId)
                 throw new UnauthorizedException();
 
@@ -98,7 +95,7 @@ namespace EduCore.Services
         {
             var course = _mapper.Map<Course>(dto);
             course.TeacherId = teacherId;
-            course.Status = CourseStatus.Draft; // دايماً يبدأ Draft
+            course.Status = CourseStatus.Draft; 
 
             await _uow.CourseRepository.AddAsync(course);
             await _uow.SaveChangesAsync();
@@ -112,12 +109,11 @@ namespace EduCore.Services
             var course = await _uow.CourseRepository.GetByIdAsync(courseId);
 
             if (course is null)
-                throw new NotFoundException("الكورس مش موجود");
+                throw new NotFoundException("Course Not Found");
 
             if (course.TeacherId != teacherId)
                 throw new UnauthorizedException();
 
-            // بيحدث الـ Fields اللي مش null بس — بسبب الـ Condition في AutoMapper
             _mapper.Map(dto, course);
             _uow.CourseRepository.Update(course);
             await _uow.SaveChangesAsync();
@@ -130,14 +126,13 @@ namespace EduCore.Services
             var course = await _uow.CourseRepository.GetByIdAsync(courseId);
 
             if (course is null)
-                throw new NotFoundException("الكورس مش موجود");
+                throw new NotFoundException("Course Not Found");
 
             if (course.TeacherId != teacherId)
                 throw new UnauthorizedException();
 
-            // مينفعش نحذف لو فيه طلبة مشتركين
             if (await _uow.CourseRepository.HasEnrollmentsAsync(courseId))
-                throw new BadRequestException("مينفعش تحذف الكورس — فيه طلبة مشتركين");
+                throw new BadRequestException("You can't delete the course — there are enrolled students.");
 
             _uow.CourseRepository.Remove(course);
             await _uow.SaveChangesAsync();
@@ -148,7 +143,7 @@ namespace EduCore.Services
             var course = await _uow.CourseRepository.GetByIdAsync(courseId);
 
             if (course is null)
-                throw new NotFoundException("الكورس مش موجود");
+                throw new NotFoundException("Course Not Found");
 
             if (course.TeacherId != teacherId)
                 throw new UnauthorizedException();
@@ -163,7 +158,7 @@ namespace EduCore.Services
             var course = await _uow.CourseRepository.GetByIdAsync(courseId);
 
             if (course is null)
-                throw new NotFoundException("الكورس مش موجود");
+                throw new NotFoundException("Course Not Found");
 
             if (course.TeacherId != teacherId)
                 throw new UnauthorizedException();
@@ -188,7 +183,7 @@ namespace EduCore.Services
             var course = await _uow.CourseRepository.GetWithSectionsAsync(courseId);
 
             if (course is null)
-                throw new NotFoundException("الكورس مش موجود");
+                throw new NotFoundException("Course Not Found");
 
             return _mapper.Map<List<SectionDto>>(course.Sections);
         }
@@ -199,7 +194,7 @@ namespace EduCore.Services
             var course = await _uow.CourseRepository.GetByIdAsync(courseId);
 
             if (course is null)
-                throw new NotFoundException("الكورس مش موجود");
+                throw new NotFoundException("Course Not Found");
 
             if (course.TeacherId != teacherId)
                 throw new UnauthorizedException();
@@ -223,7 +218,7 @@ namespace EduCore.Services
             var course = await _uow.CourseRepository.GetByIdAsync(courseId);
 
             if (course is null)
-                throw new NotFoundException("الكورس مش موجود");
+                throw new NotFoundException("Course Not Found");
 
             if (course.TeacherId != teacherId)
                 throw new UnauthorizedException();
@@ -231,7 +226,7 @@ namespace EduCore.Services
             var section = await _uow.GetRepository<Section, int>().GetByIdAsync(sectionId);
 
             if (section is null || section.CourseId != courseId)
-                throw new NotFoundException("الـ Section مش موجود");
+                throw new NotFoundException("Section Not Found");
 
             section.Title = dto.Title;
             _uow.GetRepository<Section, int>().Update(section);
@@ -243,7 +238,7 @@ namespace EduCore.Services
             var course = await _uow.CourseRepository.GetByIdAsync(courseId);
 
             if (course is null)
-                throw new NotFoundException("الكورس مش موجود");
+                throw new NotFoundException("Course Not Found");
 
             if (course.TeacherId != teacherId)
                 throw new UnauthorizedException();
@@ -251,9 +246,9 @@ namespace EduCore.Services
             var section = await _uow.GetRepository<Section, int>().GetByIdAsync(sectionId);
 
             if (section is null || section.CourseId != courseId)
-                throw new NotFoundException("الـ Section مش موجود");
+                throw new NotFoundException("Section Not Found");
 
-            // الـ Cascade في الـ DB هيحذف الـ Lessons تلقائياً
+            //  Cascade delete lessons
             _uow.GetRepository<Section, int>().Remove(section);
             await _uow.SaveChangesAsync();
         }
@@ -264,7 +259,7 @@ namespace EduCore.Services
             var course = await _uow.CourseRepository.GetByIdAsync(courseId);
 
             if (course is null)
-                throw new NotFoundException("الكورس مش موجود");
+                throw new NotFoundException("Course Not Found");
 
             if (course.TeacherId != teacherId)
                 throw new UnauthorizedException();
@@ -289,7 +284,7 @@ namespace EduCore.Services
             var course = await _uow.CourseRepository.GetByIdAsync(courseId);
 
             if (course is null)
-                throw new NotFoundException("الكورس مش موجود");
+                throw new NotFoundException("Course Not Found");
 
             if (course.TeacherId != teacherId)
                 throw new UnauthorizedException();
@@ -297,7 +292,7 @@ namespace EduCore.Services
             var section = await _uow.GetRepository<Section, int>().GetByIdAsync(sectionId);
 
             if (section is null || section.CourseId != courseId)
-                throw new NotFoundException("الـ Section مش موجود");
+                throw new NotFoundException("Section Not Found");
 
             var lessonRepo = _uow.GetRepository<Lesson, int>();
 
@@ -318,14 +313,10 @@ namespace EduCore.Services
         public async Task<PagedResult<CourseSummaryDto>> GetAllCoursesAdminAsync(
             CourseFilterDto filter, PaginationParams pagination)
         {
-            // Admin بيشوف كل الـ Statuses — هنعمل query مختلفة
             var query = _uow.CourseRepository;
-
-            // بنجيب الكل من غير فلتر Status
+            //Draft, Published, Archived
             var all = await _uow.CourseRepository.GetAllAsync();
 
-            // فلترة في الـ Memory لأن GetAllAsync مش بيدعم Filter
-            // ✅ مقبول هنا لأن Admin queries مش بتحصل كتير
             if (filter.CategoryId.HasValue)
                 all = all.Where(c => c.CategoryId == filter.CategoryId.Value);
 
@@ -363,7 +354,7 @@ namespace EduCore.Services
             var course = await _uow.CourseRepository.GetByIdAsync(courseId);
 
             if (course is null)
-                throw new NotFoundException("الكورس مش موجود");
+                throw new NotFoundException("Course Not Found");
 
             course.PricingType = dto.PricingType;
             course.Price = dto.Price;
@@ -374,13 +365,12 @@ namespace EduCore.Services
 
         // ── Helper ────────────────────────────────────────────────
 
-        // بيتشارك بين Teacher وAdmin — لو teacherId = null معناه Admin
         private async Task SetStatusAsync(int courseId, CourseStatus status, string? teacherId = null)
         {
             var course = await _uow.CourseRepository.GetByIdAsync(courseId);
 
             if (course is null)
-                throw new NotFoundException("الكورس مش موجود");
+                throw new NotFoundException("Course Not Found");
 
             if (teacherId != null && course.TeacherId != teacherId)
                 throw new UnauthorizedException();
