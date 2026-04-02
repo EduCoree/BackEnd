@@ -2,20 +2,25 @@
 using EduCore.Domain.Contracts;
 using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities.AuthModel;
+using EduCore.Middlewares;
+using EduCore.Persistencs.Data.DataSeed;
 using EduCore.Persistencs.Data.DbContexts;
 using EduCore.Persistencs.Repositories;
 using EduCore.Services;
 using EduCore.Services.MappingProfiles;
 using EduCore.Services_Abstraction;
+using EduCore.Shared.Settings;
+using EduCore.Web.CustomMiddlewares;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace EduCore
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -56,10 +61,9 @@ namespace EduCore
                 .AddDefaultTokenProviders();
 
             //Hala from 56 to 66
-
-
-
-
+           
+            builder.Services.AddKeyedScoped<IDataInitializer, IdentityDataInitializer>("Identity");
+            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
 
 
@@ -67,9 +71,9 @@ namespace EduCore
 
 
             //Samir from 67 to 77
-
-
-
+            builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
+            builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+            builder.Services.AddScoped<IImageService, ImageService>();
 
 
 
@@ -78,7 +82,7 @@ namespace EduCore
 
 
             // Tawfik from 78 to 88
-
+            builder.Services.AddScoped<IQuestionService, QuestionService>();
 
 
 
@@ -125,7 +129,18 @@ namespace EduCore
             // End
 
             var app = builder.Build();
+            app.UseMiddleware<ExceptionMiddleware>();
+            using (var scope = app.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<EduCoreDbContext>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                await  QuizDataSeed.SeedAsync(context, userManager);
+            }
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
+            using var scope = app.Services.CreateScope();
+            var IdentityDataInitializerService = scope.ServiceProvider.GetRequiredKeyedService<IDataInitializer>("Identity");
+            IdentityDataInitializerService.InitializeAsync().Wait();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -135,6 +150,7 @@ namespace EduCore
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

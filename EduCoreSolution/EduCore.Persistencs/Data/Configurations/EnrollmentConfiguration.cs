@@ -1,4 +1,5 @@
 ﻿using EduCore.Domain.Entities.EnrollmentModel;
+using EduCore.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;

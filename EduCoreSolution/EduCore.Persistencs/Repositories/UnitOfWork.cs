@@ -15,13 +15,17 @@ namespace EduCore.Persistencs.Repositories
         private readonly Dictionary<Type, object> _repositories = [];
         private readonly EduCoreDbContext _eduCoreDbContext;
 
+
         public UnitOfWork(EduCoreDbContext eduCoreDbContext)
         {
             _eduCoreDbContext = eduCoreDbContext;
+            CourseRepository = new CourseRepository(eduCoreDbContext);
+                QuizRepository = new QuizRepository(_eduCoreDbContext);
         }
 
         public IQuizRepository QuizRepository{ get; }
 
+        public ICourseRepository CourseRepository { get; }
         public IGenericRepository<TEntity, Tkey> GetRepository<TEntity, Tkey>() where TEntity : BaseEntity<Tkey>
         {
             var EntityType = typeof(TEntity);
