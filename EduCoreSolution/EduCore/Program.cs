@@ -143,10 +143,10 @@ namespace EduCore
             var app = builder.Build();
             app.UseMiddleware<ExceptionMiddleware>();
             using var scope = app.Services.CreateScope();
-            
-                //var context = scope.ServiceProvider.GetRequiredService<EduCoreDbContext>();
-                //var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-                //await  QuizDataSeed.SeedAsync(context, userManager);
+
+            var context = scope.ServiceProvider.GetRequiredService<EduCoreDbContext>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            await  QuizDataSeed.SeedAsync(context, userManager);
             //ahmed samir 137-147
             using (var seederScope = app.Services.CreateScope())
             {
