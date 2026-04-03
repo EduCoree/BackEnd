@@ -104,6 +104,7 @@ namespace EduCore
 
 
 
+
             // Abdelbadea from 89 to 99
 
 
@@ -139,6 +140,10 @@ namespace EduCore
 
 
             // End
+
+            // ── Forum ─────────────────────────────────────
+            builder.Services.AddScoped<IForumService, ForumService>();
+            builder.Services.AddScoped<IForumRepository, ForumRepository>();
 
             var app = builder.Build();
             app.UseMiddleware<ExceptionMiddleware>();
