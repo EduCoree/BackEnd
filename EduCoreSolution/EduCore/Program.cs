@@ -75,6 +75,9 @@ namespace EduCore
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
             builder.Services.AddScoped<ICourseRepository, CourseRepository>();
             builder.Services.AddScoped<IImageService, ImageService>();
+            builder.Services.AddControllers()
+    .AddApplicationPart(
+        typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly);
             builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 
@@ -142,11 +145,33 @@ namespace EduCore
             app.UseMiddleware<ExceptionMiddleware>();
             using var scope = app.Services.CreateScope();
             
-                var context = scope.ServiceProvider.GetRequiredService<EduCoreDbContext>();
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-                await  QuizDataSeed.SeedAsync(context, userManager);
-            
-   
+                //var context = scope.ServiceProvider.GetRequiredService<EduCoreDbContext>();
+                //var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                //await  QuizDataSeed.SeedAsync(context, userManager);
+            //ahmed samir 137-147
+            using (var seederScope = app.Services.CreateScope())
+            {
+                var seederUserManager = seederScope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                var seederRoleManager = seederScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var seederContext = seederScope.ServiceProvider.GetRequiredService<EduCoreDbContext>();
+
+                await DataSeeder.SeedAsync(seederUserManager, seederRoleManager, seederContext);
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             //using var scope = app.Services.CreateScope();
             var IdentityDataInitializerService = scope.ServiceProvider.GetRequiredKeyedService<IDataInitializer>("Identity");
