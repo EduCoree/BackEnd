@@ -1,4 +1,4 @@
-﻿using EduCore.Domain.Contracts;
+using EduCore.Domain.Contracts;
 using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities;
 using EduCore.Persistencs.Data.DbContexts;
@@ -22,6 +22,9 @@ namespace EduCore.Persistencs.Repositories
             CourseRepository = new CourseRepository(eduCoreDbContext);
                 QuizRepository = new QuizRepository(_eduCoreDbContext);
                 QuizAttemptRepository = new QuizAttemptRepository(_eduCoreDbContext);
+
+                // Forum
+                ForumRepository = new ForumRepository(_eduCoreDbContext);
         }
 
         public IQuizRepository QuizRepository{ get; }
@@ -29,6 +32,9 @@ namespace EduCore.Persistencs.Repositories
         public ICourseRepository CourseRepository { get; }
 
         public IQuizAttemptRepository QuizAttemptRepository { get; }
+
+        // ── Forum ──
+        public IForumRepository ForumRepository { get; }
 
         public IGenericRepository<TEntity, Tkey> GetRepository<TEntity, Tkey>() where TEntity : BaseEntity<Tkey>
         {
