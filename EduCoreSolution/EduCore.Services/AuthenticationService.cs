@@ -94,14 +94,14 @@ namespace EduCore.Services
             var user = await userManager.FindByEmailAsync(email);
             return user != null;
         }
-        public async Task<Result<UserDto>> GetUserByEmailAsync(string email)
-        {
-            var user = await userManager.FindByEmailAsync(email);
-            if (user == null)
-                return Error.NotFound("user.NotFound",$"No user with email {email} found");
-            return new UserDto(user.Name, user.Email,await CreatTokenAsync(user));
+        //public async Task<Result<UserDto>> GetUserByEmailAsync(string email)
+        //{
+        //    var user = await userManager.FindByEmailAsync(email);
+        //    if (user == null)
+        //        return Error.NotFound("user.NotFound",$"No user with email {email} found");
+        //    return new UserDto(user.Name, user.Email,await CreatTokenAsync(user));
             
-        }
+        //}
 
         public async Task<Result<bool>> LogoutAsync(string email)
         {

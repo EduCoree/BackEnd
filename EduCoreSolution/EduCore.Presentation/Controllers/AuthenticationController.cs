@@ -38,14 +38,14 @@ namespace EduCore.Presentation.Controllers
             var result=await authanticationService.CheckEmailAsync(email);
             return Ok(result);
         }
-        [Authorize]
-        [HttpGet("currenUser")]
-        public async Task<ActionResult<UserDto>> GetCurrentUser() 
-        {
-            var email = User.FindFirstValue(ClaimTypes.Email);
-            var user = await authanticationService.GetUserByEmailAsync(email);
-            return HandleResult(user);
-        }
+        //[Authorize]
+        //[HttpGet("currenUser")]
+        //public async Task<ActionResult<UserDto>> GetCurrentUser()
+        //{
+        //    var email = User.FindFirstValue(ClaimTypes.Email);
+        //    var user = await authanticationService.GetUserByEmailAsync(email);
+        //    return HandleResult(user);
+        //}
         [Authorize]
         [HttpPost("logout")]
         public async Task<ActionResult<bool>> Logout()
