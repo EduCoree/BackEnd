@@ -17,5 +17,9 @@ namespace EduCore.Domain.Contracts.Repositories
         Task<IEnumerable<Course>> GetByTeacherAsync(string teacherId);
         Task<bool> HasEnrollmentsAsync(int courseId);
         Task<IEnumerable<StudentEnrolledCourseDto>> GetStudentEnrolledCoursesAsync(string studentId);
+
+
+
+        Task<string?> GetCourseTeacherIdAsync(int courseId);
     }
 }

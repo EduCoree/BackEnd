@@ -5,15 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EduCore.Shared.DTOs.Quiz
+namespace EduCore.Shared.DTOs.Quiz.Teacher
 {
-    public class CreateQuestionDto
+    public class CreateAnswerOptionDto
     {
         [Required]
+        [MaxLength(500)]
         public string Text { get; init; } = string.Empty;
-        [Required]
-        public string Type { get; init; } = string.Empty; 
-        [Range(1, int.MaxValue)]
-        public int Points { get; init; }
+        public bool IsCorrect { get; init; }
     }
 }

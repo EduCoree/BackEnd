@@ -10,9 +10,11 @@ using EduCore.Services;
 using EduCore.Services.MappingProfiles;
 using EduCore.Services_Abstraction;
 using EduCore.Shared.Settings;
+using EduCore.Web.CustomMiddlewares;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace EduCore
@@ -76,6 +78,7 @@ namespace EduCore
             builder.Services.AddControllers()
     .AddApplicationPart(
         typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly);
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 
 
@@ -84,6 +87,15 @@ namespace EduCore
 
             // Tawfik from 78 to 88
             builder.Services.AddScoped<IQuestionService, QuestionService>();
+            builder.Services.AddScoped<IAnswerOptionService, AnswerOptionService>();
+            builder.Services.AddScoped<IstudentQuizService, StudentQuizService>();
+            builder.Services.AddScoped<IQuizAttemptRepository, QuizAttemptRepository>();
+            builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters
+                    .Add(new JsonStringEnumConverter());
+            });
 
 
 
