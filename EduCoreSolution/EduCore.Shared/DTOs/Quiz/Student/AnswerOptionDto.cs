@@ -1,4 +1,4 @@
-﻿namespace EduCore.Shared.DTOs.Quiz
+﻿namespace EduCore.Shared.DTOs.Quiz.Student
 {
     public class AnswerOptionDto
     {

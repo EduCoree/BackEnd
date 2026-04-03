@@ -42,7 +42,6 @@ namespace EduCore.Persistencs.Data.DataSeed
                         Email = "halamedhat2486@gmail.com",
                         PhoneNumber = "01100775305",
                         CenterId=3,
-                        Role = UserRole.Admin
 
 
                     };
@@ -53,7 +52,6 @@ namespace EduCore.Persistencs.Data.DataSeed
                         Email = "Menna@gmail.com",
                         PhoneNumber = "0113245878",
                         CenterId = 2,
-                        Role = UserRole.Teacher
 
 
 
@@ -65,8 +63,6 @@ namespace EduCore.Persistencs.Data.DataSeed
                         Email = "Mm@gmail.com",
                         PhoneNumber = "0113245878",
                         CenterId = 2,
-                        Role  = UserRole.Student
-
 
 
                     };
