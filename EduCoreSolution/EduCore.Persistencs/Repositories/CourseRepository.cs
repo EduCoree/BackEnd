@@ -105,5 +105,13 @@ namespace EduCore.Persistencs.Repositories
                 })
                 .ToListAsync();
         }
+
+        public async Task<string?> GetCourseTeacherIdAsync(int courseId)
+        {
+            return await _EduCoreDbContext.Set<Course>()
+           .Where(c => c.Id == courseId)
+           .Select(c => c.TeacherId)
+           .FirstOrDefaultAsync();
+        }
     }
 }
