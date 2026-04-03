@@ -10,7 +10,6 @@ using EduCore.Services;
 using EduCore.Services.MappingProfiles;
 using EduCore.Services_Abstraction;
 using EduCore.Shared.Settings;
-using EduCore.Web.CustomMiddlewares;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
