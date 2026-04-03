@@ -13,17 +13,21 @@ namespace EduCore.Services.Helpers
     public static class ValidationHelpers
     {
 
-        public static async Task GetCourseOrThrowAsync(IUnitOfWork unitOfWork, int courseId)
+        public static async Task EnsureCourseAccessAsync(IUnitOfWork unitOfWork, int courseId, string teacherId)
         {
-            var course = await unitOfWork.GetRepository<Course, int>().AnyAsync(c => c.Id == courseId);
-            if (!course)
+            var teacherIdInDb = await unitOfWork.CourseRepository.GetCourseTeacherIdAsync(courseId);
+            if (teacherIdInDb is null)
                 throw new NotFoundException($"Course with id {courseId} not found.");
+            if (teacherIdInDb != teacherId)
+                throw new UnauthorizedException();
         }
-        public static async Task<Quiz> GetQuizOrThrowAsync(IUnitOfWork unitOfWork, int courseId, int quizId)
+        public static async Task<Quiz> GetQuizOrThrowAsync(IUnitOfWork unitOfWork, int courseId, int quizId, string teacherId)
         {
+                await EnsureCourseAccessAsync(unitOfWork, courseId, teacherId);
             var quiz = await unitOfWork.QuizRepository.GetByIdAsync(quizId);
             if (quiz is null || quiz.CourseId != courseId)
                 throw new NotFoundException($"Quiz with id {quizId} not found in course {courseId}.");
+
             return quiz;
         }
 
@@ -33,6 +37,13 @@ namespace EduCore.Services.Helpers
             if (question is null || question.QuizId != quizId)
                 throw new NotFoundException($"Question with id {questionId} not found in quiz {quizId}.");
             return question;
+        }
+        public static async Task<AnswerOption> GetAnswerOptionOrThrowAsync(IUnitOfWork unitOfWork, int questionId, int optionId)
+        {
+            var option = await unitOfWork.GetRepository<AnswerOption, int>().GetByIdAsync(optionId);
+            if (option is null || option.QuestionId != questionId)
+                throw new NotFoundException($"Answer option with id {optionId} not found in question {questionId}.");
+            return option;
         }
     }
 }

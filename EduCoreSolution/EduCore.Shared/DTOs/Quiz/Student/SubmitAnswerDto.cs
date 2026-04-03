@@ -5,12 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EduCore.Shared.DTOs.Quiz
+namespace EduCore.Shared.DTOs.Quiz.Student
 {
-    public class CreateAnswerOptionDto
+    public class SubmitAnswerDto
     {
         [Required]
-        public string Text { get; init; } = string.Empty;
-        public bool IsCorrect { get; init; }
+        public ICollection<AnswerSubmissionDto> Answers { get; init; } = new List<AnswerSubmissionDto>();
     }
 }

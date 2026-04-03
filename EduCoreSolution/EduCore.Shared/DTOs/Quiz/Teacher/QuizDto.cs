@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EduCore.Shared.Dtos.Quiz
+namespace EduCore.Shared.DTOs.Quiz.Teacher
 {
     public class QuizDto
     {

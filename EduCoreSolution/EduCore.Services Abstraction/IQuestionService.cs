@@ -1,4 +1,4 @@
-﻿using EduCore.Shared.DTOs.Quiz;
+﻿using EduCore.Shared.DTOs.Quiz.Teacher;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +9,9 @@ namespace EduCore.Services_Abstraction
 {
     public interface IQuestionService
     {
-        Task<QuizDetailsDto> GetQuestionsByQuizAsync(int courseId, int quizId);
-        Task<QuestionDto> AddQuestionAsync(int courseId, int quizId,CreateQuestionDto request);
-        Task<QuestionDto> UpdateQuestionAsync(int courseId, int quizId, CreateQuestionDto request);
-        Task DeleteQuestionAsync(int courseId, int quizId, int questionId);
+        Task<QuizDetailsDto> GetQuestionsByQuizAsync(int courseId, int quizId, string teacherId);
+        Task<QuestionDto> AddQuestionAsync(int courseId, int quizId, string teacherId, CreateQuestionDto request);
+        Task<QuestionDto> UpdateQuestionAsync(int courseId, int quizId, int questionId, string teacherId, UpdateQuestionDto request);
+        Task DeleteQuestionAsync(int courseId, int quizId, int questionId, string teacherId);
     }
 }
