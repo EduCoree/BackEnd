@@ -75,7 +75,7 @@ namespace EduCore
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
             builder.Services.AddScoped<ICourseRepository, CourseRepository>();
             builder.Services.AddScoped<IImageService, ImageService>();
-
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 
 
