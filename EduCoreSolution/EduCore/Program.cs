@@ -124,54 +124,56 @@ namespace EduCore
                 options.JsonSerializerOptions.Converters
                     .Add(new JsonStringEnumConverter());
             });
+            #region JWT Configuration
             // JWT — بيخلي الـ [Authorize] يقرأ الـ Token من الـ Header
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["JWTOptions:Issuer"],
-                    ValidAudience = builder.Configuration["JWTOptions:Audience"],
-                    IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
-                        System.Text.Encoding.UTF8.GetBytes(
-                            builder.Configuration["JWTOptions:SecretKey"]!))
-                };
-            });
-            builder.Services.AddSwaggerGen(c =>
-            {
-                c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-                {
-                    Name = "Authorization",
-                    Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
-                    In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-                    Description = "Enter: Bearer {your token}"
-                });
+            //        builder.Services.AddAuthentication(options =>
+            //        {
+            //            options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+            //            options.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+            //        })
+            //        .AddJwtBearer(options =>
+            //        {
+            //            options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            //            {
+            //                ValidateIssuer = true,
+            //                ValidateAudience = true,
+            //                ValidateLifetime = true,
+            //                ValidateIssuerSigningKey = true,
+            //                ValidIssuer = builder.Configuration["JWTOptions:Issuer"],
+            //                ValidAudience = builder.Configuration["JWTOptions:Audience"],
+            //                IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
+            //                    System.Text.Encoding.UTF8.GetBytes(
+            //                        builder.Configuration["JWTOptions:SecretKey"]!))
+            //            };
+            //        });
+            //        builder.Services.AddSwaggerGen(c =>
+            //        {
+            //            c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            //            {
+            //                Name = "Authorization",
+            //                Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+            //                Scheme = "Bearer",
+            //                BearerFormat = "JWT",
+            //                In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+            //                Description = "Enter: Bearer {your token}"
+            //            });
 
-                c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-    {
-        {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-            {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id   = "Bearer"
-                }
-            },
-            []
-        }
-    });
-            });
+            //            c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+            //{
+            //    {
+            //        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            //        {
+            //            Reference = new Microsoft.OpenApi.Models.OpenApiReference
+            //            {
+            //                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+            //                Id   = "Bearer"
+            //            }
+            //        },
+            //        []
+            //    }
+            //});
+            //        });
+            #endregion
             // السماح للـ Angular بالتواصل مع الـ API
             builder.Services.AddCors(options =>
             {

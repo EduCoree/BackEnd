@@ -280,7 +280,7 @@ namespace EduCore.Services
         public async Task<Result<string>> ResetPasswordAsync(ResetPasswordDto dto)
         {
             var user = await userManager.FindByEmailAsync(dto.Email);
-            if(user == null) return Error.Validation("NotFound", "User not found.");
+            if (user == null) return Error.Validation("NotFound", "User not found.");
             var result = await userManager.ResetPasswordAsync(user, dto.ResetToken, dto.NewPassword);
             if (!result.Succeeded)
             {
@@ -290,7 +290,7 @@ namespace EduCore.Services
                 return result.Errors.Select(e => Error.Validation(e.Code, e.Description)).ToList();
             }
             return "Password reset successfully.";
-
+        }   
         public async Task<bool> CheckEmailAsync(string email)
         {
             var user = await userManager.FindByEmailAsync(email);
