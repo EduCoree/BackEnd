@@ -1,4 +1,4 @@
-﻿using EduCore.Domain.Contracts.Repositories;
+using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -24,5 +24,8 @@ namespace EduCore.Domain.Contracts
 
 
         ICourseRepository CourseRepository { get; }
+
+        // ── Forum ──
+        IForumRepository ForumRepository { get; }
     }
 }
