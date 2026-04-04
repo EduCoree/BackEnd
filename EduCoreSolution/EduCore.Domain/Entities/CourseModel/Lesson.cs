@@ -1,4 +1,4 @@
-﻿using EduCore.Domain.Entities.ContentModel;
+using EduCore.Domain.Entities.ContentModel;
 using EduCore.Domain.Entities.ProgressModel;
 using EduCore.Shared.Enums;
 using System;
@@ -19,6 +19,7 @@ namespace EduCore.Domain.Entities.CourseModel
         public int? DurationSeconds { get; set; }
         public bool IsFreePreview { get; set; } = false;
         public DateTime CreatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
 
         // Navigation — Parent
         public Section Section { get; set; } = null!;

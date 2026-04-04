@@ -10,6 +10,7 @@ using EduCore.Services;
 using EduCore.Services.MappingProfiles;
 using EduCore.Services_Abstraction;
 using EduCore.Shared.Settings;
+using FluentValidation;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,10 @@ namespace EduCore
             builder.Services.AddScoped<IQuizRepository, QuizRepository>();
             builder.Services.AddScoped<ICourseService, CourseService>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<ILessonService, LessonService>();
+            builder.Services.AddScoped<IVideoLessonService, VideoLessonService>();
+            builder.Services.AddScoped<ILiveSessionService, LiveSessionService>();
+            builder.Services.AddValidatorsFromAssembly(typeof(EduCore.Shared.DTOs.Content.Validators.CreateLessonRequestValidator).Assembly);
 
             //builder.Services.AddAutoMapper(typeof(CenterMappingProfile).Assembly);
             builder.Services.AddAutoMapper(typeof(ServicesAssemblyReference).Assembly);

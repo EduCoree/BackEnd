@@ -1,4 +1,5 @@
-﻿using EduCore.Domain.Entities.AuthModel;
+using EduCore.Domain.Entities.AuthModel;
+using EduCore.Domain.Entities.ContentModel;
 using EduCore.Domain.Entities.EnrollmentModel;
 using EduCore.Domain.Entities.ForumModel;
 using EduCore.Domain.Entities.ProgressModel;
@@ -32,6 +33,7 @@ namespace EduCore.Domain.Entities.CourseModel
         // Navigation — Children
         public ICollection<Section> Sections { get; set; } = new List<Section>();
         public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+        public ICollection<LiveSession> LiveSessions { get; set; } = new List<LiveSession>();
         public ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
         public ICollection<CourseReview> Reviews { get; set; } = new List<CourseReview>();
         public ICollection<ForumPost> ForumPosts { get; set; } = new List<ForumPost>();
