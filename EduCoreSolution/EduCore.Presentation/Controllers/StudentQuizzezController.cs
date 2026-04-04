@@ -14,13 +14,15 @@ namespace EduCore.Presentation.Controllers
 {
     [ApiController]
     [Route("api/quizzes")]
-    public class StudentQuizzezController : ControllerBase
+    
+    public class StudentQuizzesController : ControllerBase
     {
         private readonly IstudentQuizService _studentQuizService;
-        private string StudentId => "2721eab6-9c64-404e-9911-3850dbefb12f";
-        public StudentQuizzezController(IstudentQuizService studentQuizService)
+
+        public StudentQuizzesController(IstudentQuizService studentQuizService)
             => _studentQuizService = studentQuizService;
 
+        private string StudentId => "2721eab6-9c64-404e-9911-3850dbefb12f";
 
         [HttpGet("{quizId}")]
         public async Task<IActionResult> GetQuiz(int quizId)
@@ -33,7 +35,30 @@ namespace EduCore.Presentation.Controllers
         public async Task<IActionResult> StartAttempt(int quizId)
         {
             var result = await _studentQuizService.StartAttemptAsync(quizId, StudentId);
-            return Ok(ApiResponse<AttemptDto>.SuccessResult(result, "Quiz attempt started successfully."));
+            return CreatedAtAction(nameof(GetResult),
+                new { quizId, attemptId = result.Id },
+                ApiResponse<AttemptDto>.SuccessResult(result, "Attempt started successfully."));
+        }
+
+        [HttpPost("{quizId}/attempts/{attemptId}/submit")]
+        public async Task<IActionResult> SubmitAttempt(int quizId, int attemptId, [FromBody] SubmitAnswerDto request)
+        {
+            var result = await _studentQuizService.SubmitAttemptAsync(quizId, attemptId, StudentId, request);
+            return Ok(ApiResponse<AttemptResultDto>.SuccessResult(result, "Quiz submitted successfully."));
+        }
+
+        [HttpGet("{quizId}/attempts/{attemptId}/result")]
+        public async Task<IActionResult> GetResult(int quizId, int attemptId)
+        {
+            var result = await _studentQuizService.GetResultAsync(quizId, attemptId, StudentId);
+            return Ok(ApiResponse<AttemptResultDto>.SuccessResult(result, "Result retrieved successfully."));
+        }
+
+        [HttpGet("history")]
+        public async Task<IActionResult> GetHistory()
+        {
+            var result = await _studentQuizService.GetHistoryAsync(StudentId);
+            return Ok(ApiResponse<IEnumerable<AttemptHistoryDto>>.SuccessResult(result, "History retrieved successfully."));
         }
     }
 }

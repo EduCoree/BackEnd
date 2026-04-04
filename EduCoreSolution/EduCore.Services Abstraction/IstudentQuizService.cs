@@ -11,5 +11,8 @@ namespace EduCore.Services_Abstraction
     {
         Task<StudentQuizDto> GetQuizAsync(int quizId, string studentId);
         Task<AttemptDto> StartAttemptAsync(int quizId, string studentId);
+        Task<AttemptResultDto> SubmitAttemptAsync(int quizId, int attemptId, string studentId, SubmitAnswerDto request);
+        Task<AttemptResultDto> GetResultAsync(int quizId, int attemptId, string studentId);
+        Task<IEnumerable<AttemptHistoryDto>> GetHistoryAsync(string studentId);
     }
 }
