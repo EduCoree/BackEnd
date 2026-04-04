@@ -1,4 +1,4 @@
-﻿using EduCore.Domain.Entities.ContentModel;
+using EduCore.Domain.Entities.ContentModel;
 using EduCore.Domain.Entities.CourseModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -28,6 +28,10 @@ namespace EduCore.Persistencs.Data.Configurations
                    .IsRequired();
 
             builder.Property(l => l.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+            builder.Property(l => l.DeletedAt).IsRequired(false);
+
+            // Global Query Filter for soft-delete
+            builder.HasQueryFilter(l => l.DeletedAt == null);
 
             builder.HasOne(l => l.Section)
                    .WithMany(s => s.Lessons)
