@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EduCore.Shared.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EduCore.Domain.Entities.QuizModel
 {
-    public enum QuestionType { MCQ, TrueFalse }
+   
 
     public class Question : BaseEntity<int>
     {

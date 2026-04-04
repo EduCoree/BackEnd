@@ -32,6 +32,7 @@ namespace EduCore.Services.MappingProfiles
 
             CreateMap<Quiz, StudentQuizDto>();
             CreateMap<QuizAttempt, AttemptDto>();
+            CreateMap<QuizAttempt,AttemptHistoryDto>();
 
         }
 
