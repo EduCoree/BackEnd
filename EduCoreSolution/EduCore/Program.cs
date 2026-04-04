@@ -160,7 +160,7 @@ namespace EduCore
             // Menna from 100 to 110
 
 
-
+            builder.Services.AddScoped<IReviewService, ReviewService>();
 
 
 
