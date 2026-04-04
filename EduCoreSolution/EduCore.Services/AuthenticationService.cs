@@ -64,6 +64,8 @@ namespace EduCore.Services
         {
             var Claims = new List<Claim>
             {
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(JwtRegisteredClaimNames.Name, user.Name),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email!)
             };
