@@ -22,5 +22,8 @@ namespace EduCore.Services_Abstraction
         Task<Result<string>> SendOtpAsync(string email,OtpPurpose purpose);
         Task<Result<string>> VerifyOtpAsync(VerifyOtpDto dto,OtpPurpose purpose);
         Task<Result<string>> ResetPasswordAsync(ResetPasswordDto dto);
+        Task<bool> CheckEmailAsync(string email);
+        //Task<Result<UserDto>> GetUserByEmailAsync(string email);
+        Task<Result<bool>> LogoutAsync(string email);
     }
 }

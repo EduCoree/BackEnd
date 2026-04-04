@@ -6,11 +6,14 @@ using EduCore.Shared.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,6 +31,7 @@ namespace EduCore.Services
             this.configuration = configuration;
             _emailService = emailService;
         }
+
 
         public async Task<Result<UserDto>> LoginAsync(LoginDto loginDto)
         {
@@ -68,8 +72,13 @@ namespace EduCore.Services
         {
             var Claims = new List<Claim>
             {
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(JwtRegisteredClaimNames.Name, user.Name),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email!)
+                new Claim(JwtRegisteredClaimNames.Email, user.Email!),
+                //old tokens are rejected after logout
+                new Claim("securityStamp", user.SecurityStamp ?? string.Empty)
+
             };
             var role = await userManager.GetRolesAsync(user);
             foreach (var r in role)
@@ -282,6 +291,30 @@ namespace EduCore.Services
             }
             return "Password reset successfully.";
 
+        public async Task<bool> CheckEmailAsync(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            return user != null;
+        }
+        //public async Task<Result<UserDto>> GetUserByEmailAsync(string email)
+        //{
+        //    var user = await userManager.FindByEmailAsync(email);
+        //    if (user == null)
+        //        return Error.NotFound("user.NotFound",$"No user with email {email} found");
+        //    return new UserDto(user.Name, user.Email,await CreatTokenAsync(user));
+            
+        //}
+
+        public async Task<Result<bool>> LogoutAsync(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+                return Error.NotFound("user.NotFound", $"No user with email {email} found");
+
+            // Invalidates all existing tokens for this user
+            await userManager.UpdateSecurityStampAsync(user);
+
+            return true;
         }
     }
 }

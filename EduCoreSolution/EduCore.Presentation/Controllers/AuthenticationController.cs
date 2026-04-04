@@ -1,10 +1,12 @@
 ﻿using EduCore.Services_Abstraction;
 using EduCore.Shared.DTOs.Identity;
 using EduCore.Shared.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,11 +16,13 @@ namespace EduCore.Presentation.Controllers
     {
         private readonly IAuthenticationService authanticationService;
 
+    
         public AuthenticationController(IAuthenticationService authanticationService)
         {
             this.authanticationService = authanticationService;
         }
 
+    
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
@@ -110,5 +114,31 @@ namespace EduCore.Presentation.Controllers
             var result = await authanticationService.ResetPasswordAsync(dto);
             return HandleResult(result);
         }
+        [HttpGet("emailExists")]
+        public async Task<ActionResult<bool>> CheckEmail(string email)
+        {
+            var result=await authanticationService.CheckEmailAsync(email);
+            return Ok(result);
+        }
+        //[Authorize]
+        //[HttpGet("currenUser")]
+        //public async Task<ActionResult<UserDto>> GetCurrentUser()
+        //{
+        //    var email = User.FindFirstValue(ClaimTypes.Email);
+        //    var user = await authanticationService.GetUserByEmailAsync(email);
+        //    return HandleResult(user);
+        //}
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<ActionResult<bool>> Logout()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (email==null)
+                return Unauthorized();
+
+            var result = await authanticationService.LogoutAsync(email);
+            return HandleResult(result);
+        }
+
     }
 }
