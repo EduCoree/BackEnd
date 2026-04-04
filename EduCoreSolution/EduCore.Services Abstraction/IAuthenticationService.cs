@@ -12,5 +12,8 @@ namespace EduCore.Services_Abstraction
     {
         Task<Result<UserDto>> LoginAsync(LoginDto loginDto);
          Task<Result<UserDto>> RegisterAsync(RegisterDto registerDto);
+        Task<bool> CheckEmailAsync(string email);
+        //Task<Result<UserDto>> GetUserByEmailAsync(string email);
+        Task<Result<bool>> LogoutAsync(string email);
     }
 }
