@@ -15,8 +15,10 @@ namespace EduCore.Shared.DTOs.Content.Validators
                 .WithMessage("Provider must be one of: Zoom, MicrosoftTeams, GoogleMeet, Jitsi.");
 
             RuleFor(x => x.MeetingUrl)
-                .NotEmpty().WithMessage("Meeting URL is required.")
-                .MaximumLength(255).WithMessage("Meeting URL must not exceed 255 characters.");
+                .NotEmpty().WithMessage("Meeting URL is required for this provider.")
+                .When(x => !x.Provider.Equals("jitsi", StringComparison.OrdinalIgnoreCase))
+                .MaximumLength(255).When(x => x.MeetingUrl != null)
+                .WithMessage("Meeting URL must not exceed 255 characters.");
 
             RuleFor(x => x.ScheduledAt)
                 .GreaterThan(DateTime.UtcNow).WithMessage("Scheduled time must be in the future.");

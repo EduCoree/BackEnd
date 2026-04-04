@@ -27,7 +27,7 @@ namespace EduCore.Services_Abstraction
         Task<List<LiveSessionResponse>> GetUpcomingSessionsAsync(string studentId,
             CancellationToken ct = default);
 
-        Task<string> GetJoinUrlAsync(int sessionId, string studentId,
+        Task<JoinSessionResponse> GetJoinUrlAsync(int sessionId, string studentId,
             CancellationToken ct = default);
     }
 }

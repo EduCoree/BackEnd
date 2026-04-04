@@ -45,11 +45,16 @@ namespace EduCore.Services
             if (!Enum.TryParse<LiveProvider>(request.Provider, true, out var providerEnum))
                 throw new BadRequestException("Invalid provider.");
 
+            // Auto-generate room name for Jitsi; other providers use the teacher-provided URL
+            var meetingUrl = providerEnum == LiveProvider.Jitsi
+                ? $"educore-{courseId}-{Guid.NewGuid().ToString("N").Substring(0, 8)}"
+                : request.MeetingUrl ?? throw new BadRequestException("Meeting URL is required for this provider.");
+
             var session = new LiveSession
             {
                 CourseId = courseId,
                 Provider = providerEnum,
-                MeetingUrl = request.MeetingUrl,
+                MeetingUrl = meetingUrl,
                 ScheduledAt = request.ScheduledAt,
                 Title = request.Title,
                 Description = request.Description,
@@ -76,7 +81,14 @@ namespace EduCore.Services
                 session.Provider = providerEnum;
             }
 
-            if (request.MeetingUrl != null) session.MeetingUrl = request.MeetingUrl;
+            // Jitsi room names are auto-generated and immutable
+            if (request.MeetingUrl != null)
+            {
+                if (session.Provider == LiveProvider.Jitsi)
+                    throw new BadRequestException("Cannot change the meeting URL for Jitsi sessions. Room names are auto-generated.");
+                session.MeetingUrl = request.MeetingUrl;
+            }
+
             if (request.ScheduledAt.HasValue) session.ScheduledAt = request.ScheduledAt.Value;
             if (request.Title != null) session.Title = request.Title;
             if (request.Description != null) session.Description = request.Description;
@@ -159,7 +171,7 @@ namespace EduCore.Services
             return upcomingSessions.Select(MapToResponse).ToList();
         }
 
-        public async Task<string> GetJoinUrlAsync(
+        public async Task<JoinSessionResponse> GetJoinUrlAsync(
             int sessionId, string studentId, CancellationToken ct)
         {
             var session = await _uow.GetRepository<LiveSession, int>().GetByIdAsync(sessionId);
@@ -179,9 +191,14 @@ namespace EduCore.Services
 
             // 15 min rule
             if (DateTime.UtcNow < session.ScheduledAt.AddMinutes(-15))
-                throw new ForbiddenException("You can only join the session 15 minutes before the scheduled time.");
+                throw new ForbiddenException("Session has not started yet.");
 
-            return session.MeetingUrl;
+            return new JoinSessionResponse
+            {
+                RoomName = session.MeetingUrl,
+                Provider = session.Provider.ToString(),
+                Title = session.Title
+            };
         }
 
         // ── Helpers ──────────────────────────────────────

@@ -35,8 +35,8 @@ namespace EduCore.Presentation.Controllers
         public async Task<IActionResult> JoinSession(
             int sessionId, CancellationToken ct)
         {
-            var joinUrl = await _service.GetJoinUrlAsync(sessionId, StudentId, ct);
-            return Ok(ApiResponse<string>.SuccessResult(joinUrl, "Join URL retrieved successfully."));
+            var result = await _service.GetJoinUrlAsync(sessionId, StudentId, ct);
+            return Ok(ApiResponse<JoinSessionResponse>.SuccessResult(result, "Join session details retrieved successfully."));
         }
     }
 }
