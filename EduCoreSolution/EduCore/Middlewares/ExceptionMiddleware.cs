@@ -1,4 +1,4 @@
-﻿using EduCore.Shared.Exceptions;
+using EduCore.Shared.Exceptions;
 using EduCore.Shared.Responses;
 using System.Net;
 using System.Text.Json;
@@ -34,7 +34,9 @@ namespace EduCore.Middlewares
             {
                 NotFoundException => HttpStatusCode.NotFound,            // 404
                 UnauthorizedException => HttpStatusCode.Forbidden,           // 403
+                ForbiddenException => HttpStatusCode.Forbidden,              // 403
                 BadRequestException => HttpStatusCode.BadRequest,          // 400
+                ConflictException => HttpStatusCode.Conflict,              // 409
                 _ => HttpStatusCode.InternalServerError  // 500
             };
 

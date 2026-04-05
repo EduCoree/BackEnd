@@ -1,0 +1,9 @@
+using System;
+
+namespace EduCore.Shared.Exceptions
+{
+    public class ForbiddenException : Exception
+    {
+        public ForbiddenException(string message = "Access forbidden") : base(message) { }
+    }
+}
