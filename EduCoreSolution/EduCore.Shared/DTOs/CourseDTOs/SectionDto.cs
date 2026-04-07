@@ -1,4 +1,4 @@
-﻿using EduCore.Shared.Enums;
+using EduCore.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +23,23 @@ namespace EduCore.Shared.DTOs.CourseDTOs
         public int SortOrder { get; set; }
         public int? DurationSeconds { get; set; }
         public bool IsFreePreview { get; set; }
+        public VideoLessonDto? VideoLesson { get; set; }
+        public PdfLessonDto? PdfLesson { get; set; }
+    }
+
+    public class VideoLessonDto
+    {
+        public int Id { get; set; }
+        public string VideoUrl { get; set; } = string.Empty;
+        public string VideoProvider { get; set; } = string.Empty;
+        public string? ThumbnailUrl { get; set; }
+    }
+
+    public class PdfLessonDto
+    {
+        public int Id { get; set; }
+        public string FileUrl { get; set; } = string.Empty;
+        public int? FileSizeKb { get; set; }
     }
 
     public class CreateSectionDto
