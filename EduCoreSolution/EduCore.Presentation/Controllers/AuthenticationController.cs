@@ -22,13 +22,14 @@ namespace EduCore.Presentation.Controllers
             this.authanticationService = authanticationService;
         }
 
-    
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
             var result = await authanticationService.RegisterAsync(registerDto);
             return HandleResult(result);
         }
+
+        // POST api/authentication/login
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
@@ -36,47 +37,22 @@ namespace EduCore.Presentation.Controllers
             return HandleResult(result);
         }
 
+        // POST api/authentication/refresh-token
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<UserDto>> RefreshToken(RefreshTokenDto dto)
+        {
+            var result = await authanticationService.RefreshTokenAsync(dto.RefreshToken);
+            return HandleResult(result);
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        // POST api/authentication/logout
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<ActionResult<bool>> Logout(RefreshTokenDto dto)
+        {
+            var result = await authanticationService.LogoutAsync(dto.RefreshToken);
+            return HandleResult(result);
+        }
 
 
         [HttpPost("send-confirmation")]
@@ -120,25 +96,7 @@ namespace EduCore.Presentation.Controllers
             var result=await authanticationService.CheckEmailAsync(email);
             return Ok(result);
         }
-        //[Authorize]
-        //[HttpGet("currenUser")]
-        //public async Task<ActionResult<UserDto>> GetCurrentUser()
-        //{
-        //    var email = User.FindFirstValue(ClaimTypes.Email);
-        //    var user = await authanticationService.GetUserByEmailAsync(email);
-        //    return HandleResult(user);
-        //}
-        [Authorize]
-        [HttpPost("logout")]
-        public async Task<ActionResult<bool>> Logout()
-        {
-            var email = User.FindFirstValue(ClaimTypes.Email);
-            if (email==null)
-                return Unauthorized();
-
-            var result = await authanticationService.LogoutAsync(email);
-            return HandleResult(result);
-        }
+        
 
     }
 }

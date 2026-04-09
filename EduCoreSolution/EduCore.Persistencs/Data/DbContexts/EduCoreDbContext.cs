@@ -40,6 +40,7 @@ namespace EduCore.Persistencs.Data.DbContexts
         // Auth
         public DbSet<User> Users { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         // Notifications
         public DbSet<Notification> Notifications { get; set; }

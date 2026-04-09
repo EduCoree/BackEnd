@@ -9,7 +9,8 @@ namespace EduCore.Shared.DTOs.Identity
     public record UserDto(
         string Name,
         string Email,
-        string Token
+        string Token,
+        string RefreshToken,
+        DateTime RefreshTokenExpiry
         );
-    
 }
