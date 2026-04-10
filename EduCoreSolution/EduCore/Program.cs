@@ -73,6 +73,12 @@ namespace EduCore
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IAdminUserRepository, AdminUserRepository>();
             builder.Services.AddScoped<IAdminUserService, AdminUserService>();
+
+            builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
+            builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+            builder.Services.AddScoped<ITeacherDashboardService, TeacherDashboardService>();
+            builder.Services.AddScoped<IStudentDashboardService, StudentDashboardService>();
+
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
