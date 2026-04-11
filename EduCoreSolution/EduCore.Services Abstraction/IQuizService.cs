@@ -1,4 +1,5 @@
-﻿using EduCore.Shared.DTOs.Quiz.Teacher;
+﻿using EduCore.Shared.DTOs.Quiz.Student;
+using EduCore.Shared.DTOs.Quiz.Teacher;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace EduCore.Services_Abstraction
         Task<IEnumerable<QuizDto>> GetQuizzesByCourseAsync(int courseId, string teacherId);
         Task<QuizDto> UpdateQuizAsync(int courseId, int quizId, string teacherId, UpdateQuizDto request);
         Task DeleteQuizAsync(int courseId, int quizId, string teacherId);
+       
 
     }
 }

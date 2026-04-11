@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EduCore.Domain.Contracts;
+using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities.AuthModel;
 using EduCore.Domain.Entities.QuizModel;
 using EduCore.Services.Helpers;
@@ -34,28 +35,46 @@ namespace EduCore.Services
 
         public async Task<StudentQuizDto> GetQuizAsync(int quizId, string studentId)
         {
+            await ValidateEnrollmentAsync(quizId, studentId);
             var quiz = await _unitOfWork.QuizRepository.GetQuizWithDetails(quizId);
             if (quiz is null)
                 throw new NotFoundException($"Quiz with id {quizId} not found.");
-            var usedAttempts = await _unitOfWork.QuizAttemptRepository.GetAttemptCountAsync(quizId, studentId);
-            var AttemptsLeft = quiz.MaxAttempts - usedAttempts;
-            var quizDto = _mapper.Map<StudentQuizDto>(quiz);
-            return quizDto with { AttemptsLeft = AttemptsLeft };
+           return _mapper.Map<StudentQuizDto>(quiz);
+        }
+
+        public async Task<IEnumerable<AttemptHistoryDto>> GetQuizHistoryAsync(int quizId, string studentId)
+        {
+            await ValidateEnrollmentAsync(quizId, studentId);
+            var attempts = await _unitOfWork.QuizAttemptRepository.GetQuizHistoryAsync(quizId,studentId);
+            return _mapper.Map<IEnumerable<AttemptHistoryDto>>(attempts);
+        }
+
+        public async Task<QuizSummaryDto> GetQuizSummaryAsync(int quizId, string studentId)
+        {
+
+            await ValidateEnrollmentAsync(quizId, studentId);
+            var summary = await _unitOfWork.QuizRepository.GetQuizSummaryAsync(quizId, studentId);
+            if (summary == null) throw new NotFoundException($"Quiz {quizId} not found");
+            return summary;
         }
 
         public async Task<AttemptResultDto> GetResultAsync(int quizId, int attemptId, string studentId)
         {
+            await ValidateEnrollmentAsync(quizId, studentId);
             var attempt = await _unitOfWork.QuizAttemptRepository.GetAttemptWithAnswersAsync(attemptId);
             if (attempt is null || attempt.QuizId != quizId || attempt.StudentId != studentId)
                 throw new NotFoundException($"Attempt with id {attemptId} not found");
             var quiz = await _unitOfWork.QuizRepository.GetQuizWithDetails(quizId); 
             var totalPoints = quiz!.Questions.Sum(q => q.Points);
             var EarnedPoints = attempt.AttemptAnswers.Where(a=>a.AnswerOption.IsCorrect).Sum(a => a.Question.Points);
-            return BuildResultDto(attempt, EarnedPoints, totalPoints);
+            return BuildResultDto(attempt, EarnedPoints, totalPoints,quiz);
         }
+
+
 
         public async Task<AttemptDto> StartAttemptAsync(int quizId, string studentId)
         {
+            await ValidateEnrollmentAsync(quizId, studentId);
             var quiz = await _unitOfWork.QuizRepository.GetQuizWithDetails(quizId);
             if (quiz is null)
                 throw new NotFoundException($"Quiz with id {quizId} not found.");
@@ -76,7 +95,8 @@ namespace EduCore.Services
 
         public async Task<AttemptResultDto> SubmitAttemptAsync(int quizId, int attemptId, string studentId, SubmitAnswerDto request)
         {
-            var attempt= await _unitOfWork.QuizAttemptRepository.GetAttemptWithAnswersAsync(attemptId);
+            await ValidateEnrollmentAsync(quizId, studentId);
+            var attempt= await _unitOfWork.QuizAttemptRepository.GetAttemptWithAnswersAsync(attemptId);  
             if (attempt is null || attempt.QuizId != quizId || attempt.StudentId != studentId)
                 throw new NotFoundException($"Attempt with id {attemptId} not found");
             if (attempt.SubmittedAt.HasValue)
@@ -111,7 +131,7 @@ namespace EduCore.Services
             attempt.SubmittedAt = DateTime.Now;
             _unitOfWork.QuizAttemptRepository.Update(attempt);
             await _unitOfWork.SaveChangesAsync();
-            return BuildResultDto(attempt, EarnedPoints, TotalPoints);
+            return BuildResultDto(attempt, EarnedPoints, TotalPoints,quiz);
 
         }
 
@@ -120,19 +140,21 @@ namespace EduCore.Services
 
 
         #region Helpers
-        private AttemptResultDto BuildResultDto(QuizAttempt attempt, int earnedPoints, int totalPoints)
+        private AttemptResultDto BuildResultDto(QuizAttempt attempt, int earnedPoints, int totalPoints,Quiz quiz)
         {
-            var review = attempt.AttemptAnswers.Select(aa =>
+            var review = quiz.Questions.Select(q =>
             {
-                var correctOption = aa.Question.AnswerOptions.FirstOrDefault(o => o.IsCorrect);
+                var studentAnswer = attempt.AttemptAnswers.FirstOrDefault(aa => aa.QuestionId == q.Id);
+                var correctOption = q.AnswerOptions.FirstOrDefault(o => o.IsCorrect);
+
                 return new QuestionReviewDto
                 {
-                    QuestionId = aa.QuestionId,
-                    QuestionText = aa.Question.Text,
-                    SelectedAnswerText = aa.AnswerOption.Text,
+                    QuestionId = q.Id,
+                    QuestionText = q.Text,
+                    SelectedAnswerText = studentAnswer?.AnswerOption?.Text ?? "No Answer Provided",
                     CorrectAnswerText = correctOption?.Text ?? string.Empty,
-                    IsCorrect = aa.AnswerOption.IsCorrect,
-                    Points = aa.Question.Points
+                    IsCorrect = studentAnswer?.AnswerOption?.IsCorrect ?? false,
+                    Points = q.Points
                 };
             }).ToList();
 
@@ -147,6 +169,16 @@ namespace EduCore.Services
                 Review = review
             };
         }
+
+        private async Task ValidateEnrollmentAsync(int quizId, string studentId)
+        {
+            var quiz = await _unitOfWork.QuizRepository.GetByIdAsync(quizId);
+            if (quiz == null) throw new NotFoundException($"Quiz with id {quizId} not found."); 
+            var isEnrolled = await _unitOfWork.EnrollmentRepository
+                                   .IsEnrolledAsync(studentId, quiz.CourseId);
+            if (!isEnrolled) throw new UnauthorizedException();
+        }
+
         #endregion
 
     }

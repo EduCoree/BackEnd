@@ -32,7 +32,7 @@ namespace EduCore.Presentation.Controllers
         public async Task<IActionResult> CreateQuestion(int courseId, int quizId, [FromBody] CreateQuestionDto request)
         {
             var result = await _questionService.AddQuestionAsync(courseId, quizId,TeacherId, request);
-            return CreatedAtAction(nameof(GetQuestions), new { courseId = courseId, quizId = quizId }, result);
+            return CreatedAtAction(nameof(GetQuestions),new { courseId, quizId },ApiResponse<QuestionDto>.SuccessResult(result, "Question Created Successfully"));
         }
         [HttpPut("{questionId}")]
         public async Task<IActionResult> UpdateQuestion(int courseId, int quizId, int questionId, [FromBody] UpdateQuestionDto request)

@@ -10,6 +10,7 @@ namespace EduCore.Domain.Contracts
 {
     public interface IUnitOfWork
     {
+        IEnrollmentRepository EnrollmentRepository { get; }
         IQuizRepository QuizRepository { get; }
         IQuizAttemptRepository QuizAttemptRepository { get; }
         Task<int> SaveChangesAsync();
