@@ -30,6 +30,15 @@ namespace EduCore.Presentation.Controllers
             return Ok(ApiResponse<IEnumerable<ForumPostDto>>.SuccessResult(result, "Posts retrieved successfully."));
         }
 
+        // GET /api/courses/{courseId}/forum/posts/{postId}
+        [HttpGet("posts/{postId:int}")]
+        [Authorize(Roles = "Student,Teacher")]
+        public async Task<IActionResult> GetPostById(int courseId, int postId)
+        {
+            var result = await _forumService.GetPostByIdAsync(postId);
+            return Ok(ApiResponse<ForumPostDetailDto>.SuccessResult(result, "Post retrieved successfully."));
+        }
+
         // POST /api/courses/{courseId}/forum/posts
         [HttpPost("posts")]
         [Authorize(Roles = "Student")]

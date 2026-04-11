@@ -7,6 +7,7 @@ namespace EduCore.Services_Abstraction
     public interface IForumService
     {
         // Posts
+        Task<ForumPostDetailDto> GetPostByIdAsync(int postId);
         Task<IEnumerable<ForumPostDto>> GetPostsAsync(int courseId, string? sort);
         Task<ForumPostDto> CreatePostAsync(int courseId, string studentId, CreateForumPostDto dto);
         Task<ForumPostDto> UpdatePostAsync(int postId, string userId, UpdateForumPostDto dto);
