@@ -22,6 +22,8 @@ namespace EduCore.Persistencs.Repositories
             CourseRepository = new CourseRepository(eduCoreDbContext);
                 QuizRepository = new QuizRepository(_eduCoreDbContext);
                 QuizAttemptRepository = new QuizAttemptRepository(_eduCoreDbContext);
+                NotificationRepository= new NotificationRepository(_eduCoreDbContext);
+                
 
                 // Forum
                 ForumRepository = new ForumRepository(_eduCoreDbContext);
@@ -35,6 +37,8 @@ namespace EduCore.Persistencs.Repositories
 
         // ── Forum ──
         public IForumRepository ForumRepository { get; }
+
+        public INotificationRepository NotificationRepository{get;}
 
         public IGenericRepository<TEntity, Tkey> GetRepository<TEntity, Tkey>() where TEntity : BaseEntity<Tkey>
         {
