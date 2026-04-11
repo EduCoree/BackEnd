@@ -1,4 +1,4 @@
-﻿using EduCore.Domain.Contracts.Repositories;
+using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities.CourseModel;
 using EduCore.Domain.Entities.EnrollmentModel;
 using EduCore.Domain.Entities.ProgressModel;
@@ -60,6 +60,10 @@ namespace EduCore.Persistencs.Repositories
                 .Include(c => c.Teacher)
                 .Include(c => c.Sections.OrderBy(s => s.SortOrder))
                     .ThenInclude(s => s.Lessons.OrderBy(l => l.SortOrder))
+                        .ThenInclude(l => l.VideoLesson)
+                .Include(c => c.Sections.OrderBy(s => s.SortOrder))
+                    .ThenInclude(s => s.Lessons.OrderBy(l => l.SortOrder))
+                        .ThenInclude(l => l.PdfLesson)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(c => c.Id == courseId);
         }

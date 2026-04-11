@@ -10,7 +10,6 @@ using EduCore.Services;
 using EduCore.Services.MappingProfiles;
 using EduCore.Services_Abstraction;
 using EduCore.Shared.Settings;
-using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
@@ -46,10 +45,6 @@ namespace EduCore
             builder.Services.AddScoped<IQuizRepository, QuizRepository>();
             builder.Services.AddScoped<ICourseService, CourseService>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddScoped<ILessonService, LessonService>();
-            builder.Services.AddScoped<IVideoLessonService, VideoLessonService>();
-            builder.Services.AddScoped<ILiveSessionService, LiveSessionService>();
-            builder.Services.AddValidatorsFromAssembly(typeof(EduCore.Shared.DTOs.Content.Validators.CreateLessonRequestValidator).Assembly);
 
             //builder.Services.AddAutoMapper(typeof(CenterMappingProfile).Assembly);
             builder.Services.AddAutoMapper(typeof(ServicesAssemblyReference).Assembly);
@@ -73,8 +68,17 @@ namespace EduCore
             //Hala from 56 to 66
             builder.Services.AddKeyedScoped<IDataInitializer, IdentityDataInitializer>("Identity");
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+            builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IAdminUserRepository, AdminUserRepository>();
+            builder.Services.AddScoped<IAdminUserService, AdminUserService>();
+
+            builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
+            builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+            builder.Services.AddScoped<ITeacherDashboardService, TeacherDashboardService>();
+            builder.Services.AddScoped<IStudentDashboardService, StudentDashboardService>();
+
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -198,6 +202,7 @@ namespace EduCore
             builder.Services.AddScoped<IstudentQuizService, StudentQuizService>();
             builder.Services.AddScoped<IQuizAttemptRepository, QuizAttemptRepository>();
             builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
