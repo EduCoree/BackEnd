@@ -1,4 +1,4 @@
-﻿
+
 using EduCore.Domain.Contracts;
 using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities.AuthModel;
@@ -268,14 +268,14 @@ namespace EduCore
             //var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             //await  QuizDataSeed.SeedAsync(context, userManager);
             //ahmed samir 137-147
-            //using (var seederScope = app.Services.CreateScope())
-            //{
-            //    var seederUserManager = seederScope.ServiceProvider.GetRequiredService<UserManager<User>>();
-            //    var seederRoleManager = seederScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            //    var seederContext = seederScope.ServiceProvider.GetRequiredService<EduCoreDbContext>();
+            using (var seederScope = app.Services.CreateScope())
+            {
+                var seederUserManager = seederScope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                var seederRoleManager = seederScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var seederContext = seederScope.ServiceProvider.GetRequiredService<EduCoreDbContext>();
 
-            //    await DataSeeder.SeedAsync(seederUserManager, seederRoleManager, seederContext);
-            //}
+                await DataSeeder.SeedAsync(seederUserManager, seederRoleManager, seederContext);
+            }
             using (var initScope = app.Services.CreateScope())
             {
                 var identityInit = initScope.ServiceProvider
