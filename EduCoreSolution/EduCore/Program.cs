@@ -1,4 +1,4 @@
-﻿
+
 using EduCore.Domain.Contracts;
 using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities.AuthModel;
@@ -283,6 +283,14 @@ namespace EduCore
                 var identityInit = initScope.ServiceProvider
                     .GetRequiredKeyedService<IDataInitializer>("Identity");
                 await identityInit.InitializeAsync();
+            }
+
+            // ── Forum Data Seed (for testing — remove before merge) ──
+            using (var forumScope = app.Services.CreateScope())
+            {
+                var forumContext = forumScope.ServiceProvider.GetRequiredService<EduCoreDbContext>();
+                var forumUserManager = forumScope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                await ForumDataSeed.SeedAsync(forumContext, forumUserManager);
             }
 
 
