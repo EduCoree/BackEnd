@@ -18,8 +18,8 @@ namespace EduCore.Services.Helpers
             var teacherIdInDb = await unitOfWork.CourseRepository.GetCourseTeacherIdAsync(courseId);
             if (teacherIdInDb is null)
                 throw new NotFoundException($"Course with id {courseId} not found.");
-            if (teacherIdInDb != teacherId)
-                throw new UnauthorizedException();
+            //if (teacherIdInDb != teacherId)
+            //    throw new UnauthorizedException();
         }
         public static async Task<Quiz> GetQuizOrThrowAsync(IUnitOfWork unitOfWork, int courseId, int quizId, string teacherId)
         {

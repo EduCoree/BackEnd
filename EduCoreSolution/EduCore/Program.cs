@@ -202,6 +202,7 @@ namespace EduCore
             builder.Services.AddScoped<IstudentQuizService, StudentQuizService>();
             builder.Services.AddScoped<IQuizAttemptRepository, QuizAttemptRepository>();
             builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {

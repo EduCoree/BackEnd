@@ -13,6 +13,7 @@ namespace EduCore.Domain.Contracts.Repositories
         Task<int> GetAttemptCountAsync(int quizId, string studentId);
         Task<QuizAttempt?> GetAttemptWithAnswersAsync(int attemptId);
         Task<IEnumerable<QuizAttempt>> GetStudentHistoryAsync(string studentId);
+        Task<IEnumerable<QuizAttempt>> GetQuizHistoryAsync(int quizId, string studentId);
 
     }
 }
