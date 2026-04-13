@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace EduCore.Shared.DTOs.EnrollmentDTOs
 {
-    internal class EnrollFreeDto
+    public class EnrollFreeDto
     {
+        public int CourseId { get; set; }
     }
 }

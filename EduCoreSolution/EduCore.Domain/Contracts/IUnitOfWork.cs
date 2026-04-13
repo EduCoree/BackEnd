@@ -21,8 +21,8 @@ namespace EduCore.Domain.Contracts
 
 
 
-
-
+        IEnrollmentRepository EnrollmentRepository { get; }
+        IPaymentRepository PaymentRepository { get; }
         ICourseRepository CourseRepository { get; }
 
         // ── Forum ──

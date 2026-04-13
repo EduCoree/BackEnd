@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace EduCore.Shared.Enums
 {
-    internal class EnrollEnums
-    {
-    }
+    public enum PaymentMethod { CreditCard, PayPal, BankTransfer, Stripe, Fawry,Paymob }
+    public enum PaymentStatus { Pending, Completed, Failed, Refunded }
 }

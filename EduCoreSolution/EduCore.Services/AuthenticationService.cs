@@ -1,4 +1,5 @@
 ﻿using EduCore.Domain.Entities.AuthModel;
+using EduCore.Domain.Entities.CenterModel;
 using EduCore.Services_Abstraction;
 using EduCore.Shared.CommonResult;
 using EduCore.Shared.DTOs.Identity;
@@ -72,6 +73,7 @@ namespace EduCore.Services
         {
             var Claims = new List<Claim>
             {
+                 new Claim("centerId", user.CenterId.ToString()) ,
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
                  new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(JwtRegisteredClaimNames.Name, user.Name),

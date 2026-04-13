@@ -1,0 +1,24 @@
+﻿using AutoMapper;
+using EduCore.Domain.Entities.EnrollmentModel;
+using EduCore.Shared.DTOs.EnrollmentDTOs;
+
+namespace EduCore.Services.MappingProfiles
+{
+    public class EnrollmentProfile : Profile
+    {
+        public EnrollmentProfile()
+        {
+            // Enrollment → EnrollmentDto
+            CreateMap<Enrollment, EnrollmentDto>()
+                .ForMember(d => d.CourseTitle,
+                    o => o.MapFrom(s => s.Course.Title))
+                .ForMember(d => d.CourseCover,
+                    o => o.MapFrom(s => s.Course.CoverImage));
+
+            // Payment → PaymentDto
+            CreateMap<Payment, PaymentDto>()
+                .ForMember(d => d.CourseTitle,
+                    o => o.MapFrom(s => s.Enrollment.Course.Title));
+        }
+    }
+}

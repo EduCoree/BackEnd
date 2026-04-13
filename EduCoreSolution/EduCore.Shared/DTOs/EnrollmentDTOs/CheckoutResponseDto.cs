@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace EduCore.Shared.DTOs.EnrollmentDTOs
 {
-    internal class CheckoutResponseDto
+    public class CheckoutResponseDto
     {
+        public string CheckoutUrl { get; set; } = string.Empty;
+        public int PaymentId { get; set; }
     }
 }
