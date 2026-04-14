@@ -420,6 +420,82 @@ namespace EduCore.Persistencs.Data.DataSeed
                     await context.SaveChangesAsync();
                 }
             }
+
+            // 7. Forum Posts
+            if (!await context.Set<EduCore.Domain.Entities.ForumModel.ForumPost>().AnyAsync())
+            {
+                var algebraLesson = await context.Set<Lesson>().FirstOrDefaultAsync(l => l.Title == "What is Algebra?");
+                var biologyLesson = await context.Set<Lesson>().FirstOrDefaultAsync(l => l.Title == "Cell Membrane");
+                
+                var student1 = await userManager.FindByEmailAsync("student1@educore.com");
+                var student2 = await userManager.FindByEmailAsync("student2@educore.com");
+                var teacher1 = await userManager.FindByEmailAsync("ahmed.teacher@educore.com");
+
+                if (algebraLesson != null && student1 != null && student2 != null && teacher1 != null)
+                {
+                    var posts = new List<EduCore.Domain.Entities.ForumModel.ForumPost>
+                    {
+                        new EduCore.Domain.Entities.ForumModel.ForumPost
+                        {
+                            LessonId = algebraLesson.Id,
+                            StudentId = student1.Id,
+                            Title = "Help with algebraic variables",
+                            Body = "I'm having trouble understanding how variables work. Can someone give an example?",
+                            CreatedAt = DateTime.UtcNow.AddDays(-2),
+                            UpvoteCount = 2,
+                            Replies = new List<EduCore.Domain.Entities.ForumModel.ForumReply>
+                            {
+                                new EduCore.Domain.Entities.ForumModel.ForumReply
+                                {
+                                    UserId = student2.Id,
+                                    Body = "Variables are like empty boxes. You can put different numbers in them!",
+                                    CreatedAt = DateTime.UtcNow.AddDays(-1)
+                                },
+                                new EduCore.Domain.Entities.ForumModel.ForumReply
+                                {
+                                    UserId = teacher1.Id,
+                                    Body = "Great explanation! Think of x as a placeholder for a value we want to find.",
+                                    CreatedAt = DateTime.UtcNow.AddHours(-12)
+                                }
+                            },
+                            Upvotes = new List<EduCore.Domain.Entities.ForumModel.PostUpvote>
+                            {
+                                new EduCore.Domain.Entities.ForumModel.PostUpvote { UserId = student2.Id, CreatedAt = DateTime.UtcNow.AddDays(-1) },
+                                new EduCore.Domain.Entities.ForumModel.PostUpvote { UserId = teacher1.Id, CreatedAt = DateTime.UtcNow.AddHours(-12) }
+                            }
+                        },
+                        new EduCore.Domain.Entities.ForumModel.ForumPost
+                        {
+                            LessonId = algebraLesson.Id,
+                            StudentId = student2.Id,
+                            Title = "Great lesson!",
+                            Body = "The explanation was very clear, thank you.",
+                            CreatedAt = DateTime.UtcNow.AddDays(-1),
+                            UpvoteCount = 0
+                        }
+                    };
+
+                    if (biologyLesson != null)
+                    {
+                        posts.Add(new EduCore.Domain.Entities.ForumModel.ForumPost
+                        {
+                            LessonId = biologyLesson.Id,
+                            StudentId = student1.Id,
+                            Title = "Question about cell membranes",
+                            Body = "What does semi-permeable actually mean in this context?",
+                            CreatedAt = DateTime.UtcNow.AddHours(-5),
+                            UpvoteCount = 1,
+                            Upvotes = new List<EduCore.Domain.Entities.ForumModel.PostUpvote>
+                            {
+                                new EduCore.Domain.Entities.ForumModel.PostUpvote { UserId = student2.Id, CreatedAt = DateTime.UtcNow.AddHours(-2) }
+                            }
+                        });
+                    }
+
+                    context.Set<EduCore.Domain.Entities.ForumModel.ForumPost>().AddRange(posts);
+                    await context.SaveChangesAsync();
+                }
+            }
         }
 
         ///Helper 
