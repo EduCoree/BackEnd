@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EduCore.Persistencs.Repositories
 {
-    internal class NotificationRepository : GenericRepository<Notification, int>, INotificationRepository
+    public class NotificationRepository : GenericRepository<Notification, int>, INotificationRepository
     {
         public NotificationRepository(EduCoreDbContext context): base(context) { }
         public async Task<int> GetTotalCountAsync(string userId)

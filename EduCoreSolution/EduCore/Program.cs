@@ -1,4 +1,4 @@
-﻿
+
 using EduCore.Domain.Contracts;
 using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities.AuthModel;
@@ -6,6 +6,7 @@ using EduCore.Middlewares;
 using EduCore.Persistencs.Data.DataSeed;
 using EduCore.Persistencs.Data.DbContexts;
 using EduCore.Persistencs.Repositories;
+using EduCore.Presentation.Hubs;
 using EduCore.Services;
 using EduCore.Services.MappingProfiles;
 using EduCore.Services_Abstraction;
@@ -13,6 +14,7 @@ using EduCore.Shared.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -41,7 +43,7 @@ namespace EduCore
             });
 
             builder.Services.AddScoped<ICenterService, CenterService>();
-            builder.Services.AddScoped<IQuizService, QuizService>(); 
+            builder.Services.AddScoped<IQuizService, QuizService>();
             builder.Services.AddScoped<IQuizRepository, QuizRepository>();
             builder.Services.AddScoped<ICourseService, CourseService>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -57,7 +59,7 @@ namespace EduCore
                 options.Password.RequiredLength = 8;
                 options.Password.RequireUppercase = true;
                 options.Password.RequireNonAlphanumeric = false;
-          
+
                 // User settings
                 options.User.RequireUniqueEmail = true;
 
@@ -94,7 +96,7 @@ namespace EduCore
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = builder.Configuration["JWTOptions:Issuer"],
                     ValidAudience = builder.Configuration["JWTOptions:Audience"],
-                    IssuerSigningKey =new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTOptions:SecretKey"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTOptions:SecretKey"]))
                 };
             });
             builder.Services.AddSwaggerGen(c =>
@@ -102,7 +104,7 @@ namespace EduCore
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
-                    Type = SecuritySchemeType.Http, 
+                    Type = SecuritySchemeType.Http,
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header
@@ -124,9 +126,9 @@ namespace EduCore
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
             builder.Services.AddScoped<ICourseRepository, CourseRepository>();
             builder.Services.AddScoped<IImageService, ImageService>();
-    //        builder.Services.AddControllers()
-    //.AddApplicationPart(
-    //    typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly);
+            //        builder.Services.AddControllers()
+            //.AddApplicationPart(
+            //    typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly);
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddControllers().AddApplicationPart(typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly).AddJsonOptions(options =>
             {
@@ -202,6 +204,10 @@ namespace EduCore
             builder.Services.AddScoped<IstudentQuizService, StudentQuizService>();
             builder.Services.AddScoped<IQuizAttemptRepository, QuizAttemptRepository>();
             builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddSignalR();
+            builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+            builder.Services.AddScoped<INotificationSender, SignalRNotificationSender>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
@@ -236,7 +242,7 @@ namespace EduCore
 
 
             // Menna from 100 to 110
-            
+
 
             builder.Services.AddScoped<IReviewService, ReviewService>();
 
@@ -247,7 +253,7 @@ namespace EduCore
 
 
             // Badr from 111 to 121
-            
+
 
 
 
@@ -272,14 +278,14 @@ namespace EduCore
             //var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             //await  QuizDataSeed.SeedAsync(context, userManager);
             //ahmed samir 137-147
-            //using (var seederScope = app.Services.CreateScope())
-            //{
-            //    var seederUserManager = seederScope.ServiceProvider.GetRequiredService<UserManager<User>>();
-            //    var seederRoleManager = seederScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            //    var seederContext = seederScope.ServiceProvider.GetRequiredService<EduCoreDbContext>();
+            using (var seederScope = app.Services.CreateScope())
+            {
+                var seederUserManager = seederScope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                var seederRoleManager = seederScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var seederContext = seederScope.ServiceProvider.GetRequiredService<EduCoreDbContext>();
 
-            //    await DataSeeder.SeedAsync(seederUserManager, seederRoleManager, seederContext);
-            //}
+                await DataSeeder.SeedAsync(seederUserManager, seederRoleManager, seederContext);
+            }
             using (var initScope = app.Services.CreateScope())
             {
                 var identityInit = initScope.ServiceProvider
@@ -316,6 +322,8 @@ namespace EduCore
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseAuthorization();
+            //D:\GraduationProject_ITI\BackEnd\EduCoreSolution\EduCore.Presentation\Hubs\
+            app.MapHub<NotificationHub>("/hubs/notifications");
 
 
             app.MapControllers();
