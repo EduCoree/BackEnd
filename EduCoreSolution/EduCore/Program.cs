@@ -6,7 +6,6 @@ using EduCore.Middlewares;
 using EduCore.Persistencs.Data.DataSeed;
 using EduCore.Persistencs.Data.DbContexts;
 using EduCore.Persistencs.Repositories;
-using EduCore.Presentation.Hubs;
 using EduCore.Services;
 using EduCore.Services.MappingProfiles;
 using EduCore.Services_Abstraction;
@@ -204,10 +203,15 @@ namespace EduCore
             builder.Services.AddScoped<IstudentQuizService, StudentQuizService>();
             builder.Services.AddScoped<IQuizAttemptRepository, QuizAttemptRepository>();
             builder.Services.AddScoped<IEmailService, EmailService>();
+<<<<<<< Updated upstream
             builder.Services.AddSignalR();
             builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
             builder.Services.AddScoped<INotificationSender, SignalRNotificationSender>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
+=======
+            builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
+
+>>>>>>> Stashed changes
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
@@ -323,7 +327,7 @@ namespace EduCore
             app.UseAuthentication();
             app.UseAuthorization();
             //D:\GraduationProject_ITI\BackEnd\EduCoreSolution\EduCore.Presentation\Hubs\
-            app.MapHub<NotificationHub>("/hubs/notifications");
+
 
 
             app.MapControllers();
