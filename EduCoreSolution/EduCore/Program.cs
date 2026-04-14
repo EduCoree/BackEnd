@@ -260,7 +260,8 @@ namespace EduCore
 
             builder.Services.AddScoped<IReviewService, ReviewService>();
 
-
+            builder.Services.AddScoped<ITranslationRepository, TranslationRepository>();
+            builder.Services.AddScoped<TranslationService>();
 
 
 
