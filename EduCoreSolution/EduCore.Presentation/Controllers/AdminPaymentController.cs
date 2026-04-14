@@ -27,7 +27,7 @@ namespace EduCore.Presentation.Controllers
         public async Task<IActionResult> RecordCashPayment([FromBody] CashPaymentDto dto)
         {
             var result = await _enrollmentService.RecordCashPaymentAsync(dto);
-            return Ok(ApiResponse<EnrollmentDto>.SuccessResult(result, "تم تسجيل الدفع النقدي"));
+            return Ok(ApiResponse<EnrollmentDto>.SuccessResult(result, "The cash payment was recorded"));
         }
 
         [HttpGet]

@@ -24,6 +24,12 @@ namespace EduCore.Presentation.Controllers
         [HttpPost("free/{courseId:int}")]
         public async Task<IActionResult> EnrollFree(int courseId)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Unauthorized(ApiResponse<object>.FailResult("You must log in first."));
+            }
+
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             var result = await _enrollmentService.EnrollFreeAsync(StudentId, courseId);
             return Ok(ApiResponse<EnrollmentDto>.SuccessResult(result, "I enrolled in the course"));
         }
@@ -31,6 +37,10 @@ namespace EduCore.Presentation.Controllers
         [HttpPost("checkout")]
         public async Task<IActionResult> Checkout([FromBody] CheckoutDto dto)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Unauthorized(ApiResponse<object>.FailResult("You must log in first."));
+            }
             var result = await _enrollmentService.CreateCheckoutAsync(StudentId, dto.CourseId);
             return Ok(ApiResponse<CheckoutResponseDto>.SuccessResult(result, "Payment link has been created"));
         }
