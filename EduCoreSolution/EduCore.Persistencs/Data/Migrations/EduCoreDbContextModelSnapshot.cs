@@ -230,6 +230,34 @@ namespace EduCore.Persistencs.Data.Migrations
                     b.ToTable("centers", (string)null);
                 });
 
+            modelBuilder.Entity("EduCore.Domain.Entities.ChatModel.ChatMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ChatMessages");
+                });
+
             modelBuilder.Entity("EduCore.Domain.Entities.ContentModel.LiveSession", b =>
                 {
                     b.Property<int>("Id")
@@ -587,7 +615,7 @@ namespace EduCore.Persistencs.Data.Migrations
                         .HasColumnType("nvarchar(3)")
                         .HasDefaultValue("USD");
 
-                    b.Property<int>("EnrollmentId")
+                    b.Property<int?>("EnrollmentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Method")
@@ -616,7 +644,8 @@ namespace EduCore.Persistencs.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EnrollmentId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[EnrollmentId] IS NOT NULL");
 
                     b.HasIndex("StudentId");
 
@@ -1453,8 +1482,7 @@ namespace EduCore.Persistencs.Data.Migrations
                     b.HasOne("EduCore.Domain.Entities.EnrollmentModel.Enrollment", "Enrollment")
                         .WithOne("Payment")
                         .HasForeignKey("EduCore.Domain.Entities.EnrollmentModel.Payment", "EnrollmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("EduCore.Domain.Entities.AuthModel.User", "Student")
                         .WithMany("Payments")

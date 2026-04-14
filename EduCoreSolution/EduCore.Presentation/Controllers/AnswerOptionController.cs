@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 [ApiController]
-[Route("api/teacher/courses/{courseId}/quizzes/{quizId}/questions/{questionId}/options")]
+[Route("api/teacher/questions/{questionId}/options")]
 public class AnswerOptionsController : ControllerBase
 {
     private readonly IAnswerOptionService _answerOptionService;
@@ -17,28 +17,28 @@ public class AnswerOptionsController : ControllerBase
         => _answerOptionService = answerOptionService;
 
     [HttpPost]
-    public async Task<IActionResult> AddAnswerOption( int courseId, int quizId, int questionId,
+    public async Task<IActionResult> AddAnswerOption( int questionId,
         [FromBody] CreateAnswerOptionDto request)
     {
-        var result = await _answerOptionService.AddAnswerOptionAsync(courseId, quizId, questionId,TeacherId, request);
-        return CreatedAtAction(nameof(AddAnswerOption), new { courseId, quizId, questionId },
+        var result = await _answerOptionService.AddAnswerOptionAsync( questionId,TeacherId, request);
+        return CreatedAtAction(nameof(AddAnswerOption), new { questionId },
             ApiResponse<AnswerOptionDto>.SuccessResult(result, "Answer option added successfully."));
     }
 
     [HttpPut("{optionId}")]
     public async Task<IActionResult> UpdateAnswerOption(
-        int courseId, int quizId, int questionId, int optionId,
+        int questionId, int optionId,
         [FromBody] UpdateAnswerOptionDto request)
     {
-        var result = await _answerOptionService.UpdateAnswerOptionAsync(courseId, quizId, questionId, optionId,TeacherId, request);
+        var result = await _answerOptionService.UpdateAnswerOptionAsync( questionId, optionId,TeacherId, request);
         return Ok(ApiResponse<AnswerOptionDto>.SuccessResult(result, "Answer option updated successfully."));
     }
 
     [HttpDelete("{optionId}")]
     public async Task<IActionResult> DeleteAnswerOption(
-        int courseId, int quizId, int questionId, int optionId)
+         int questionId, int optionId)
     {
-        await _answerOptionService.DeleteAnswerOptionAsync(courseId, quizId, questionId, optionId, TeacherId);
+        await _answerOptionService.DeleteAnswerOptionAsync(questionId, optionId, TeacherId);
         return NoContent();
     }
 }
