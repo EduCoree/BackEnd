@@ -8,8 +8,8 @@ namespace EduCore.Services_Abstraction
     {
         // Posts
         Task<ForumPostDetailDto> GetPostByIdAsync(int postId);
-        Task<IEnumerable<ForumPostDto>> GetPostsAsync(int courseId, string? sort);
-        Task<ForumPostDto> CreatePostAsync(int courseId, string studentId, CreateForumPostDto dto);
+        Task<IEnumerable<ForumPostDto>> GetPostsAsync(int lessonId, string? sort);
+        Task<ForumPostDto> CreatePostAsync(int lessonId, string studentId, CreateForumPostDto dto);
         Task<ForumPostDto> UpdatePostAsync(int postId, string userId, UpdateForumPostDto dto);
         Task DeletePostAsync(int postId, string userId, bool isAdmin);
 
