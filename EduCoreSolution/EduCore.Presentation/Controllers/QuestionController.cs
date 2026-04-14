@@ -31,13 +31,10 @@ namespace EduCore.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateQuestion(int quizId, [FromBody] CreateQuestionDto request)
         {
-<<<<<<< Updated upstream
-            var result = await _questionService.AddQuestionAsync(courseId, quizId,TeacherId, request);
-            return CreatedAtAction(nameof(GetQuestions),new { courseId, quizId },ApiResponse<QuestionDto>.SuccessResult(result, "Question Created Successfully"));
-=======
+
             var result = await _questionService.AddQuestionAsync(quizId,TeacherId, request);
             return CreatedAtAction(nameof(GetQuestions), new { quizId = quizId }, result);
->>>>>>> Stashed changes
+
         }
         [HttpPut("{questionId}")]
         public async Task<IActionResult> UpdateQuestion( int quizId, int questionId, [FromBody] UpdateQuestionDto request)

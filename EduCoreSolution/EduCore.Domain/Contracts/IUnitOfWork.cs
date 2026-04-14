@@ -12,6 +12,7 @@ namespace EduCore.Domain.Contracts
     {
         IEnrollmentRepository EnrollmentRepository { get; }
         IQuizRepository QuizRepository { get; }
+        INotificationRepository NotificationRepository { get; }
         IQuizAttemptRepository QuizAttemptRepository { get; }
         Task<int> SaveChangesAsync();
         IGenericRepository<TEntity, Tkey> GetRepository<TEntity, Tkey>() where TEntity : BaseEntity<Tkey>;
