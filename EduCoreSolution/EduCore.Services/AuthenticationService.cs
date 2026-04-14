@@ -1,6 +1,8 @@
-﻿using EduCore.Domain.Contracts;
-using EduCore.Domain.Contracts.Repositories;
+
 using EduCore.Domain.Entities.AuthModel;
+using EduCore.Domain.Entities.CenterModel;
+using EduCore.Domain.Contracts;
+using EduCore.Domain.Contracts.Repositories;
 using EduCore.Services_Abstraction;
 using EduCore.Shared.CommonResult;
 using EduCore.Shared.DTOs.Identity;
@@ -114,7 +116,10 @@ namespace EduCore.Services
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Name,  user.Name),
+                 new Claim("centerId", user.CenterId.ToString()) ,
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                 new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(JwtRegisteredClaimNames.Name, user.Name),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email!),
                 new Claim(JwtRegisteredClaimNames.Sub,   user.Id),
                 new Claim("securityStamp", user.SecurityStamp ?? string.Empty),

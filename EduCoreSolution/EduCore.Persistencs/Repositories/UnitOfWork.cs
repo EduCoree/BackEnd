@@ -15,19 +15,21 @@ namespace EduCore.Persistencs.Repositories
         private readonly Dictionary<Type, object> _repositories = [];
         private readonly EduCoreDbContext _eduCoreDbContext;
 
-
         public UnitOfWork(EduCoreDbContext eduCoreDbContext)
         {
             _eduCoreDbContext = eduCoreDbContext;
             CourseRepository = new CourseRepository(eduCoreDbContext);
                 QuizRepository = new QuizRepository(_eduCoreDbContext);
                 QuizAttemptRepository = new QuizAttemptRepository(_eduCoreDbContext);
+
+            EnrollmentRepository = new EnrollmentRepository(_eduCoreDbContext);
+            PaymentRepository = new PaymentRepository(_eduCoreDbContext);
                 NotificationRepository= new NotificationRepository(_eduCoreDbContext);
                 
-            EnrollmentRepository = new EnrollmentRepository(_eduCoreDbContext);
 
-                // Forum
-                ForumRepository = new ForumRepository(_eduCoreDbContext);
+
+            // Forum
+            ForumRepository = new ForumRepository(_eduCoreDbContext);
         }
 
         public IQuizRepository QuizRepository{ get; }
@@ -38,10 +40,10 @@ namespace EduCore.Persistencs.Repositories
 
         // ── Forum ──
         public IForumRepository ForumRepository { get; }
+        public IEnrollmentRepository EnrollmentRepository { get; }
+        public IPaymentRepository PaymentRepository { get; }
 
         public INotificationRepository NotificationRepository{get;}
-        public IEnrollmentRepository EnrollmentRepository {  get; }
-
         public IGenericRepository<TEntity, Tkey> GetRepository<TEntity, Tkey>() where TEntity : BaseEntity<Tkey>
         {
             var EntityType = typeof(TEntity);

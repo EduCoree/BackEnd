@@ -126,6 +126,11 @@ namespace EduCore
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
             builder.Services.AddScoped<ICourseRepository, CourseRepository>();
             builder.Services.AddScoped<IImageService, ImageService>();
+            builder.Services.AddScoped<PaymobService>();
+            builder.Services.Configure<PaymobSettings>(
+                builder.Configuration.GetSection("Paymob"));
+            builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
             //        builder.Services.AddControllers()
             //.AddApplicationPart(
             //    typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly);
@@ -136,7 +141,7 @@ namespace EduCore
                     .Add(new JsonStringEnumConverter());
             });
             #region JWT Configuration
-            // JWT — بيخلي الـ [Authorize] يقرأ الـ Token من الـ Header
+            // JWT
             //        builder.Services.AddAuthentication(options =>
             //        {
             //            options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
@@ -185,7 +190,7 @@ namespace EduCore
             //});
             //        });
             #endregion
-            // السماح للـ Angular بالتواصل مع الـ API
+            //api with angular
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAngular", policy =>
