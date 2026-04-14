@@ -1,4 +1,5 @@
-﻿using EduCore.Domain.Entities.ForumModel;
+using EduCore.Domain.Entities.CourseModel;
+using EduCore.Domain.Entities.ForumModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -22,9 +23,9 @@ namespace EduCore.Persistencs.Data.Configurations
             builder.Property(p => p.IsRemoved).HasDefaultValue(false);
             builder.Property(p => p.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
 
-            builder.HasOne(p => p.Course)
-                   .WithMany(c => c.ForumPosts)
-                   .HasForeignKey(p => p.CourseId)
+            builder.HasOne(p => p.Lesson)
+                   .WithMany(l => l.ForumPosts)
+                   .HasForeignKey(p => p.LessonId)
                    .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(p => p.Student)

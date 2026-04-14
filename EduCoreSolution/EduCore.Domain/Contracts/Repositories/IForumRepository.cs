@@ -6,7 +6,7 @@ namespace EduCore.Domain.Contracts.Repositories
 {
     public interface IForumRepository
     {
-        Task<IEnumerable<ForumPost>> GetPostsByCourseAsync(int courseId, string? sort);
+        Task<IEnumerable<ForumPost>> GetPostsByLessonAsync(int lessonId, string? sort);
         Task<ForumPost?> GetPostWithDetailsAsync(int postId);
         Task<ForumReply?> GetReplyWithUserAsync(int replyId);
         Task<IEnumerable<PostReport>> GetAllReportsWithDetailsAsync();

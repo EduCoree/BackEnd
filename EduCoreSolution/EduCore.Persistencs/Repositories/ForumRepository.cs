@@ -17,12 +17,12 @@ namespace EduCore.Persistencs.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<ForumPost>> GetPostsByCourseAsync(int courseId, string? sort)
+        public async Task<IEnumerable<ForumPost>> GetPostsByLessonAsync(int lessonId, string? sort)
         {
             var query = _context.ForumPosts
                 .Include(p => p.Student)
                 .Include(p => p.Replies)
-                .Where(p => p.CourseId == courseId && !p.IsRemoved);
+                .Where(p => p.LessonId == lessonId && !p.IsRemoved);
 
             query = sort?.ToLower() switch
             {
