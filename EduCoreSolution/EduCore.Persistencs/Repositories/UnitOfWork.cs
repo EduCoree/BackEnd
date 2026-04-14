@@ -48,7 +48,6 @@ namespace EduCore.Persistencs.Repositories
         // ── Chat ──
         public IChatRepository ChatRepository { get; }
 
-        public IEnrollmentRepository EnrollmentRepository {  get; }
 
         public INotificationRepository NotificationRepository{get;}
         public IGenericRepository<TEntity, Tkey> GetRepository<TEntity, Tkey>() where TEntity : BaseEntity<Tkey>
