@@ -29,5 +29,8 @@ namespace EduCore.Domain.Contracts
 
         // ── Forum ──
         IForumRepository ForumRepository { get; }
+
+        // ── Chat ──
+        IChatRepository ChatRepository { get; }
     }
 }

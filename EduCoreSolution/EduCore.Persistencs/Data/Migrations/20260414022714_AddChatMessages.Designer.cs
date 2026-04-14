@@ -4,6 +4,7 @@ using EduCore.Persistencs.Data.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EduCore.Persistencs.Data.Migrations
 {
     [DbContext(typeof(EduCoreDbContext))]
-    partial class EduCoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260414022714_AddChatMessages")]
+    partial class AddChatMessages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -615,7 +618,7 @@ namespace EduCore.Persistencs.Data.Migrations
                         .HasColumnType("nvarchar(3)")
                         .HasDefaultValue("USD");
 
-                    b.Property<int?>("EnrollmentId")
+                    b.Property<int>("EnrollmentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Method")
@@ -644,8 +647,7 @@ namespace EduCore.Persistencs.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EnrollmentId")
-                        .IsUnique()
-                        .HasFilter("[EnrollmentId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("StudentId");
 
@@ -1444,7 +1446,8 @@ namespace EduCore.Persistencs.Data.Migrations
                     b.HasOne("EduCore.Domain.Entities.EnrollmentModel.Enrollment", "Enrollment")
                         .WithOne("Payment")
                         .HasForeignKey("EduCore.Domain.Entities.EnrollmentModel.Payment", "EnrollmentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("EduCore.Domain.Entities.AuthModel.User", "Student")
                         .WithMany("Payments")

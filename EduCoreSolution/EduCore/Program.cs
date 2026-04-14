@@ -267,22 +267,21 @@ namespace EduCore
 
 
             // Badr from 111 to 121
-
-
-
-
-
-
-
-
-
-
+            builder.Services.AddScoped<IChatService, ChatService>();
+            builder.Services.AddScoped<IChatRepository, ChatRepository>();
+            builder.Services.AddHttpClient("GroqClient", client =>
+            {
+                client.BaseAddress = new Uri("https://api.groq.com/openai/v1/");
+                client.DefaultRequestHeaders.Add("Authorization", 
+                    $"Bearer {builder.Configuration["Groq:ApiKey"]}");
+            });
 
             // End
 
             // ── Forum ─────────────────────────────────────
             builder.Services.AddScoped<IForumService, ForumService>();
             builder.Services.AddScoped<IForumRepository, ForumRepository>();
+
 
             var app = builder.Build();
             app.UseMiddleware<ExceptionMiddleware>();

@@ -27,9 +27,11 @@ namespace EduCore.Persistencs.Repositories
                 NotificationRepository= new NotificationRepository(_eduCoreDbContext);
                 
 
+                // Forum
+                ForumRepository = new ForumRepository(_eduCoreDbContext);
 
-            // Forum
-            ForumRepository = new ForumRepository(_eduCoreDbContext);
+                // Chat
+                ChatRepository = new ChatRepository(_eduCoreDbContext);
         }
 
         public IQuizRepository QuizRepository{ get; }
@@ -42,6 +44,11 @@ namespace EduCore.Persistencs.Repositories
         public IForumRepository ForumRepository { get; }
         public IEnrollmentRepository EnrollmentRepository { get; }
         public IPaymentRepository PaymentRepository { get; }
+
+        // ── Chat ──
+        public IChatRepository ChatRepository { get; }
+
+        public IEnrollmentRepository EnrollmentRepository {  get; }
 
         public INotificationRepository NotificationRepository{get;}
         public IGenericRepository<TEntity, Tkey> GetRepository<TEntity, Tkey>() where TEntity : BaseEntity<Tkey>
