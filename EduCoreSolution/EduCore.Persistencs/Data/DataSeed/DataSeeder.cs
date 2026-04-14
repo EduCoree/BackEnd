@@ -1,6 +1,7 @@
-﻿using EduCore.Domain.Entities.AuthModel;
+using EduCore.Domain.Entities.AuthModel;
 using EduCore.Domain.Entities.CenterModel;
 using EduCore.Domain.Entities.CourseModel;
+using EduCore.Domain.Entities.EnrollmentModel;
 using EduCore.Persistencs.Data.DbContexts;
 using EduCore.Shared.Enums;
 using Microsoft.AspNetCore.Identity;
@@ -51,9 +52,9 @@ namespace EduCore.Persistencs.Data.DataSeed
             }
 
             var center1 = await context.Set<Center>()
-                .FirstAsync(c => c.Name == "EduCore Academy");
+                .FirstOrDefaultAsync(c => c.Name == "EduCore Academy") ?? await context.Set<Center>().FirstOrDefaultAsync();
             var center2 = await context.Set<Center>()
-                .FirstAsync(c => c.Name == "Future Leaders");
+                .FirstOrDefaultAsync(c => c.Name == "Future Leaders") ?? center1;
 
             // 3. Users 
             // Admin
@@ -377,6 +378,47 @@ namespace EduCore.Persistencs.Data.DataSeed
 
                 context.Set<Course>().AddRange(courses);
                 await context.SaveChangesAsync();
+            }
+
+            // 6. Enrollments
+            if (!await context.Set<Enrollment>().AnyAsync())
+            {
+                var student1 = await userManager.FindByEmailAsync("student1@educore.com");
+
+                var algebraCourse = await context.Set<Course>().FirstOrDefaultAsync(c => c.Title == "Algebra for Beginners");
+                var advancedBiologyCourse = await context.Set<Course>().FirstOrDefaultAsync(c => c.Title == "Advanced Biology");
+
+                var enrollments = new List<Enrollment>();
+
+                if (student1 != null && algebraCourse != null)
+                {
+                    enrollments.Add(new Enrollment
+                    {
+                        StudentId = student1.Id,
+                        CourseId = algebraCourse.Id,
+                        Type = EnrollmentType.Free,
+                        EnrolledAt = DateTime.UtcNow,
+                        Status = EnrollmentStatus.Active
+                    });
+                }
+
+                if (student1 != null && advancedBiologyCourse != null)
+                {
+                    enrollments.Add(new Enrollment
+                    {
+                        StudentId = student1.Id,
+                        CourseId = advancedBiologyCourse.Id,
+                        Type = EnrollmentType.Purchase,
+                        EnrolledAt = DateTime.UtcNow,
+                        Status = EnrollmentStatus.Active
+                    });
+                }
+
+                if (enrollments.Any())
+                {
+                    context.Set<Enrollment>().AddRange(enrollments);
+                    await context.SaveChangesAsync();
+                }
             }
         }
 

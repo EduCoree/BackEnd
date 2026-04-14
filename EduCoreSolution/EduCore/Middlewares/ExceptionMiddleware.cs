@@ -43,7 +43,12 @@ namespace EduCore.Middlewares
             if (statusCode == HttpStatusCode.InternalServerError)
                 _logger.LogError(ex, "Unhandled Exception: {Message}", ex.Message);
 
-            var response = ApiResponse<string>.FailResult(ex.Message);
+            // Include inner exception details for debugging DB errors
+            var errorMessage = ex.InnerException != null
+                ? $"{ex.Message} -> {ex.InnerException.Message}"
+                : ex.Message;
+
+            var response = ApiResponse<string>.FailResult(errorMessage);
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)statusCode;

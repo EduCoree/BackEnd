@@ -28,6 +28,16 @@ namespace EduCore.Services
 
         #region Posts
 
+        public async Task<ForumPostDetailDto> GetPostByIdAsync(int postId)
+        {
+            var post = await _unitOfWork.ForumRepository.GetPostWithDetailsAsync(postId);
+
+            if (post == null || post.IsRemoved)
+                throw new NotFoundException("Post not found");
+
+            return _mapper.Map<ForumPostDetailDto>(post);
+        }
+
         public async Task<IEnumerable<ForumPostDto>> GetPostsAsync(int courseId, string? sort)
         {
             var posts = await _unitOfWork.ForumRepository.GetPostsByCourseAsync(courseId, sort);

@@ -12,6 +12,10 @@ namespace EduCore.Services.MappingProfiles
                 .ForMember(d => d.StudentName, o => o.MapFrom(s => s.Student.Name))
                 .ForMember(d => d.ReplyCount, o => o.MapFrom(s => s.Replies.Count(r => !r.IsRemoved)));
 
+            CreateMap<ForumPost, ForumPostDetailDto>()
+                .ForMember(d => d.StudentName, o => o.MapFrom(s => s.Student.Name))
+                .ForMember(d => d.Replies, o => o.MapFrom(s => s.Replies.Where(r => !r.IsRemoved)));
+
             CreateMap<ForumReply, ForumReplyDto>()
                 .ForMember(d => d.UserName, o => o.MapFrom(s => s.User.Name));
 

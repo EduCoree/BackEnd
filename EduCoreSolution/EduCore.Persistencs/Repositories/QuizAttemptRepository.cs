@@ -35,10 +35,21 @@ namespace EduCore.Persistencs.Repositories
 
         public async Task<IEnumerable<QuizAttempt>> GetStudentHistoryAsync(string studentId)
         {
-           return await _EduCoreDbContext.Set<QuizAttempt>()
-                .Where(a => a.StudentId == studentId)
-                .Include(a => a.Quiz)
-                .ToListAsync();
+                return await _EduCoreDbContext.QuizAttempts
+            .AsNoTracking() 
+            .Where(a => a.StudentId == studentId)
+            .Include(a => a.Quiz)
+                .ThenInclude(q => q.Course)
+            .Include(a => a.Quiz)
+                .ThenInclude(q => q.Questions)
+            .OrderByDescending(a => a.SubmittedAt) 
+            .ToListAsync();
+        }
+
+      public async  Task<IEnumerable<QuizAttempt>> GetQuizHistoryAsync(int quizId, string studentId)
+        {
+            return await _EduCoreDbContext.QuizAttempts.Where(q => q.QuizId == quizId && q.StudentId == studentId).ToListAsync();
+
         }
 
     }
