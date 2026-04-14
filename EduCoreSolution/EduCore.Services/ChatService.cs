@@ -59,37 +59,49 @@ namespace EduCore.Services
                 """;
 
             var messages = new List<object>();
+
+            // Add system prompt
+            messages.Add(new { role = "system", content = SystemPrompt });
+
             foreach (var msg in history)
             {
-                messages.Add(new { role = msg.Role, content = msg.Content });
+                messages.Add(new 
+                { 
+                    role = msg.Role, 
+                    content = msg.Content 
+                });
             }
-            messages.Add(new { role = "user", content = contextBlock + "\n\n" + dto.Message });
+            messages.Add(new 
+            { 
+                role = "user", 
+                content = contextBlock + "\n\n" + dto.Message 
+            });
 
             var requestBody = new
             {
-                model = "claude-sonnet-4-20250514",
-                max_tokens = 1024,
-                system = SystemPrompt,
-                messages
+                model = "llama-3.3-70b-versatile",
+                messages = messages,
+                max_tokens = 1024
             };
 
-            var client = httpClientFactory.CreateClient("AnthropicClient");
+            var client = httpClientFactory.CreateClient("GroqClient");
 
             var response = await client.PostAsJsonAsync(
-                "https://api.anthropic.com/v1/messages",
+                "chat/completions",
                 requestBody,
                 ct);
 
             if (!response.IsSuccessStatusCode)
             {
                 var errorBody = await response.Content.ReadAsStringAsync(ct);
-                return Error.Failure("Chat.ApiFailed", $"Anthropic API returned {response.StatusCode}: {errorBody}");
+                return Error.Failure("Chat.ApiFailed", $"Groq API returned {response.StatusCode}: {errorBody}");
             }
 
             var json = await response.Content.ReadFromJsonAsync<JsonElement>(ct);
             var assistantReply = json
-                .GetProperty("content")[0]
-                .GetProperty("text")
+                .GetProperty("choices")[0]
+                .GetProperty("message")
+                .GetProperty("content")
                 .GetString() ?? string.Empty;
 
             var now = DateTime.UtcNow;

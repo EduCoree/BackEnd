@@ -250,11 +250,11 @@ namespace EduCore
             // Badr from 111 to 121
             builder.Services.AddScoped<IChatService, ChatService>();
             builder.Services.AddScoped<IChatRepository, ChatRepository>();
-            builder.Services.AddHttpClient("AnthropicClient", client =>
+            builder.Services.AddHttpClient("GroqClient", client =>
             {
-                client.DefaultRequestHeaders.Add("x-api-key",
-                    builder.Configuration["Anthropic:ApiKey"]);
-                client.DefaultRequestHeaders.Add("anthropic-version", "2023-06-01");
+                client.BaseAddress = new Uri("https://api.groq.com/openai/v1/");
+                client.DefaultRequestHeaders.Add("Authorization", 
+                    $"Bearer {builder.Configuration["Groq:ApiKey"]}");
             });
 
             // End
