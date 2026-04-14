@@ -6,6 +6,7 @@ using EduCore.Middlewares;
 using EduCore.Persistencs.Data.DataSeed;
 using EduCore.Persistencs.Data.DbContexts;
 using EduCore.Persistencs.Repositories;
+using EduCore.Presentation.Hubs;
 using EduCore.Services;
 using EduCore.Services.MappingProfiles;
 using EduCore.Services_Abstraction;
@@ -13,6 +14,7 @@ using EduCore.Shared.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -41,7 +43,7 @@ namespace EduCore
             });
 
             builder.Services.AddScoped<ICenterService, CenterService>();
-            builder.Services.AddScoped<IQuizService, QuizService>(); 
+            builder.Services.AddScoped<IQuizService, QuizService>();
             builder.Services.AddScoped<IQuizRepository, QuizRepository>();
             builder.Services.AddScoped<ICourseService, CourseService>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -57,7 +59,7 @@ namespace EduCore
                 options.Password.RequiredLength = 8;
                 options.Password.RequireUppercase = true;
                 options.Password.RequireNonAlphanumeric = false;
-          
+
                 // User settings
                 options.User.RequireUniqueEmail = true;
 
@@ -94,7 +96,7 @@ namespace EduCore
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = builder.Configuration["JWTOptions:Issuer"],
                     ValidAudience = builder.Configuration["JWTOptions:Audience"],
-                    IssuerSigningKey =new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTOptions:SecretKey"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTOptions:SecretKey"]))
                 };
             });
             builder.Services.AddSwaggerGen(c =>
@@ -102,7 +104,7 @@ namespace EduCore
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
-                    Type = SecuritySchemeType.Http, 
+                    Type = SecuritySchemeType.Http,
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header
@@ -124,9 +126,14 @@ namespace EduCore
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
             builder.Services.AddScoped<ICourseRepository, CourseRepository>();
             builder.Services.AddScoped<IImageService, ImageService>();
-    //        builder.Services.AddControllers()
-    //.AddApplicationPart(
-    //    typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly);
+            builder.Services.AddScoped<PaymobService>();
+            builder.Services.Configure<PaymobSettings>(
+                builder.Configuration.GetSection("Paymob"));
+            builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
+            //        builder.Services.AddControllers()
+            //.AddApplicationPart(
+            //    typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly);
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddControllers().AddApplicationPart(typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly).AddJsonOptions(options =>
             {
@@ -134,7 +141,7 @@ namespace EduCore
                     .Add(new JsonStringEnumConverter());
             });
             #region JWT Configuration
-            // JWT — بيخلي الـ [Authorize] يقرأ الـ Token من الـ Header
+            // JWT
             //        builder.Services.AddAuthentication(options =>
             //        {
             //            options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
@@ -183,7 +190,7 @@ namespace EduCore
             //});
             //        });
             #endregion
-            // السماح للـ Angular بالتواصل مع الـ API
+            //api with angular
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAngular", policy =>
@@ -202,7 +209,14 @@ namespace EduCore
             builder.Services.AddScoped<IstudentQuizService, StudentQuizService>();
             builder.Services.AddScoped<IQuizAttemptRepository, QuizAttemptRepository>();
             builder.Services.AddScoped<IEmailService, EmailService>();
+
+            builder.Services.AddSignalR();
+            builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+            builder.Services.AddScoped<INotificationSender, SignalRNotificationSender>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
+
+
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
@@ -243,33 +257,33 @@ namespace EduCore
 
 
             // Menna from 100 to 110
-            
+
 
             builder.Services.AddScoped<IReviewService, ReviewService>();
 
-
+            builder.Services.AddScoped<ITranslationRepository, TranslationRepository>();
+            builder.Services.AddScoped<TranslationService>();
 
 
 
 
 
             // Badr from 111 to 121
-            
-
-
-
-
-
-
-
-
-
+            builder.Services.AddScoped<IChatService, ChatService>();
+            builder.Services.AddScoped<IChatRepository, ChatRepository>();
+            builder.Services.AddHttpClient("GroqClient", client =>
+            {
+                client.BaseAddress = new Uri("https://api.groq.com/openai/v1/");
+                client.DefaultRequestHeaders.Add("Authorization", 
+                    $"Bearer {builder.Configuration["Groq:ApiKey"]}");
+            });
 
             // End
 
             // ── Forum ─────────────────────────────────────
             builder.Services.AddScoped<IForumService, ForumService>();
             builder.Services.AddScoped<IForumRepository, ForumRepository>();
+
 
             var app = builder.Build();
             app.UseMiddleware<ExceptionMiddleware>();
@@ -323,6 +337,8 @@ namespace EduCore
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseAuthorization();
+            //D:\GraduationProject_ITI\BackEnd\EduCoreSolution\EduCore.Presentation\Hubs\
+            app.MapHub<NotificationHub>("/hubs/notifications");
 
 
             app.MapControllers();

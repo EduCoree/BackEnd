@@ -24,10 +24,10 @@ namespace EduCore.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public async Task<AnswerOptionDto> AddAnswerOptionAsync(int courseId, int quizId, int questionId,string teacherId, CreateAnswerOptionDto request)
+        public async Task<AnswerOptionDto> AddAnswerOptionAsync( int questionId,string teacherId, CreateAnswerOptionDto request)
         {
-            await ValidationHelpers.GetQuizOrThrowAsync(_unitOfWork, courseId, quizId,teacherId);
-            await ValidationHelpers.GetQuestionOrThrowAsync(_unitOfWork, quizId, questionId);
+            var question = await ValidationHelpers.GetQuestionOrThrowAsync(_unitOfWork, questionId, teacherId);
+            await ValidationHelpers.EnsureNoAttemptsAsync(_unitOfWork, question.QuizId);
             var option = _mapper.Map<AnswerOption>(request);
             option.QuestionId = questionId;
             await _unitOfWork.GetRepository<AnswerOption,int>().AddAsync(option);
@@ -35,33 +35,24 @@ namespace EduCore.Services
             return _mapper.Map<AnswerOptionDto>(option);
         }
 
-        public async Task DeleteAnswerOptionAsync(int courseId, int quizId, int questionId, int optionId,string teacherId)
+        public async Task DeleteAnswerOptionAsync( int questionId, int optionId,string teacherId)
         {
-            await ValidationHelpers.GetQuizOrThrowAsync(_unitOfWork, courseId, quizId,teacherId);
-            await ValidationHelpers.GetQuestionOrThrowAsync(_unitOfWork, quizId, questionId);
-            var option = await ValidationHelpers.GetAnswerOptionOrThrowAsync(_unitOfWork, questionId, optionId);
-            var hasAttempts = await _unitOfWork.QuizRepository.HasAttemptsAsync(quizId);
-            if(hasAttempts)
-                throw new BadRequestException("Cannot delete an answer option that is part of a quiz with attempts.");
+            var option = await ValidationHelpers.GetAnswerOptionOrThrowAsync(_unitOfWork, optionId, teacherId,questionId);
+            var question = await _unitOfWork.GetRepository<Question, int>().GetByIdAsync(questionId);
+            await ValidationHelpers.EnsureNoAttemptsAsync(_unitOfWork, question!.QuizId);
             _unitOfWork.GetRepository<AnswerOption, int>().Remove(option);
             await _unitOfWork.SaveChangesAsync();
 
         }
 
-        public async Task<AnswerOptionDto> UpdateAnswerOptionAsync(int courseId, int quizId, int questionId, int optionId,string teacherId, UpdateAnswerOptionDto request)
+        public async Task<AnswerOptionDto> UpdateAnswerOptionAsync( int questionId, int optionId,string teacherId, UpdateAnswerOptionDto request)
         {
-            await ValidationHelpers.GetQuizOrThrowAsync(_unitOfWork, courseId, quizId,teacherId);
-            await ValidationHelpers.GetQuestionOrThrowAsync(_unitOfWork, quizId, questionId);
-            var option = await ValidationHelpers.GetAnswerOptionOrThrowAsync(_unitOfWork, questionId, optionId);
-
-            var hasAttempts = await _unitOfWork.QuizRepository.HasAttemptsAsync(quizId);
-            if (hasAttempts)
-                throw new BadRequestException("Cannot update an answer option in a quiz that already has attempts.");
-
+            var option = await ValidationHelpers.GetAnswerOptionOrThrowAsync(_unitOfWork, optionId, teacherId,questionId);
+            var question = await _unitOfWork.GetRepository<Question, int>().GetByIdAsync(questionId);
+            await ValidationHelpers.EnsureNoAttemptsAsync(_unitOfWork, question!.QuizId);
             _mapper.Map(request, option);
             _unitOfWork.GetRepository<AnswerOption, int>().Update(option);
             await _unitOfWork.SaveChangesAsync();
-
             return _mapper.Map<AnswerOptionDto>(option);
         }
     }

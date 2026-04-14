@@ -24,9 +24,10 @@ namespace EduCore.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public async Task<QuestionDto> AddQuestionAsync(int courseId, int quizId,string teacherId, CreateQuestionDto request)
+        public async Task<QuestionDto> AddQuestionAsync(int quizId,string teacherId, CreateQuestionDto request)
         {
-            var quiz = await ValidationHelpers.GetQuizOrThrowAsync(_unitOfWork,courseId, quizId,teacherId);
+            await ValidationHelpers.GetQuizOrThrowAsync(_unitOfWork, quizId, teacherId);
+            await ValidationHelpers.EnsureNoAttemptsAsync(_unitOfWork, quizId);
             var question = _mapper.Map<Question>(request);
             question.QuizId = quizId;
             await _unitOfWork.GetRepository<Question, int>().AddAsync(question);
@@ -34,34 +35,26 @@ namespace EduCore.Services
             return _mapper.Map<QuestionDto>(question);
         }
 
-        public async Task DeleteQuestionAsync(int courseId, int quizId, int questionId,string teacherId)
+        public async Task DeleteQuestionAsync( int quizId, int questionId,string teacherId)
         {
-            await ValidationHelpers.GetQuizOrThrowAsync(_unitOfWork, courseId, quizId,teacherId);
-            var question = await ValidationHelpers.GetQuestionOrThrowAsync(_unitOfWork, quizId, questionId);
-            var hasAttempts = await _unitOfWork.QuizRepository.HasAttemptsAsync(quizId);
-            if (hasAttempts)
-                throw new BadRequestException("Cannot delete a question from a quiz that already has attempts.");
+            var question = await ValidationHelpers.GetQuestionOrThrowAsync(_unitOfWork,questionId, teacherId,quizId);
+            
+            await ValidationHelpers.EnsureNoAttemptsAsync(_unitOfWork, quizId);
             _unitOfWork.GetRepository<Question, int>().Remove(question);
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task<QuizDetailsDto> GetQuestionsByQuizAsync(int courseId, int quizId,string teacherId)
+        public async Task<QuizDetailsDto> GetQuestionsByQuizAsync(int quizId,string teacherId)
         {
-           await ValidationHelpers.GetQuizOrThrowAsync(_unitOfWork, courseId, quizId,teacherId);
-            var quiz = await _unitOfWork.QuizRepository.GetQuizWithDetails(quizId);
-            if (quiz is null || quiz.CourseId != courseId)
-                throw new NotFoundException($"Quiz with id {quizId} not found in course {courseId}.");
-
-            return _mapper.Map<QuizDetailsDto>(quiz);
+            await ValidationHelpers.GetQuizOrThrowAsync(_unitOfWork, quizId, teacherId);
+            var quizWithDetails = await _unitOfWork.QuizRepository.GetQuizWithDetails(quizId);
+            return _mapper.Map<QuizDetailsDto>(quizWithDetails);
         }
 
-        public async Task<QuestionDto> UpdateQuestionAsync(int courseId, int quizId,int questionId,string teacherID, UpdateQuestionDto request)
+        public async Task<QuestionDto> UpdateQuestionAsync(int quizId,int questionId,string teacherID, UpdateQuestionDto request)
         {
-             await ValidationHelpers.GetQuizOrThrowAsync(_unitOfWork, courseId, quizId,teacherID);
-            var question = await ValidationHelpers.GetQuestionOrThrowAsync(_unitOfWork, quizId, questionId);
-             var hasAttempts = await _unitOfWork.QuizRepository.HasAttemptsAsync(quizId);
-             if (hasAttempts)
-                 throw new BadRequestException("Cannot update a question in a quiz that already has attempts.");
+            var question = await ValidationHelpers.GetQuestionOrThrowAsync(_unitOfWork,questionId,teacherID,quizId);
+            await ValidationHelpers.EnsureNoAttemptsAsync(_unitOfWork, quizId);
              _mapper.Map(request, question);
              _unitOfWork.GetRepository<Question, int>().Update(question);
              await _unitOfWork.SaveChangesAsync();
