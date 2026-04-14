@@ -105,7 +105,9 @@ namespace EduCore.Services
             var quiz = await _unitOfWork.QuizRepository.GetQuizWithDetails(quizId);
             foreach (var answer in request.Answers)
             {
-                var question = await ValidationHelpers.GetQuestionOrThrowAsync(_unitOfWork, quizId, answer.QuestionId);
+                var question = await _unitOfWork.GetRepository<Question, int>().GetByIdAsync(answer.QuestionId);
+                if (question is null)
+                    throw new NotFoundException($"Question with id {answer.QuestionId} not found");
                 var attemptAnswer = new AttemptAnswer
                 {
                     AttemptId = attemptId,

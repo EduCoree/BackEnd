@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace EduCore.Presentation.Controllers
 {
     [ApiController]
-    [Route("api/teacher/courses/{courseId}/quizzes/{quizId}/questions")]
+    [Route("api/teacher/quizzes/{quizId}/questions")]
     public class QuestionController : ControllerBase
     {
         private readonly IQuestionService _questionService;
@@ -23,27 +23,32 @@ namespace EduCore.Presentation.Controllers
             _questionService = questionService;
         }
         [HttpGet]
-        public async Task<IActionResult> GetQuestions(int courseId, int quizId)
+        public async Task<IActionResult> GetQuestions(int quizId)
         {
-            var result = await _questionService.GetQuestionsByQuizAsync(courseId, quizId,TeacherId);
+            var result = await _questionService.GetQuestionsByQuizAsync( quizId,TeacherId);
             return Ok(ApiResponse<QuizDetailsDto>.SuccessResult(result, "Questions Retrieved Succesfully"));
         }
         [HttpPost]
-        public async Task<IActionResult> CreateQuestion(int courseId, int quizId, [FromBody] CreateQuestionDto request)
+        public async Task<IActionResult> CreateQuestion(int quizId, [FromBody] CreateQuestionDto request)
         {
+<<<<<<< Updated upstream
             var result = await _questionService.AddQuestionAsync(courseId, quizId,TeacherId, request);
             return CreatedAtAction(nameof(GetQuestions),new { courseId, quizId },ApiResponse<QuestionDto>.SuccessResult(result, "Question Created Successfully"));
+=======
+            var result = await _questionService.AddQuestionAsync(quizId,TeacherId, request);
+            return CreatedAtAction(nameof(GetQuestions), new { quizId = quizId }, result);
+>>>>>>> Stashed changes
         }
         [HttpPut("{questionId}")]
-        public async Task<IActionResult> UpdateQuestion(int courseId, int quizId, int questionId, [FromBody] UpdateQuestionDto request)
+        public async Task<IActionResult> UpdateQuestion( int quizId, int questionId, [FromBody] UpdateQuestionDto request)
         {
-            var result = await _questionService.UpdateQuestionAsync(courseId, quizId, questionId,TeacherId, request);
+            var result = await _questionService.UpdateQuestionAsync( quizId, questionId,TeacherId, request);
             return Ok(ApiResponse<QuestionDto>.SuccessResult(result, "Question Updated Succesfully"));
         }
         [HttpDelete("{questionId}")]
-        public async Task<IActionResult> DeleteQuestion(int courseId, int quizId, int questionId)
+        public async Task<IActionResult> DeleteQuestion( int quizId, int questionId)
         {
-            await _questionService.DeleteQuestionAsync(courseId, quizId, questionId, TeacherId);
+            await _questionService.DeleteQuestionAsync( quizId, questionId, TeacherId);
             return Ok(ApiResponse<string>.SuccessResult("Question Deleted Succesfully"));
         }
     }
