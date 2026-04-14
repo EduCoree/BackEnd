@@ -1,4 +1,5 @@
 ﻿using EduCore.Services_Abstraction;
+using EduCore.Shared.CommonResult;
 using EduCore.Shared.DTOs.Quiz.Student;
 using EduCore.Shared.Responses;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -52,6 +53,19 @@ namespace EduCore.Presentation.Controllers
         {
             var result = await _studentQuizService.GetResultAsync(quizId, attemptId, StudentId);
             return Ok(ApiResponse<AttemptResultDto>.SuccessResult(result, "Result retrieved successfully."));
+        }
+        [HttpGet("{quizId}/attempts")]
+        public async Task<IActionResult> GetQuizHistory(int quizId)
+        {
+            var result = await _studentQuizService.GetQuizHistoryAsync(quizId, StudentId);
+            return Ok(ApiResponse<IEnumerable<AttemptHistoryDto>>.SuccessResult(result));
+        }
+        [HttpGet("{quizId}/summary")]
+        public async Task<IActionResult> GetQuizSummary(int quizId)
+        {
+            var summary = await _studentQuizService.GetQuizSummaryAsync(quizId,StudentId);
+            return Ok(ApiResponse<QuizSummaryDto>.SuccessResult(summary));
+
         }
 
         [HttpGet("history")]

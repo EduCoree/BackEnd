@@ -1,10 +1,14 @@
-﻿using EduCore.Domain.Entities.AuthModel;
+
+using EduCore.Domain.Entities.AuthModel;
 using EduCore.Domain.Entities.CenterModel;
+using EduCore.Domain.Contracts;
+using EduCore.Domain.Contracts.Repositories;
 using EduCore.Services_Abstraction;
 using EduCore.Shared.CommonResult;
 using EduCore.Shared.DTOs.Identity;
 using EduCore.Shared.Enums;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
@@ -25,28 +29,48 @@ namespace EduCore.Services
         public readonly UserManager<User> userManager;
         private readonly IConfiguration configuration;
         private readonly IEmailService _emailService;
+        private readonly IAuthenticationRepository authenticationRepository;
+        private readonly IUnitOfWork unitOfWork;
 
-        public AuthenticationService(UserManager<User> userManager, IConfiguration configuration, IEmailService emailService)
+        public AuthenticationService(UserManager<User> userManager, 
+                                       IConfiguration configuration, 
+                                       IEmailService emailService,
+                                       IAuthenticationRepository authenticationRepository,
+                                       IUnitOfWork unitOfWork)
         {
             this.userManager = userManager;
             this.configuration = configuration;
             _emailService = emailService;
+            this.authenticationRepository = authenticationRepository;
+            this.unitOfWork = unitOfWork;
         }
 
 
+        
         public async Task<Result<UserDto>> LoginAsync(LoginDto loginDto)
         {
             var user = await userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null)
+            if (user is null)
                 return Error.InvalidCredentials("user.InvalidCredentials");
-            var IsPasswordValid = await userManager.CheckPasswordAsync(user, loginDto.Password);
-            if (!IsPasswordValid)
+
+            var isPasswordValid = await userManager.CheckPasswordAsync(user, loginDto.Password);
+            if (!isPasswordValid)
                 return Error.InvalidCredentials("user.InvalidCredentials");
-            var Token = await CreatTokenAsync(user);
-            return new UserDto(user.Name, user.Email, Token);
 
+            return await BuildUserDtoAsync(user);
+        }
+        public async Task<Result<UserDto>> RefreshTokenAsync(string refreshToken)
+        {
+            var stored = await authenticationRepository.GetByTokenAsync(refreshToken);
 
+            if (stored is null || !stored.IsActive)
+                return Error.Unauthorized("token.Invalid", "Refresh token is invalid or expired");
 
+            stored.IsRevoked = true;
+            authenticationRepository.Update(stored);
+            await unitOfWork.SaveChangesAsync();
+
+            return await BuildUserDtoAsync(stored.User);
         }
         public async Task<Result<UserDto>> RegisterAsync(RegisterDto registerDto)
         {
@@ -58,53 +82,88 @@ namespace EduCore.Services
                 PhoneNumber = registerDto.PhoneNumber,
                 CenterId = 11
             };
-            var IdentityResult = await userManager.CreateAsync(user, registerDto.Password);
 
-            if (IdentityResult.Succeeded)
-            {
+            var result = await userManager.CreateAsync(user, registerDto.Password);
+            if (!result.Succeeded)
+                return result.Errors.Select(e => Error.Validation(e.Code, e.Description)).ToList();
 
-                var Token = await CreatTokenAsync(user);
-                return new UserDto(user.Name, user.Email, Token);
-            }
-            return IdentityResult.Errors.Select(e => Error.Validation(e.Code, e.Description)).ToList();
-
+            return await BuildUserDtoAsync(user);
         }
-        private async Task<string> CreatTokenAsync(User user)
+        public async Task<Result<bool>> LogoutAsync(string refreshToken)
         {
-            var Claims = new List<Claim>
+            var stored = await authenticationRepository.GetByTokenAsync(refreshToken);
+
+            if (stored is null)
+                return Error.NotFound("token.NotFound", "Refresh token not found");
+
+            stored.IsRevoked = true;
+            authenticationRepository.Update(stored);
+            await unitOfWork.SaveChangesAsync();
+
+            return true;
+        }
+
+
+
+        private async Task<UserDto> BuildUserDtoAsync(User user)
+        {
+            var jwt = await CreateJwtAsync(user);
+            var refreshToken = await CreateRefreshTokenAsync(user);
+            return new UserDto(user.Name, user.Email!, jwt, refreshToken.Token, refreshToken.ExpiresAt);
+        }
+
+        private async Task<string> CreateJwtAsync(User user)
+        {
+            var claims = new List<Claim>
             {
                  new Claim("centerId", user.CenterId.ToString()) ,
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
                  new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(JwtRegisteredClaimNames.Name, user.Name),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-                //old tokens are rejected after logout
-                new Claim("securityStamp", user.SecurityStamp ?? string.Empty)
-
+                new Claim(JwtRegisteredClaimNames.Sub,   user.Id),
+                new Claim("securityStamp", user.SecurityStamp ?? string.Empty),
             };
-            var role = await userManager.GetRolesAsync(user);
-            foreach (var r in role)
-            {
-                Claims.Add(new Claim(ClaimTypes.Role, r));
-            }
-            var secretKey = configuration["JWTOptions:SecretKey"];
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-            var Cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var Token = new JwtSecurityToken(issuer: configuration["JWTOptions:Issuer"],
-                                             audience: configuration["JWTOptions:Audience"],
-                                             claims: Claims,
-                                             expires: DateTime.Now.AddDays(7),
-                                             signingCredentials: Cred);
-            return new JwtSecurityTokenHandler().WriteToken(Token);
+
+            var roles = await userManager.GetRolesAsync(user);
+            foreach (var role in roles)
+                claims.Add(new Claim(ClaimTypes.Role, role));
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTOptions:SecretKey"]!));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: configuration["JWTOptions:Issuer"],
+                audience: configuration["JWTOptions:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(15),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        private async Task<RefreshToken> CreateRefreshTokenAsync(User user)
+        {
+            var existing = await authenticationRepository.GetActiveTokensByUserIdAsync(user.Id);
+            foreach (var token in existing)
+            {
+                token.IsRevoked = true;
+                authenticationRepository.Update(token);
+            }
 
+            var refreshToken = new RefreshToken
+            {
+                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                UserId = user.Id,
+                ExpiresAt = DateTime.UtcNow.AddDays(7),
+            };
 
+            await authenticationRepository.AddAsync(refreshToken);
+            await unitOfWork.SaveChangesAsync();
 
-
-
-
-
+            return refreshToken;
+        }
 
 
 
@@ -298,25 +357,8 @@ namespace EduCore.Services
             var user = await userManager.FindByEmailAsync(email);
             return user != null;
         }
-        //public async Task<Result<UserDto>> GetUserByEmailAsync(string email)
-        //{
-        //    var user = await userManager.FindByEmailAsync(email);
-        //    if (user == null)
-        //        return Error.NotFound("user.NotFound",$"No user with email {email} found");
-        //    return new UserDto(user.Name, user.Email,await CreatTokenAsync(user));
-            
-        //}
+        
+       
 
-        public async Task<Result<bool>> LogoutAsync(string email)
-        {
-            var user = await userManager.FindByEmailAsync(email);
-            if (user == null)
-                return Error.NotFound("user.NotFound", $"No user with email {email} found");
-
-            // Invalidates all existing tokens for this user
-            await userManager.UpdateSecurityStampAsync(user);
-
-            return true;
-        }
     }
 }

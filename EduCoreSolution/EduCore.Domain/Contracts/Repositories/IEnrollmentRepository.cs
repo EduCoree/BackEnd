@@ -1,4 +1,4 @@
-﻿using EduCore.Domain.Entities.EnrollmentModel;
+using EduCore.Domain.Entities.EnrollmentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

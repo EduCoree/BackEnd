@@ -12,7 +12,7 @@ namespace EduCore.Shared.DTOs.Identity
         string UserName,
         [EmailAddress] string Email,
         string Password,
-        [Phone] string PhoneNumber
+        [Phone] string? PhoneNumber
        
         );
     

@@ -10,7 +10,7 @@ namespace EduCore.Shared.Enums
         public enum CoursePricingType { Free, Paid, Subscription }
         public enum CourseStatus { Draft, Published, Archived }
     public enum EnrollmentType { Purchase, Free, Gift }
-    public enum EnrollmentStatus { Active, Expired, Cancelled }
+    public enum EnrollmentStatus { Active, Expired, Cancelled , Completed }
     // SET type — a lesson can combine multiple content types
     // e.g. "video,pdf" or "live" or "video,live"
     [Flags]

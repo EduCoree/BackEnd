@@ -1,5 +1,6 @@
-﻿using AutoMapper;
+using AutoMapper;
 using EduCore.Domain.Entities.CourseModel;
+using EduCore.Domain.Entities.ContentModel;
 using EduCore.Shared.DTOs.CourseDTOs;
 using System;
 using System.Collections.Generic;
@@ -27,8 +28,10 @@ namespace EduCore.Services.MappingProfiles
                 // Section → SectionDto
                 CreateMap<Section, SectionDto>();
 
-                // Lesson → LessonDto
+                // Lesson → LessonDto (includes nested VideoLesson & PdfLesson)
                 CreateMap<Lesson, LessonDto>();
+                CreateMap<VideoLesson, VideoLessonDto>();
+                CreateMap<PdfLesson, PdfLessonDto>();
 
                 // CreateCourseDto → Course
                 CreateMap<CreateCourseDto, Course>();
