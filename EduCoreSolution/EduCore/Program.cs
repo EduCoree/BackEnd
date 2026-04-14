@@ -226,6 +226,11 @@ namespace EduCore
 
 
             // Abdelbadea from 89 to 99
+            builder.Services.AddScoped<ILessonService, LessonService>();
+            builder.Services.AddScoped<ILiveSessionService, LiveSessionService>();
+            builder.Services.AddScoped<IVideoLessonService, VideoLessonService>();
+            builder.Services.AddScoped<IProgressService, ProgressService>();
+
 
 
 
