@@ -1,5 +1,6 @@
-﻿using EduCore.Domain.Entities.AuthModel;
+using EduCore.Domain.Entities.AuthModel;
 using EduCore.Domain.Entities.CenterModel;
+using EduCore.Domain.Entities.ChatModel;
 using EduCore.Domain.Entities.ContentModel;
 using EduCore.Domain.Entities.CourseModel;
 using EduCore.Domain.Entities.EnrollmentModel;
@@ -78,6 +79,9 @@ namespace EduCore.Persistencs.Data.DbContexts
         public DbSet<ForumReply> ForumReplies { get; set; }
         public DbSet<PostUpvote> PostUpvotes { get; set; }
         public DbSet<PostReport> PostReports { get; set; }
+
+        // Chat
+        public DbSet<ChatMessage> ChatMessages { get; set; }
 
 
 

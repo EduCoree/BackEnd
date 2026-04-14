@@ -26,6 +26,9 @@ namespace EduCore.Persistencs.Repositories
 
                 // Forum
                 ForumRepository = new ForumRepository(_eduCoreDbContext);
+
+                // Chat
+                ChatRepository = new ChatRepository(_eduCoreDbContext);
         }
 
         public IQuizRepository QuizRepository{ get; }
@@ -36,6 +39,9 @@ namespace EduCore.Persistencs.Repositories
 
         // ── Forum ──
         public IForumRepository ForumRepository { get; }
+
+        // ── Chat ──
+        public IChatRepository ChatRepository { get; }
 
         public IEnrollmentRepository EnrollmentRepository {  get; }
 
