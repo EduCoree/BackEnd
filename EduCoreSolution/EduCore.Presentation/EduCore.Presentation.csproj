@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EduCore.Services Abstraction\EduCore.Services Abstraction.csproj" />
+    <ProjectReference Include="..\EduCore.Services\EduCore.Services.csproj" />
   </ItemGroup>
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />

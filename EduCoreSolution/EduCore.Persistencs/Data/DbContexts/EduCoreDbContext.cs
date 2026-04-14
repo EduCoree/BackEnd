@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using EduCore.Domain.Entities.TranslationModel;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -80,6 +81,10 @@ namespace EduCore.Persistencs.Data.DbContexts
         public DbSet<PostReport> PostReports { get; set; }
 
 
+
+        //Translate
+
+        public DbSet<Translation> Translations { get; set; }
 
         #endregion
     }
