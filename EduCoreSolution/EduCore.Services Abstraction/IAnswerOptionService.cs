@@ -10,8 +10,8 @@ namespace EduCore.Services_Abstraction
 {
     public interface IAnswerOptionService
     {
-        Task<AnswerOptionDto> AddAnswerOptionAsync(int courseId, int quizId, int questionId, string teacherId, CreateAnswerOptionDto request);
-        Task<AnswerOptionDto> UpdateAnswerOptionAsync(int courseId, int quizId, int questionId, int optionId, string teacherId, UpdateAnswerOptionDto request);
-        Task DeleteAnswerOptionAsync(int courseId, int quizId, int questionId, int optionId, string teacherId);
+        Task<AnswerOptionDto> AddAnswerOptionAsync( int questionId, string teacherId, CreateAnswerOptionDto request);
+        Task<AnswerOptionDto> UpdateAnswerOptionAsync(  int questionId, int optionId, string teacherId, UpdateAnswerOptionDto request);
+        Task DeleteAnswerOptionAsync( int questionId, int optionId, string teacherId);
     }
 }

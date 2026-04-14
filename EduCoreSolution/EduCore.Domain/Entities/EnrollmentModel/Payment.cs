@@ -1,4 +1,5 @@
 ﻿using EduCore.Domain.Entities.AuthModel;
+using EduCore.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +8,11 @@ using System.Threading.Tasks;
 
 namespace EduCore.Domain.Entities.EnrollmentModel
 {
-    public enum PaymentMethod { CreditCard, PayPal, BankTransfer, Stripe, Fawry }
-    public enum PaymentStatus { Pending, Completed, Failed, Refunded }
+    
 
     public class Payment : BaseEntity<int>
     {
-        public int EnrollmentId { get; set; }
+        public int? EnrollmentId { get; set; }
         public string StudentId { get; set; }
         public decimal Amount { get; set; }
         public string Currency { get; set; } = "USD";
@@ -22,7 +22,7 @@ namespace EduCore.Domain.Entities.EnrollmentModel
         public DateTime? PaidAt { get; set; }
 
         // Navigation
-        public Enrollment Enrollment { get; set; } = null!;
+        public Enrollment? Enrollment { get; set; } = null!;
         public User Student { get; set; } = null!;
     }
 }
