@@ -1,4 +1,4 @@
-﻿using EduCore.Domain.Entities.CourseModel;
+using EduCore.Domain.Entities.CourseModel;
 using EduCore.Shared.Common;
 using EduCore.Shared.DTOs.CourseDTOs;
 using System;
@@ -21,5 +21,6 @@ namespace EduCore.Domain.Contracts.Repositories
 
 
         Task<string?> GetCourseTeacherIdAsync(int courseId);
+        Task<IEnumerable<Course>> GetCoursesWithTeacherAsync(IEnumerable<int> courseIds);
     }
 }

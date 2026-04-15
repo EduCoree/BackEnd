@@ -13,5 +13,9 @@ namespace EduCore.Shared.DTOs.Content
         public string? Title { get; set; }
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
+
+        // Enriched fields for student agenda grouping
+        public string? CourseName { get; set; }
+        public string? TeacherName { get; set; }
     }
 }

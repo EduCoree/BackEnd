@@ -117,5 +117,14 @@ namespace EduCore.Persistencs.Repositories
            .Select(c => c.TeacherId)
            .FirstOrDefaultAsync();
         }
+
+        public async Task<IEnumerable<Course>> GetCoursesWithTeacherAsync(IEnumerable<int> courseIds)
+        {
+            return await _EduCoreDbContext.Set<Course>()
+                .AsNoTracking()
+                .Include(c => c.Teacher)
+                .Where(c => courseIds.Contains(c.Id))
+                .ToListAsync();
+        }
     }
 }

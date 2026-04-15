@@ -140,7 +140,7 @@ namespace EduCore.Services
 
             var session = await GetSessionInCourse(courseId, sessionId);
             
-            if (session.ScheduledAt > DateTime.UtcNow)
+            if (session.ScheduledAt > DateTime.Now)
                 throw new BadRequestException("Cannot add recording to a future session.");
 
             session.RecordingUrl = recordingUrl;
@@ -158,17 +158,31 @@ namespace EduCore.Services
             var enrolledCourseIds = allEnrollments
                 .Where(e => e.StudentId == studentId && e.Status == EnrollmentStatus.Active)
                 .Select(e => e.CourseId)
+                .Distinct()
                 .ToList();
 
             var sessionRepo = _uow.GetRepository<LiveSession, int>();
             var allSessions = await sessionRepo.GetAllAsync();
             
             var upcomingSessions = allSessions
-                .Where(s => enrolledCourseIds.Contains(s.CourseId) && s.ScheduledAt >= DateTime.UtcNow.AddHours(-2)) 
+                .Where(s => enrolledCourseIds.Contains(s.CourseId) && s.ScheduledAt >= DateTime.Now.AddHours(-2)) 
                 .OrderBy(s => s.ScheduledAt)
                 .ToList();
 
-            return upcomingSessions.Select(MapToResponse).ToList();
+            // Fetch course and teacher info
+            var courses = await _uow.CourseRepository.GetCoursesWithTeacherAsync(upcomingSessions.Select(s => s.CourseId).Distinct());
+            var courseDict = courses.ToDictionary(c => c.Id);
+
+            return upcomingSessions.Select(s => 
+            {
+                var response = MapToResponse(s);
+                if (courseDict.TryGetValue(s.CourseId, out var course))
+                {
+                    response.CourseName = course.Title;
+                    response.TeacherName = course.Teacher?.Name;
+                }
+                return response;
+            }).ToList();
         }
 
         public async Task<JoinSessionResponse> GetJoinUrlAsync(
@@ -190,7 +204,7 @@ namespace EduCore.Services
                 throw new ForbiddenException("You must be enrolled in the course to join this session.");
 
             // 15 min rule
-            if (DateTime.UtcNow < session.ScheduledAt.AddMinutes(-15))
+            if (DateTime.Now < session.ScheduledAt.AddMinutes(-15))
                 throw new ForbiddenException("Session has not started yet.");
 
             return new JoinSessionResponse
