@@ -8,6 +8,7 @@ using System.Security.Claims;
 
 [ApiController]
 [Route("api/teacher/questions/{questionId}/options")]
+[Authorize(Roles = "Teacher")]
 public class AnswerOptionsController : ControllerBase
 {
     private readonly IAnswerOptionService _answerOptionService;

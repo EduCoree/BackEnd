@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace EduCore.Services
@@ -69,7 +70,7 @@ namespace EduCore.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task SendNotificationAsync(string userId, string title, string message, NotificationType notificationType)
+        public async Task SendNotificationAsync(string userId, string title, string message, NotificationType notificationType,int entityId, object? extraData = null)
         {
             var Notification = new Notification
             {
@@ -78,10 +79,15 @@ namespace EduCore.Services
                 Message = message,
                 Type = notificationType.ToString(),
                 CreatedAt = DateTime.UtcNow,
-                IsRead = false
+                IsRead = false,
+                EntityId = entityId,
+                Metadata = extraData != null
+            ? JsonSerializer.Serialize(extraData, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
+            : null
             };
-            var saved = _unitOfWork.NotificationRepository.AddAsync(Notification);
-            var dto = _mapper.Map<NotificationDto>(saved);
+            await _unitOfWork.NotificationRepository.AddAsync(Notification);
+            await _unitOfWork.SaveChangesAsync();
+            var dto = _mapper.Map<NotificationDto>(Notification);
             await _sender.SendAsync(userId, dto);
 
 

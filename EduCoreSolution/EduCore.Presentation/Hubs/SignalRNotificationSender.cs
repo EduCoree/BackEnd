@@ -20,7 +20,7 @@ namespace EduCore.Presentation.Hubs
 
         public async Task SendAsync(string userId, NotificationDto dto)
         {
-            await _hubContext.Clients.User(userId).SendAsync("RecieveNotification", dto);
+            await _hubContext.Clients.User(userId).SendAsync("ReceiveNotification", dto);
         }
     }
 }

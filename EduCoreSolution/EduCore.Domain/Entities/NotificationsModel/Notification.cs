@@ -16,9 +16,11 @@ namespace EduCore.Domain.Entities.NotificationsModel
             public string Message { get; set; } = null!;
             public bool IsRead { get; set; } = false;
             public DateTime CreatedAt { get; set; }
+             public int EntityId { get; set; }
+             public string? Metadata { get; set; }
 
             // Navigation
-            public User User { get; set; } = null!;
+             public User User { get; set; } = null!;
         }
     
 }
