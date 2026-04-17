@@ -11,10 +11,10 @@ namespace EduCore.Services_Abstraction
     public interface IQuizService
     {
         Task<QuizDto> CreateQuizAsync(int courseId, string teacherId, CreateQuizDto request);
-        Task<QuizDto> GetQuizByIdAsync(int courseId, int quizId, string teacherId);
+        Task<QuizDto> GetQuizByIdAsync( int quizId, string teacherId);
         Task<IEnumerable<QuizDto>> GetQuizzesByCourseAsync(int courseId, string teacherId);
-        Task<QuizDto> UpdateQuizAsync(int courseId, int quizId, string teacherId, UpdateQuizDto request);
-        Task DeleteQuizAsync(int courseId, int quizId, string teacherId);
+        Task<QuizDto> UpdateQuizAsync(int quizId, string teacherId, UpdateQuizDto request);
+        Task DeleteQuizAsync( int quizId, string teacherId);
        
 
     }

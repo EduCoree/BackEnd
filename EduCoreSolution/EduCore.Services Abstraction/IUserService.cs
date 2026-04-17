@@ -16,6 +16,7 @@ namespace EduCore.Services_Abstraction
         Task<Result<UserProfileDto>> UpdateAvatarAsync(string email, UpdateAvatarDto dto);
         Task<Result<bool>> ChangePasswordAsync(string email, ChangePasswordDto dto);
         Task<Result<TeacherProfileDto>> GetTeacherProfileAsync(string teacherId);
+        Task<string> GetUserNameAsync(string userId);
 
     }
 }

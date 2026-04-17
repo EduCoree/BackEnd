@@ -1,6 +1,7 @@
 ﻿using EduCore.Services_Abstraction;
 using EduCore.Shared.DTOs.Quiz.Teacher;
 using EduCore.Shared.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace EduCore.Presentation.Controllers
 {
     [ApiController]
     [Route("api/teacher/quizzes/{quizId}/questions")]
+    [Authorize(Roles ="Teacher")]
     public class QuestionController : ControllerBase
     {
         private readonly IQuestionService _questionService;
@@ -33,7 +35,13 @@ namespace EduCore.Presentation.Controllers
         {
 
             var result = await _questionService.AddQuestionAsync(quizId,TeacherId, request);
-            return CreatedAtAction(nameof(GetQuestions), new { quizId = quizId }, result);
+            var response = ApiResponse<QuestionDto>.SuccessResult(result, "Question Created Successfully");
+
+            return CreatedAtAction(
+                nameof(GetQuestions),
+                new { quizId = quizId },
+                response 
+            );
 
         }
         [HttpPut("{questionId}")]

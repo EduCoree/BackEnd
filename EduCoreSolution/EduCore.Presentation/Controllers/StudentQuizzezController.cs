@@ -2,6 +2,7 @@
 using EduCore.Shared.CommonResult;
 using EduCore.Shared.DTOs.Quiz.Student;
 using EduCore.Shared.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -15,7 +16,8 @@ namespace EduCore.Presentation.Controllers
 {
     [ApiController]
     [Route("api/quizzes")]
-    
+    [Authorize(Roles = "Student")]
+
     public class StudentQuizzesController : ControllerBase
     {
         private readonly IstudentQuizService _studentQuizService;
@@ -23,7 +25,7 @@ namespace EduCore.Presentation.Controllers
         public StudentQuizzesController(IstudentQuizService studentQuizService)
             => _studentQuizService = studentQuizService;
 
-        private string StudentId => "2721eab6-9c64-404e-9911-3850dbefb12f";
+        private string StudentId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
         [HttpGet("{quizId}")]
         public async Task<IActionResult> GetQuiz(int quizId)

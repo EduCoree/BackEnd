@@ -6,6 +6,7 @@ using EduCore.Domain.Entities.QuizModel;
 using EduCore.Services.Helpers;
 using EduCore.Services_Abstraction;
 using EduCore.Shared.DTOs.Quiz.Student;
+using EduCore.Shared.Enums;
 using EduCore.Shared.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -20,11 +21,13 @@ namespace EduCore.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly INotificationService _notificationService;
 
-        public StudentQuizService(IUnitOfWork unitOfWork,IMapper mapper)
+        public StudentQuizService(IUnitOfWork unitOfWork,IMapper mapper,INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+           _notificationService = notificationService;
         }
 
         public async Task<IEnumerable<AttemptHistoryDto>> GetHistoryAsync(string studentId)
@@ -35,10 +38,19 @@ namespace EduCore.Services
 
         public async Task<StudentQuizDto> GetQuizAsync(int quizId, string studentId)
         {
-            await ValidateEnrollmentAsync(quizId, studentId);
+           // await ValidateEnrollmentAsync(quizId, studentId);
             var quiz = await _unitOfWork.QuizRepository.GetQuizWithDetails(quizId);
             if (quiz is null)
                 throw new NotFoundException($"Quiz with id {quizId} not found.");
+            var rng = new Random();
+            if (quiz.IsRandomized)
+            {
+                quiz.Questions = quiz.Questions.OrderBy(q => rng.Next()).ToList();
+            }
+            foreach (var question in quiz.Questions)
+            {
+                question.AnswerOptions = question.AnswerOptions.OrderBy(a => rng.Next()).ToList();
+              }
            return _mapper.Map<StudentQuizDto>(quiz);
         }
 
@@ -52,7 +64,7 @@ namespace EduCore.Services
         public async Task<QuizSummaryDto> GetQuizSummaryAsync(int quizId, string studentId)
         {
 
-            await ValidateEnrollmentAsync(quizId, studentId);
+            //await ValidateEnrollmentAsync(quizId, studentId);
             var summary = await _unitOfWork.QuizRepository.GetQuizSummaryAsync(quizId, studentId);
             if (summary == null) throw new NotFoundException($"Quiz {quizId} not found");
             return summary;
@@ -60,7 +72,7 @@ namespace EduCore.Services
 
         public async Task<AttemptResultDto> GetResultAsync(int quizId, int attemptId, string studentId)
         {
-            await ValidateEnrollmentAsync(quizId, studentId);
+           // await ValidateEnrollmentAsync(quizId, studentId);
             var attempt = await _unitOfWork.QuizAttemptRepository.GetAttemptWithAnswersAsync(attemptId);
             if (attempt is null || attempt.QuizId != quizId || attempt.StudentId != studentId)
                 throw new NotFoundException($"Attempt with id {attemptId} not found");
@@ -74,7 +86,7 @@ namespace EduCore.Services
 
         public async Task<AttemptDto> StartAttemptAsync(int quizId, string studentId)
         {
-            await ValidateEnrollmentAsync(quizId, studentId);
+            //await ValidateEnrollmentAsync(quizId, studentId);
             var quiz = await _unitOfWork.QuizRepository.GetQuizWithDetails(quizId);
             if (quiz is null)
                 throw new NotFoundException($"Quiz with id {quizId} not found.");
@@ -95,7 +107,7 @@ namespace EduCore.Services
 
         public async Task<AttemptResultDto> SubmitAttemptAsync(int quizId, int attemptId, string studentId, SubmitAnswerDto request)
         {
-            await ValidateEnrollmentAsync(quizId, studentId);
+          //  await ValidateEnrollmentAsync(quizId, studentId);
             var attempt= await _unitOfWork.QuizAttemptRepository.GetAttemptWithAnswersAsync(attemptId);  
             if (attempt is null || attempt.QuizId != quizId || attempt.StudentId != studentId)
                 throw new NotFoundException($"Attempt with id {attemptId} not found");
@@ -133,6 +145,7 @@ namespace EduCore.Services
             attempt.SubmittedAt = DateTime.Now;
             _unitOfWork.QuizAttemptRepository.Update(attempt);
             await _unitOfWork.SaveChangesAsync();
+            await _notificationService.SendNotificationAsync(studentId, "Quiz Result", $"You Scored {attempt.Score} on Your {quiz.Title} Quiz", NotificationType.QuizResult, quizId, new {attemptId=attemptId});
             return BuildResultDto(attempt, EarnedPoints, TotalPoints,quiz);
 
         }

@@ -37,9 +37,9 @@ namespace EduCore.Services
                 return _mapper.Map<QuizDto>(quiz);
         }
 
-        public async Task<QuizDto> GetQuizByIdAsync(int courseId,int quizId,string teacherId)
+        public async Task<QuizDto> GetQuizByIdAsync(int quizId,string teacherId)
         {
-            var quiz = await ValidationHelpers.GetQuizOrThrowAsync(_unitOfWork, quizId, teacherId,courseId);
+            var quiz = await ValidationHelpers.GetQuizOrThrowAsync(_unitOfWork, quizId, teacherId);
             return _mapper.Map<QuizDto>(quiz);
         }
 
@@ -50,18 +50,18 @@ namespace EduCore.Services
             return _mapper.Map<IEnumerable<QuizDto>>(quizzes);
 
         }
-        public async Task<QuizDto> UpdateQuizAsync(int courseId,int quizId,string teacherId, UpdateQuizDto request)
+        public async Task<QuizDto> UpdateQuizAsync(int quizId,string teacherId, UpdateQuizDto request)
         {
-            var quiz = await ValidationHelpers.GetQuizOrThrowAsync(_unitOfWork , quizId, teacherId,courseId);
+            var quiz = await ValidationHelpers.GetQuizOrThrowAsync(_unitOfWork , quizId, teacherId);
             await ValidationHelpers.EnsureNoAttemptsAsync(_unitOfWork, quizId);
             _mapper.Map(request, quiz);
             _unitOfWork.QuizRepository.Update(quiz);
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<QuizDto>(quiz);
         }
-        public async Task DeleteQuizAsync(int courseId, int quizId,string teacherId)
+        public async Task DeleteQuizAsync( int quizId,string teacherId)
         {
-            var quiz = await ValidationHelpers.GetQuizOrThrowAsync(_unitOfWork, quizId, teacherId, courseId);
+            var quiz = await ValidationHelpers.GetQuizOrThrowAsync(_unitOfWork, quizId, teacherId);
             await ValidationHelpers.EnsureNoAttemptsAsync(_unitOfWork, quizId);
             _unitOfWork.QuizRepository.Remove(quiz);
             await _unitOfWork.SaveChangesAsync();

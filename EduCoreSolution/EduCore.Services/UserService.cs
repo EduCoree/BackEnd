@@ -76,6 +76,11 @@ namespace EduCore.Services
 
             return true;
         }
+        public async Task<string> GetUserNameAsync(string userId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            return user?.Name ?? "Someone";
+        }
 
         public async Task<Result<TeacherProfileDto>> GetTeacherProfileAsync(string teacherId)
         {

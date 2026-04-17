@@ -19,11 +19,15 @@ namespace EduCore.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly INotificationService _notificationService;
+        private readonly IUserService _userService;
 
-        public ForumService(IUnitOfWork unitOfWork, IMapper mapper)
+        public ForumService(IUnitOfWork unitOfWork, IMapper mapper,INotificationService notificationService,IUserService userService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _notificationService = notificationService;
+            _userService = userService;
         }
 
         #region Posts
@@ -121,15 +125,14 @@ namespace EduCore.Services
             // Notify post author (if replier is not the author)
             if (post.StudentId != userId)
             {
-                var notification = new Notification
-                {
-                    UserId = post.StudentId,
-                    Type = "forum_reply",
-                    Title = "New reply on your post",
-                    Message = $"Someone replied to your post \"{post.Title}\"",
-                    CreatedAt = DateTime.UtcNow
-                };
-                await _unitOfWork.GetRepository<Notification, int>().AddAsync(notification);
+                var replierName = _userService.GetUserNameAsync(userId);
+                await _notificationService.SendNotificationAsync(
+                userId: post.StudentId,  
+                title: "New Reply to Your Post",
+                message: $"{replierName} replied to your post: \"{post.Title}\"",
+                notificationType: NotificationType.ForumReply,
+                entityId: postId  
+        );
             }
 
             await _unitOfWork.SaveChangesAsync();

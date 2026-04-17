@@ -17,7 +17,7 @@ namespace EduCore.Services_Abstraction
         Task MarkAsRead(int NotificationId);
         Task DeleteAsync(int notificationId);
 
-        Task SendNotificationAsync(string userId, string title, string message, NotificationType notificationType);
+        Task SendNotificationAsync(string userId, string title, string message, NotificationType notificationType,int entityId, object? extraData = null);
 
     }
 }
