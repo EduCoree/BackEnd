@@ -42,6 +42,15 @@ namespace EduCore.Services
             var quiz = await _unitOfWork.QuizRepository.GetQuizWithDetails(quizId);
             if (quiz is null)
                 throw new NotFoundException($"Quiz with id {quizId} not found.");
+            var rng = new Random();
+            if (quiz.IsRandomized)
+            {
+                quiz.Questions = quiz.Questions.OrderBy(q => rng.Next()).ToList();
+            }
+            foreach (var question in quiz.Questions)
+            {
+                question.AnswerOptions = question.AnswerOptions.OrderBy(a => rng.Next()).ToList();
+              }
            return _mapper.Map<StudentQuizDto>(quiz);
         }
 
