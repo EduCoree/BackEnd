@@ -28,6 +28,7 @@ namespace EduCore.Persistencs.Repositories
         {
             return await _EduCoreDbContext.Set<Quiz>()
                 .Where(q => q.CourseId == courseId)
+                .OrderByDescending(q=>q.CreatedAt)
                 .ToListAsync();
         }
         public async Task<QuizSummaryDto?> GetQuizSummaryAsync(int quizId, string studentId)
@@ -61,6 +62,16 @@ namespace EduCore.Persistencs.Repositories
         public async Task<int> GetTotalQuestionsPoints(int quizId)
         {
             return await _EduCoreDbContext.Questions.Where(q=>quizId==q.QuizId).SumAsync(q=>q.Points);
+        }
+        public async Task<IEnumerable<string>> GetAvailableCourseTitlesAsync(string studentId)
+        {
+            return await _EduCoreDbContext.Quizzes
+                .AsNoTracking()
+                .Where(q => q.Course.Enrollments.Any(e => e.StudentId == studentId)) 
+                .Where(q => q.Attempts.Count(a => a.StudentId == studentId) < q.MaxAttempts) 
+                .Select(q => q.Course.Title)
+                .Distinct()
+                .ToListAsync();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using EduCore.Shared.DTOs.Quiz.Student;
+﻿using EduCore.Shared.Common;
+using EduCore.Shared.DTOs.Quiz.Student;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,10 @@ namespace EduCore.Services_Abstraction
         Task<AttemptResultDto> SubmitAttemptAsync(int quizId, int attemptId, string studentId, SubmitAnswerDto request);
         Task<AttemptResultDto> GetResultAsync(int quizId, int attemptId, string studentId);
         Task<IEnumerable<AttemptHistoryDto>> GetQuizHistoryAsync(int quizId, string studentId);
-        Task<IEnumerable<AttemptHistoryDto>> GetHistoryAsync(string studentId);
+        Task<PagedResult<AttemptHistoryDto>> GetHistoryAsync(string studentId,PaginationParams pagination, HistoryFilterDto filter);
+        Task<PagedResult<AvailableQuizzesDto>> GetAvailableQuizzesAsync(string studentId,PaginationParams paginationParams,string? courseTitle);
+        Task <IEnumerable<string>>  GetAttemptedCourseTitlesAsync(string studentId);
+        Task<IEnumerable<string>> GetAvailableCourseTitles (string studentId);
 
     }
 }

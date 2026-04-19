@@ -36,12 +36,20 @@ namespace EduCore.Services.MappingProfiles
             CreateMap<QuizAttempt, AttemptDto>();
             CreateMap<QuizAttempt, AttemptHistoryDto>()
             .ForMember(dest => dest.CourseTitle, opt => opt.MapFrom(src => src.Quiz.Course.Title))
-            .ForMember(dest => dest.TotalPoints, opt => opt.MapFrom(src => src.Quiz.Questions.Sum(q => q.Points)))
+            .ForMember(dest => dest.TotalPoints, opt => opt.MapFrom(src =>
+            src.Quiz.Questions != null ? src.Quiz.Questions.Sum(q => q.Points) : 0))
             .ForMember(dest => dest.EarnedPoints, opt => opt.MapFrom(src =>
-                (int)Math.Round((decimal)(src.Score / 100) * src.Quiz.Questions.Sum(q => q.Points))
+            (src.Score.HasValue && src.Quiz.Questions != null)
+              ? (int)Math.Round((src.Score.Value / 100) * src.Quiz.Questions.Sum(q => q.Points))
+              : 0
             ));
 
+            CreateMap<Quiz, AvailableQuizzesDto>()
+    .ForMember(dest => dest.CourseTitle, opt => opt.MapFrom(src => src.Course.Title));
+
         }
+
+
 
     }
 }

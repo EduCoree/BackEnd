@@ -16,6 +16,8 @@ namespace EduCore.Domain.Entities.QuizModel
         public int PassScore { get; set; }
         public int MaxAttempts { get; set; } = 1;
         public bool IsRandomized { get; set; } = false;
+        public bool IsPublished { get; set; } = false;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation
         public Course Course { get; set; } = null!;

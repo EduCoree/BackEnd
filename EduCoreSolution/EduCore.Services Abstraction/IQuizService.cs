@@ -15,7 +15,8 @@ namespace EduCore.Services_Abstraction
         Task<IEnumerable<QuizDto>> GetQuizzesByCourseAsync(int courseId, string teacherId);
         Task<QuizDto> UpdateQuizAsync(int quizId, string teacherId, UpdateQuizDto request);
         Task DeleteQuizAsync( int quizId, string teacherId);
-       
+ 
+        
 
     }
 }
