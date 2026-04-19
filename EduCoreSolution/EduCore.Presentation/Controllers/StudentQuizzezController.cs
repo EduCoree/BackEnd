@@ -1,4 +1,5 @@
 ﻿using EduCore.Services_Abstraction;
+using EduCore.Shared.Common;
 using EduCore.Shared.CommonResult;
 using EduCore.Shared.DTOs.Quiz.Student;
 using EduCore.Shared.Responses;
@@ -71,10 +72,30 @@ namespace EduCore.Presentation.Controllers
         }
 
         [HttpGet("history")]
-        public async Task<IActionResult> GetHistory()
+        public async Task<IActionResult> GetHistory([FromQuery] PaginationParams paginationParams, [FromQuery]HistoryFilterDto filter)
         {
-            var result = await _studentQuizService.GetHistoryAsync(StudentId);
-            return Ok(ApiResponse<IEnumerable<AttemptHistoryDto>>.SuccessResult(result, "History retrieved successfully."));
+            var result = await _studentQuizService.GetHistoryAsync(StudentId,paginationParams,filter);
+            return Ok(ApiResponse<PagedResult<AttemptHistoryDto>>.SuccessResult(result, "History retrieved successfully."));
+        }
+
+        [HttpGet("available")]
+        public async Task<IActionResult> GetAvailableQuizzes([FromQuery] PaginationParams paginationParams,[FromQuery] string? courseTitle)
+        { 
+            var quizzes = await _studentQuizService.GetAvailableQuizzesAsync(StudentId,paginationParams,courseTitle);
+            return Ok(ApiResponse<PagedResult<AvailableQuizzesDto>>.SuccessResult(quizzes));
+        }
+        [HttpGet("history/courses")]
+        public async Task<IActionResult> GetAttemptedCourseTitles()
+        {
+            var courses = await _studentQuizService.GetAttemptedCourseTitlesAsync(StudentId);
+            return Ok(ApiResponse<IEnumerable<string>>.SuccessResult(courses));
+        }
+
+        [HttpGet("available/courses")]
+        public async Task<IActionResult> GetAvailableCourseTitles()
+        {
+            var courses = await _studentQuizService.GetAvailableCourseTitles(StudentId);
+            return Ok(ApiResponse<IEnumerable<string>>.SuccessResult(courses));
         }
     }
 }

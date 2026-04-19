@@ -2,12 +2,14 @@
 using EduCore.Services;
 using EduCore.Services_Abstraction;
 using EduCore.Shared.DTOs.Centers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduCore.Presentation.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    
     public class CentersController : BaseController // ✅ غيري ControllerBase
     {
         private readonly ICenterService _centerService;
@@ -20,22 +22,23 @@ namespace EduCore.Presentation.Controllers
         }
 
         // GET api/centers
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var centers = await _centerService.GetAllCentersAsync();
+        //[HttpGet]
+        //public async Task<IActionResult> GetAll()
+        //{
+        //    var centers = await _centerService.GetAllCentersAsync();
 
-            // ✅ ترجمة كل center
-            foreach (var dto in centers)
-                await _tr.TranslateAsync(dto, "Center", dto.Id, CurrentLang,
-                    ("Name", (d, v) => d.Name = v),
-                    ("Address", (d, v) => d.Address = v));
+        //    // ✅ ترجمة كل center
+        //    foreach (var dto in centers)
+        //        await _tr.TranslateAsync(dto, "Center", dto.Id, CurrentLang,
+        //            ("Name", (d, v) => d.Name = v),
+        //            ("Address", (d, v) => d.Address = v));
 
-            return Ok(centers);
-        }
+        //    return Ok(centers);
+        //}
 
         // GET api/centers/5
         [HttpGet("{id:int}")]
+       
         public async Task<IActionResult> GetById(int id)
         {
             var center = await _centerService.GetCenterByIdAsync(id);

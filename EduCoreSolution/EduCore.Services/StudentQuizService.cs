@@ -5,9 +5,12 @@ using EduCore.Domain.Entities.AuthModel;
 using EduCore.Domain.Entities.QuizModel;
 using EduCore.Services.Helpers;
 using EduCore.Services_Abstraction;
+using EduCore.Shared.Common;
+using EduCore.Shared.DTOs.CourseDTOs;
 using EduCore.Shared.DTOs.Quiz.Student;
 using EduCore.Shared.Enums;
 using EduCore.Shared.Exceptions;
+using Microsoft.AspNetCore.Http.Features;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,12 +33,26 @@ namespace EduCore.Services
            _notificationService = notificationService;
         }
 
-        public async Task<IEnumerable<AttemptHistoryDto>> GetHistoryAsync(string studentId)
+        public async Task<PagedResult<AttemptHistoryDto>> GetHistoryAsync(string studentId,PaginationParams pagination, HistoryFilterDto filter)
         {
-            var attempts = await _unitOfWork.QuizAttemptRepository.GetStudentHistoryAsync(studentId);
-            return _mapper.Map<IEnumerable<AttemptHistoryDto>>(attempts);
+            var (items,totalCount) = await _unitOfWork.QuizAttemptRepository.GetStudentHistoryAsync(studentId,pagination,filter);
+            return new PagedResult<AttemptHistoryDto>
+            {
+                Items = _mapper.Map<IEnumerable<AttemptHistoryDto>>(items),
+                TotalCount = totalCount,
+                PageNumber = pagination.PageNumber,
+                PageSize = pagination.PageSize
+            };
+     
         }
-
+        public async Task<IEnumerable<string>> GetAttemptedCourseTitlesAsync(string studentId)
+        {
+            return await _unitOfWork.QuizAttemptRepository.GetStudentAttemptedCoursesAsync(studentId);
+        }
+        public async Task<IEnumerable<string>> GetAvailableCourseTitles(string studentId)
+        {
+            return await _unitOfWork.QuizRepository.GetAvailableCourseTitlesAsync(studentId);
+        }
         public async Task<StudentQuizDto> GetQuizAsync(int quizId, string studentId)
         {
            // await ValidateEnrollmentAsync(quizId, studentId);
@@ -82,7 +99,17 @@ namespace EduCore.Services
             return BuildResultDto(attempt, EarnedPoints, totalPoints,quiz);
         }
 
-
+        public async Task<PagedResult<AvailableQuizzesDto>> GetAvailableQuizzesAsync(string studentId, PaginationParams pagination, string? courseTitle)
+        {
+            var (items,totalcount) = await _unitOfWork.QuizAttemptRepository.GetAvailableQuizzesAsync(studentId,pagination,courseTitle);
+            return new PagedResult<AvailableQuizzesDto>
+            {
+                Items = _mapper.Map<IEnumerable<AvailableQuizzesDto>>(items),
+                TotalCount = totalcount,
+                PageNumber = pagination.PageNumber,
+                PageSize = pagination.PageSize
+            };
+        }
 
         public async Task<AttemptDto> StartAttemptAsync(int quizId, string studentId)
         {
@@ -193,6 +220,8 @@ namespace EduCore.Services
                                    .IsEnrolledAsync(studentId, quiz.CourseId);
             if (!isEnrolled) throw new UnauthorizedException();
         }
+
+      
 
         #endregion
 

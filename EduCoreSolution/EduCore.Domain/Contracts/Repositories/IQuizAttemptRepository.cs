@@ -1,4 +1,5 @@
 ﻿using EduCore.Domain.Entities.QuizModel;
+using EduCore.Shared.Common;
 using EduCore.Shared.DTOs.Quiz.Student;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,10 @@ namespace EduCore.Domain.Contracts.Repositories
     {
         Task<int> GetAttemptCountAsync(int quizId, string studentId);
         Task<QuizAttempt?> GetAttemptWithAnswersAsync(int attemptId);
-        Task<IEnumerable<QuizAttempt>> GetStudentHistoryAsync(string studentId);
+        Task<(IEnumerable<QuizAttempt>, int totalCount)> GetStudentHistoryAsync(string studentId,PaginationParams pagination,HistoryFilterDto filter);
         Task<IEnumerable<QuizAttempt>> GetQuizHistoryAsync(int quizId, string studentId);
+        Task<(IEnumerable<Quiz>, int totalcount)> GetAvailableQuizzesAsync(string studentId,PaginationParams paginationParams, string? courseTitle);
+        Task<IEnumerable<string>> GetStudentAttemptedCoursesAsync(string studentId);
 
     }
 }

@@ -16,6 +16,7 @@ namespace EduCore.Domain.Contracts.Repositories
          Task<bool> HasAttemptsAsync(int quizId);
         Task<int> GetQuizQuestionsCount(int quizId);
         Task<int> GetTotalQuestionsPoints(int quizId);
+        Task<IEnumerable<string>> GetAvailableCourseTitlesAsync(string studentId);
 
     }
 }
