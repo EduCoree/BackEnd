@@ -45,44 +45,104 @@ namespace EduCore.Presentation.Controllers
             return Ok(ApiResponse<CheckoutResponseDto>.SuccessResult(result, "Payment link has been created"));
         }
 
+
         [HttpPost("webhooks/paymob")]
         [AllowAnonymous]
-        public async Task<IActionResult> PaymobWebhook([FromBody] PaymobWebhookDto webhook)
+        public async Task<IActionResult> PaymobWebhook()  
         {
             try
             {
-                // 1. Verify HMAC signature
-                if (!VerifyPaymobHmac(webhook))
+                using var reader = new StreamReader(Request.Body);
+                var body = await reader.ReadToEndAsync();
+
+                if (string.IsNullOrWhiteSpace(body))
                 {
-                    return Ok("Invalid signature");
+                    return Ok("Empty body");  
                 }
 
-                // 2. Check if payment succeeded
-                if (!webhook.success || webhook.obj?.success != true)
+                var options = new System.Text.Json.JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                var webhook = System.Text.Json.JsonSerializer.Deserialize<PaymobWebhookDto>(body, options);
+
+
+                if (webhook == null)
+                {
+                    return Ok("Invalid webhook");
+                }
+
+                bool isPaymentSuccessful = webhook.success && (webhook.obj?.success ?? true);
+
+                if (!isPaymentSuccessful)
                 {
                     return Ok("Payment failed");
                 }
 
-                // 3. Process enrollment 
                 await _enrollmentService.HandlePaymobWebhookAsync(webhook);
-
-                return Ok("Webhook processed");
+                return Ok("Success");
             }
             catch (Exception ex)
             {
-                return Ok($"Error: {ex.Message}");
+                return Ok($"Error: {ex.Message}");  
             }
         }
 
-        //helper method
-        private bool VerifyPaymobHmac(PaymobWebhookDto webhook)
+        // Test GET
+        [HttpGet("webhooks/paymob-test")]
+        [AllowAnonymous]
+        public IActionResult TestWebhookGet()
         {
-
-            var hmacSecret = "your-hmac-secret"; 
-            if (string.IsNullOrEmpty(hmacSecret))
-                return true; 
-           
-            return true;
+            var result = new
+            {
+                status = "OK",
+                message = "Paymob webhook endpoint is accessible",
+                timestamp = DateTime.UtcNow,
+                url = $"{Request.Scheme}://{Request.Host}{Request.Path}"
+            };
+            return Ok(result);
         }
+
+        [HttpPost("complete-payment/{paymentId:int}")]
+        public async Task<IActionResult> CompletePayment(int paymentId)
+        {
+            try
+            {
+                var webhook = new PaymobWebhookDto
+                {
+                    type = "TRANSACTION",
+                    success = true,
+                    hmac = "manual-test",
+                    obj = new PaymobTransactionObj
+                    {
+                        id = 999999,
+                        success = true,
+                        amount_cents = 400,
+                        currency = "EGP",
+                        created_at = DateTime.UtcNow.ToString("o"),
+                        order = new PaymobOrder
+                        {
+                            merchant_order_id = paymentId.ToString()
+                        },
+                        source_data = new PaymobSourceData
+                        {
+                            type = "card",
+                            sub_type = "MasterCard",
+                            pan = "1234"
+                        }
+                    }
+                };
+
+                await _enrollmentService.HandlePaymobWebhookAsync(webhook);
+                return Ok(ApiResponse<object>.SuccessResult(null, "Payment completed"));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<object>.FailResult($"Error: {ex.Message}"));
+            }
+        }
+
+
     }
 }
