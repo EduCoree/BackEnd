@@ -54,7 +54,7 @@ namespace EduCore.Presentation.Controllers
             {
                 using var reader = new StreamReader(Request.Body);
                 var body = await reader.ReadToEndAsync();
-
+                Console.WriteLine($"[PAYMOB WEBHOOK] Body: {body}");
                 if (string.IsNullOrWhiteSpace(body))
                 {
                     return Ok("Empty body");  
@@ -68,19 +68,30 @@ namespace EduCore.Presentation.Controllers
                 var webhook = System.Text.Json.JsonSerializer.Deserialize<PaymobWebhookDto>(body, options);
 
 
-                if (webhook == null)
+                if (webhook?.obj == null)
                 {
+                    Console.WriteLine("[PAYMOB] webhook or obj is null");
                     return Ok("Invalid webhook");
                 }
+                Console.WriteLine($"[PAYMOB] top-level success={webhook.success}");
+                Console.WriteLine($"[PAYMOB] obj.success={webhook.obj.success}");
+                Console.WriteLine($"[PAYMOB] obj.pending={webhook.obj.pending}");
+                Console.WriteLine($"[PAYMOB] obj.error_occured={webhook.obj.error_occured}");
+                Console.WriteLine($"[PAYMOB] merchant_order_id={webhook.obj?.order?.merchant_order_id}");
 
-                bool isPaymentSuccessful = webhook.success && (webhook.obj?.success ?? true);
+
+                bool isPaymentSuccessful = webhook.obj.success == true &&
+                                  webhook.obj.pending == false &&
+                                  webhook.obj.error_occured != true;
 
                 if (!isPaymentSuccessful)
                 {
+                    Console.WriteLine("[PAYMOB] Payment not successful - skipping");
                     return Ok("Payment failed");
                 }
 
                 await _enrollmentService.HandlePaymobWebhookAsync(webhook);
+                Console.WriteLine("[PAYMOB] Enrollment completed ✅");
                 return Ok("Success");
             }
             catch (Exception ex)
@@ -141,6 +152,18 @@ namespace EduCore.Presentation.Controllers
             {
                 return BadRequest(ApiResponse<object>.FailResult($"Error: {ex.Message}"));
             }
+        }
+
+        [HttpGet("payment-redirect")]
+        [AllowAnonymous]
+        public IActionResult PaymentRedirect([FromQuery] bool success)
+        {
+            var frontendUrl = "http://localhost:4200";
+
+            if (success)
+                return Redirect($"{frontendUrl}/#/payment/success?fromCard=true");
+            else
+                return Redirect($"{frontendUrl}/#/payment/failed");
         }
 
 
