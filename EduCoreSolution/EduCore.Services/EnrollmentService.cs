@@ -163,23 +163,31 @@ namespace EduCore.Services
 
         public async Task HandlePaymobWebhookAsync(PaymobWebhookDto webhook)
         {
+
             var paymentIdStr = webhook.obj?.order?.merchant_order_id;
-
             if (!int.TryParse(paymentIdStr, out int paymentId))
-                throw new BadRequestException("Payment ID does not exist");
-
+            {
+                throw new BadRequestException("Invalid payment ID");
+            }
             var payment = await _uow.PaymentRepository.GetByIdAsync(paymentId);
 
             if (payment is null)
+            {
                 throw new NotFoundException("Payment not found");
+            }
 
             if (payment.Status == PaymentStatus.Completed)
-                return; 
-
-            // get couurse from db or ref
+            {
+                return;
+            }
             var course = await GetCourseFromPayment(payment);
 
-            // make Enrollment
+            if (course == null)
+            {
+                throw new NotFoundException("Course not found");
+            }
+
+            // Create enrollment
             var enrollment = new Enrollment
             {
                 StudentId = payment.StudentId,
@@ -192,8 +200,8 @@ namespace EduCore.Services
             await _uow.EnrollmentRepository.AddAsync(enrollment);
             await _uow.SaveChangesAsync();
 
-            // payment with enrollment
-            payment.EnrollmentId = enrollment.Id; 
+            // Update payment
+            payment.EnrollmentId = enrollment.Id;
             payment.Status = PaymentStatus.Completed;
             payment.PaidAt = DateTime.UtcNow;
 

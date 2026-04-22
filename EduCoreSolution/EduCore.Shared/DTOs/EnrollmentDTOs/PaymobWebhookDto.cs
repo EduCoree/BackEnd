@@ -6,45 +6,87 @@ using System.Threading.Tasks;
 
 namespace EduCore.Shared.DTOs.EnrollmentDTOs
 {
+    //public class PaymobWebhookDto
+    //{
+    //    public bool success { get; set; }
+    //    public string? hmac { get; set; }
+    //    public PaymobTransactionDto? obj { get; set; }
+    //}
+
     public class PaymobWebhookDto
     {
+        public string type { get; set; } = string.Empty; 
+        public PaymobTransactionObj obj { get; set; }
         public bool success { get; set; }
-        public string? hmac { get; set; }
-        public PaymobTransactionDto? obj { get; set; }
+        public string hmac { get; set; } = string.Empty; 
     }
 
-    public class PaymobTransactionDto
+    public class PaymobTransactionObj
     {
-        public int id { get; set; }
-        public bool success { get; set; }
-        public int amount_cents { get; set; }
-        public string? currency { get; set; }
-        public DateTime created_at { get; set; }
-        public bool error_occured { get; set; }
-        public bool has_parent_transaction { get; set; }
-        public int integration_id { get; set; }
-        public bool is_3d_secure { get; set; }
-        public bool is_auth { get; set; }
-        public bool is_capture { get; set; }
-        public bool is_refunded { get; set; }
-        public bool is_standalone_payment { get; set; }
-        public bool is_voided { get; set; }
-        public PaymobOrderDto? order { get; set; }
-        public int owner { get; set; }
-        public bool pending { get; set; }
-        public PaymobSourceDataDto? source_data { get; set; }
+        public int? id { get; set; } 
+        public bool? success { get; set; } 
+        public int? amount_cents { get; set; }
+        public string currency { get; set; } = string.Empty;  
+        public string created_at { get; set; } = string.Empty;
+        public bool? error_occured { get; set; }
+        public bool? has_parent_transaction { get; set; }
+        public int? integration_id { get; set; }
+        public bool? is_3d_secure { get; set; }
+        public bool? is_auth { get; set; }
+        public bool? is_capture { get; set; }
+        public bool? is_refunded { get; set; }
+        public bool? is_standalone_payment { get; set; }
+        public bool? is_voided { get; set; }
+        public int? owner { get; set; }
+        public bool? pending { get; set; }
+        public PaymobSourceData source_data { get; set; }
+        public PaymobOrder order { get; set; }
     }
 
-    public class PaymobOrderDto
+    public class PaymobSourceData
     {
-        public int id { get; set; }
-        public string? merchant_order_id { get; set; }
+        public string type { get; set; } = string.Empty;
+        public string sub_type { get; set; } = string.Empty;
+        public string pan { get; set; } = string.Empty;
     }
 
-    public class PaymobSourceDataDto
+    public class PaymobOrder
     {
-        public string? pan { get; set; }
-        public string? sub_type { get; set; }
-        public string? type { get; set; }
+        public int? id { get; set; }
+        public string merchant_order_id { get; set; } = string.Empty;
     }
+    //public class PaymobTransactionDto
+    //{
+    //    public int id { get; set; }
+    //    public bool success { get; set; }
+    //    public int amount_cents { get; set; }
+    //    public string? currency { get; set; }
+    //    public DateTime created_at { get; set; }
+    //    public bool error_occured { get; set; }
+    //    public bool has_parent_transaction { get; set; }
+    //    public int integration_id { get; set; }
+    //    public bool is_3d_secure { get; set; }
+    //    public bool is_auth { get; set; }
+    //    public bool is_capture { get; set; }
+    //    public bool is_refunded { get; set; }
+    //    public bool is_standalone_payment { get; set; }
+    //    public bool is_voided { get; set; }
+    //    public PaymobOrderDto? order { get; set; }
+    //    public int owner { get; set; }
+    //    public bool pending { get; set; }
+    //    public PaymobSourceDataDto? source_data { get; set; }
+    //}
+
+    //public class PaymobOrderDto
+    //{
+    //    public int id { get; set; }
+    //    public string? merchant_order_id { get; set; }
+    //}
+
+    //public class PaymobSourceDataDto
+    //{
+    //    public string? pan { get; set; }
+    //    public string? sub_type { get; set; }
+    //    public string? type { get; set; }
+    //}
 }
