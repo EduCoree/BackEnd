@@ -16,5 +16,6 @@ namespace EduCore.Shared.DTOs.Quiz.Teacher
         public int PassScore { get; init; }
         public int? MaxAttempts { get; init; }
         public bool IsRandomized { get; init; }
+       public bool IsPublished { get; init; }
     }
 }

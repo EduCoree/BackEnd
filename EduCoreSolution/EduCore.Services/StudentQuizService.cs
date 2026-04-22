@@ -71,11 +71,17 @@ namespace EduCore.Services
            return _mapper.Map<StudentQuizDto>(quiz);
         }
 
-        public async Task<IEnumerable<AttemptHistoryDto>> GetQuizHistoryAsync(int quizId, string studentId)
+        public async Task<PagedResult<AttemptHistoryDto>> GetQuizHistoryAsync(int quizId, string studentId,PaginationParams pagination)
         {
             await ValidateEnrollmentAsync(quizId, studentId);
-            var attempts = await _unitOfWork.QuizAttemptRepository.GetQuizHistoryAsync(quizId,studentId);
-            return _mapper.Map<IEnumerable<AttemptHistoryDto>>(attempts);
+            var (items,totalCount) = await _unitOfWork.QuizAttemptRepository.GetQuizHistoryAsync(quizId,studentId,pagination);
+            return new PagedResult<AttemptHistoryDto>
+            {
+                Items = _mapper.Map<IEnumerable<AttemptHistoryDto>>(items),
+                PageSize = pagination.PageSize,
+                PageNumber = pagination.PageNumber,
+                TotalCount = totalCount
+            };
         }
 
         public async Task<QuizSummaryDto> GetQuizSummaryAsync(int quizId, string studentId)

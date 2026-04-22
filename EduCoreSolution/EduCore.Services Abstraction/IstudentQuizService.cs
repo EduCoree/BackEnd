@@ -15,7 +15,7 @@ namespace EduCore.Services_Abstraction
         Task<AttemptDto> StartAttemptAsync(int quizId, string studentId);
         Task<AttemptResultDto> SubmitAttemptAsync(int quizId, int attemptId, string studentId, SubmitAnswerDto request);
         Task<AttemptResultDto> GetResultAsync(int quizId, int attemptId, string studentId);
-        Task<IEnumerable<AttemptHistoryDto>> GetQuizHistoryAsync(int quizId, string studentId);
+        Task<PagedResult<AttemptHistoryDto>> GetQuizHistoryAsync(int quizId, string studentId,PaginationParams pagination);
         Task<PagedResult<AttemptHistoryDto>> GetHistoryAsync(string studentId,PaginationParams pagination, HistoryFilterDto filter);
         Task<PagedResult<AvailableQuizzesDto>> GetAvailableQuizzesAsync(string studentId,PaginationParams paginationParams,string? courseTitle);
         Task <IEnumerable<string>>  GetAttemptedCourseTitlesAsync(string studentId);

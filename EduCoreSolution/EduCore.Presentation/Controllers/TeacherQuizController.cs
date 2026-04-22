@@ -1,4 +1,6 @@
 ﻿using EduCore.Services_Abstraction;
+using EduCore.Shared.Common;
+using EduCore.Shared.CommonResult;
 using EduCore.Shared.DTOs.Quiz.Teacher;
 using EduCore.Shared.Exceptions;
 using EduCore.Shared.Responses;
@@ -40,11 +42,11 @@ namespace EduCore.Presentation.Controllers
         }
 
         [HttpGet("courses/{courseId}/quizzes")]
-        public async Task<IActionResult> GetQuizzesByCourse(int courseId)
+        public async Task<IActionResult> GetQuizzesByCourse(int courseId,[FromQuery] PaginationParams pagination)
         {
            
-           var result = await _quizService.GetQuizzesByCourseAsync(courseId,TeacherId);
-           return Ok(ApiResponse<IEnumerable<QuizDto>>.SuccessResult(result, "Quizzes retrieved successfully."));
+           var result = await _quizService.GetQuizzesByCourseAsync(courseId,TeacherId,pagination);
+           return Ok(ApiResponse<PagedResult<QuizDto>>.SuccessResult(result, "Quizzes retrieved successfully."));
           
         }
 
@@ -61,6 +63,12 @@ namespace EduCore.Presentation.Controllers
         {
             await _quizService.DeleteQuizAsync(quizId, TeacherId);
             return Ok(ApiResponse<string>.SuccessResult("Quiz deleted successfully.", "Quiz deleted successfully."));
+        }
+        [HttpPost("quizzes/{quizId}/publish")]
+        public async Task<IActionResult> PublishQuiz(int quizId)
+        {
+           var result= await _quizService.PublishQuizAsync(quizId, TeacherId);
+            return Ok(ApiResponse<QuizDto>.SuccessResult(result, "Quiz Published successfully."));
         }
     }
 

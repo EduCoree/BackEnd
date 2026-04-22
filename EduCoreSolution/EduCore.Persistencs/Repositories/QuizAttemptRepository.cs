@@ -74,14 +74,22 @@ namespace EduCore.Persistencs.Repositories
 
         }
 
-      public async  Task<IEnumerable<QuizAttempt>> GetQuizHistoryAsync(int quizId, string studentId)
+      public async Task<(IEnumerable<QuizAttempt>,int totalCount)> GetQuizHistoryAsync(int quizId, string studentId,PaginationParams pagination)
         {
-            return await _EduCoreDbContext.QuizAttempts.Where(q => q.QuizId == quizId && q.StudentId == studentId).ToListAsync();
-
+            var query =  _EduCoreDbContext.QuizAttempts
+                .Where(q => q.QuizId == quizId && q.StudentId == studentId)
+                .AsNoTracking();
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((pagination.PageNumber-1) * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .ToListAsync();
+            return(items,totalCount);
         }
         public async Task<(IEnumerable<Quiz>,int totalcount)> GetAvailableQuizzesAsync(string studentId,PaginationParams pagination, string? courseTitle)
         {
             var query=  _EduCoreDbContext.Quizzes
+                .Where(q => q.IsPublished && q.Questions.Any())
                 .Where(q => q.Course.Enrollments
                     .Any(e => e.StudentId == studentId))
                 .Where(q => q.Attempts.Count(a => a.StudentId == studentId) < q.MaxAttempts)
