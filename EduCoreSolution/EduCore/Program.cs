@@ -13,6 +13,7 @@ using EduCore.Services_Abstraction;
 using EduCore.Shared.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -135,6 +136,9 @@ namespace EduCore
             //.AddApplicationPart(
             //    typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly);
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddDataProtection()
+                            .PersistKeysToFileSystem( new DirectoryInfo(@"D:\Sites\site62091\wwwroot\keys"))
+                            .SetApplicationName("EduCore");
             builder.Services.AddControllers().AddApplicationPart(typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly).AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.Converters
