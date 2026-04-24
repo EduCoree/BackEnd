@@ -53,9 +53,13 @@ namespace EduCore.Services
             if (user is null)
                 return Error.InvalidCredentials("user.InvalidCredentials");
 
+            if (!user.EmailConfirmed)
+                return Error.Unauthorized("Email.NotConfirmed", "Please confirm your email before logging in.");
+
             var isPasswordValid = await userManager.CheckPasswordAsync(user, loginDto.Password);
             if (!isPasswordValid)
                 return Error.InvalidCredentials("user.InvalidCredentials");
+            
 
             return await BuildUserDtoAsync(user);
         }
@@ -72,7 +76,7 @@ namespace EduCore.Services
 
             return await BuildUserDtoAsync(stored.User);
         }
-        public async Task<Result<UserDto>> RegisterAsync(RegisterDto registerDto)
+        public async Task<Result<RegisterResponseDto>> RegisterAsync(RegisterDto registerDto,string baseUrl)
         {
             var user = new User
             {
@@ -86,8 +90,13 @@ namespace EduCore.Services
             var result = await userManager.CreateAsync(user, registerDto.Password);
             if (!result.Succeeded)
                 return result.Errors.Select(e => Error.Validation(e.Code, e.Description)).ToList();
+            await SendEmailConfirmationAsync(user.Email!, baseUrl);
+            return new RegisterResponseDto
+            { Email=user.Email,
+              Message= "Registration successful. Please verify your email.",
+              RequiresVerification=true
+            };
 
-            return await BuildUserDtoAsync(user);
         }
         public async Task<Result<bool>> LogoutAsync(string refreshToken)
         {
@@ -194,15 +203,24 @@ namespace EduCore.Services
 
 
 
-        public async Task<Result<string>> SendEmailConfirmationAsync(string email, string baseUrl)
+        public async Task<Result<ResendEmailResponseDto>> SendEmailConfirmationAsync(string email, string baseUrl)
         {
             var user = await userManager.FindByEmailAsync(email);
             if (user == null)
-                return "If this email is registered, a confirmation link has been sent.";    // to prevent email enumeration attacks and make dont know the email exists in the system or not
+                // to prevent email enumeration attacks and make dont know the email exists in the system or not
+                return new ResendEmailResponseDto
+                { Email = email,
+                    message = "If this email is registered, a confirmation link has been sent."
+                };
+
             if (user.EmailConfirmed)
-                return "If this email is registered, a confirmation link has been sent.";     
+                return new ResendEmailResponseDto
+                { 
+                    Email = email,
+                    message = "If this email is registered, a confirmation link has been sent."
+                };
             var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationLink = $"{baseUrl}/api/auth/confirm-email?email={user.Email}&token={Uri.EscapeDataString(token)}";
+            var confirmationLink = $"{baseUrl}/api/Authentication/confirm-email?email={user.Email}&token={Uri.EscapeDataString(token)}";
             var subject = "Confirm your EduCore Email ✅";
             var htmlBody = $"""
 <!DOCTYPE html>
@@ -243,7 +261,11 @@ namespace EduCore.Services
 """;
 
             await _emailService.SendEmailAsync(email, subject, htmlBody);
-            return "Confirmation Email Sent Successfully";
+            return new ResendEmailResponseDto
+            { Email=email,
+            message= "Confirmation Email Sent Successfully"
+            };
+
 
         }
 
@@ -251,21 +273,26 @@ namespace EduCore.Services
         {
             var user = await userManager.FindByEmailAsync(dto.Email);
             if (user == null)
-                return "Invalid confirmation link.";
-            if (user.EmailConfirmed)   // to make sure that the user didn't click the confirmation link more than once
-                return "Email is already confirmed.";
+                return Error.Validation("InvalidLink", "Invalid confirmation link.");
+            // to make sure that the user didn't click the confirmation link more than once
+            if (user.EmailConfirmed)
+                return Error.Validation("AlreadyConfirmed", "Email is already confirmed.");
             var decodedToken = Uri.UnescapeDataString(dto.Token);
             var result = await userManager.ConfirmEmailAsync(user, decodedToken);
             if (!result.Succeeded)
-                return result.Errors.Select(e => Error.Validation(e.Code, e.Description)).ToList();
+                return Error.Validation("InvalidToken", "Confirmation link has expired or is invalid.");
             return "Email confirmed successfully.";
 
         }
-        public async Task<Result<string>> SendOtpAsync(string email,OtpPurpose purpose)
+        public async Task<Result<SendOtpResponseDto>> SendOtpAsync(sendOtpDto sendOtpDto)
         {
-            var user = await userManager.FindByEmailAsync(email);
+            var user = await userManager.FindByEmailAsync(sendOtpDto.Email);
             if (user == null)
-                return "If this email is registered, an OTP has been sent.";
+                return new SendOtpResponseDto {
+                    Message = "If this email is registered, an OTP has been sent.;",
+                    ExpiresInSeconds = 600
+                };
+
             var code = await userManager.GenerateTwoFactorTokenAsync(user, "Email");
             var subject = $"Your EduCore OTP Code";
             var htmlBody = $"""
@@ -309,39 +336,58 @@ namespace EduCore.Services
 </html>
 """;
 
-            await _emailService.SendEmailAsync(email, subject, htmlBody);
-            return "OTP sent successfully.";
+            await _emailService.SendEmailAsync(sendOtpDto.Email, subject, htmlBody);
+            return new SendOtpResponseDto
+            { ExpiresInSeconds = 600,
+              Message = "If this email is registered, an OTP has been sent.;"
+            };
+        
+
 
         }
 
-        public async Task<Result<string>> VerifyOtpAsync(VerifyOtpDto dto,OtpPurpose purpose)
+        public async Task<Result<VerifyOtpResponseDto>> VerifyOtpAsync(VerifyOtpDto dto)
         {
             var user = await userManager.FindByEmailAsync(dto.Email);
             if (user == null)
-                return Error.Validation("InvalidOTP", "Invalid email or OTP.");
+                return Error.Validation("InvalidOTP", "Invalid or Expired OTP.");
             var isValid = await userManager.VerifyTwoFactorTokenAsync(user,"Email", dto.Otp);
             if (!isValid)
-                return Error.Validation("InvalidOTP", "Invalid  or Expired Otp"); //
-            switch(purpose)
+                return Error.Validation("InvalidOTP", "Invalid or Expired Otp"); //
+            switch (dto.purpose)
             {
                 case OtpPurpose.Password:
                     var resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
-                    return resetToken; // return the reset token to the client to include it in the password reset request (this token valid only for password reset)
+                    // return the reset token to the client to include it in the password reset request (this token valid only for password reset)
+                    return new VerifyOtpResponseDto
+                    {
+                        Message = "Otp Verified Successfully",
+                        ResetToken = resetToken,
+                        ExpiresInSeconds = 600,
+
+                    };
 
                 case OtpPurpose.Email:
                     user.EmailConfirmed = true;
                     await userManager.UpdateAsync(user);
-                    break;
+                    return new VerifyOtpResponseDto
+                    {
+                        Message = "Email verified successfully.",
+                        ConfirmedEmail = user.Email
+                    };
+
+
+                default:
+                    return Error.Validation("InvalidPurpose", "Unknown OTP purpose");
             }
-            return "OTP verified successfully.";
 
 
         }
 
-        public async Task<Result<string>> ResetPasswordAsync(ResetPasswordDto dto)
+        public async Task<Result<ResetPasswordResponseDto>> ResetPasswordAsync(ResetPasswordDto dto)
         {
             var user = await userManager.FindByEmailAsync(dto.Email);
-            if (user == null) return Error.Validation("NotFound", "User not found.");
+            if (user == null) return Error.Validation("InvalidToken", "Reset token is invalid or expired.");
             var result = await userManager.ResetPasswordAsync(user, dto.ResetToken, dto.NewPassword);
             if (!result.Succeeded)
             {
@@ -350,7 +396,7 @@ namespace EduCore.Services
 
                 return result.Errors.Select(e => Error.Validation(e.Code, e.Description)).ToList();
             }
-            return "Password reset successfully.";
+            return new ResetPasswordResponseDto { message = "Password reset successfully" };
         }   
         public async Task<bool> CheckEmailAsync(string email)
         {
