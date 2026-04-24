@@ -58,10 +58,10 @@ namespace EduCore.Presentation.Controllers
             return Ok(ApiResponse<AttemptResultDto>.SuccessResult(result, "Result retrieved successfully."));
         }
         [HttpGet("{quizId}/attempts")]
-        public async Task<IActionResult> GetQuizHistory(int quizId)
+        public async Task<IActionResult> GetQuizHistory(int quizId, [FromQuery] PaginationParams pagination)
         {
-            var result = await _studentQuizService.GetQuizHistoryAsync(quizId, StudentId);
-            return Ok(ApiResponse<IEnumerable<AttemptHistoryDto>>.SuccessResult(result));
+            var result = await _studentQuizService.GetQuizHistoryAsync(quizId, StudentId,pagination);
+            return Ok(ApiResponse<PagedResult<AttemptHistoryDto>>.SuccessResult(result));
         }
         [HttpGet("{quizId}/summary")]
         public async Task<IActionResult> GetQuizSummary(int quizId)

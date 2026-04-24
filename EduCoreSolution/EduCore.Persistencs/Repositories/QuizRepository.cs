@@ -1,6 +1,7 @@
 ﻿using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities.QuizModel;
 using EduCore.Persistencs.Data.DbContexts;
+using EduCore.Shared.Common;
 using EduCore.Shared.DTOs.Quiz.Student;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,12 +25,21 @@ namespace EduCore.Persistencs.Repositories
                 .FirstOrDefaultAsync(q => q.Id == quizId);
         }
 
-        public async Task<IEnumerable<Quiz>> GetQuizzesByCourseAsync(int courseId)
+        public async Task<(IEnumerable<Quiz>,int totalCount)> GetQuizzesByCourseAsync(int courseId,PaginationParams pagination)
         {
-            return await _EduCoreDbContext.Set<Quiz>()
+            var query =  _EduCoreDbContext.Set<Quiz>()
                 .Where(q => q.CourseId == courseId)
-                .OrderByDescending(q=>q.CreatedAt)
+                .OrderByDescending(q => q.CreatedAt);
+
+            var totalCount =await query.CountAsync();
+            var items = await query
+                .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+                .Take(pagination.PageSize)
                 .ToListAsync();
+
+            return (items, totalCount);
+
+
         }
         public async Task<QuizSummaryDto?> GetQuizSummaryAsync(int quizId, string studentId)
         {
@@ -67,6 +77,7 @@ namespace EduCore.Persistencs.Repositories
         {
             return await _EduCoreDbContext.Quizzes
                 .AsNoTracking()
+                .Where(q => q.IsPublished && q.Questions.Any())
                 .Where(q => q.Course.Enrollments.Any(e => e.StudentId == studentId)) 
                 .Where(q => q.Attempts.Count(a => a.StudentId == studentId) < q.MaxAttempts) 
                 .Select(q => q.Course.Title)
