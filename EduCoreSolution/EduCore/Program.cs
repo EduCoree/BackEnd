@@ -220,6 +220,10 @@ namespace EduCore
             builder.Services.AddScoped<INotificationSender, SignalRNotificationSender>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
+            builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
+            {
+                opt.TokenLifespan = TimeSpan.FromMinutes(10); 
+            });
 
 
             builder.Services.AddControllers()
