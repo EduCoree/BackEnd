@@ -69,6 +69,7 @@ namespace EduCore.Persistencs.Data.DbContexts
         // Enrollment
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<CashPaymentRequest> CashPaymentRequests { get; set; }
 
         // Progress
         public DbSet<LessonProgress> LessonProgresses { get; set; }
