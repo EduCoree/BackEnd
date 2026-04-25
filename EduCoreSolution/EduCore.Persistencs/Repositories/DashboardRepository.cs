@@ -84,6 +84,22 @@ public class DashboardRepository : IDashboardRepository
             .CountAsync();
     }
 
+    //public async Task<IEnumerable<TrendPointDto>> GetEnrollmentsTrendAsync(int centerId, int days)
+    //{
+    //    var startDate = DateTime.UtcNow.Date.AddDays(-days);
+
+    //    var data = await _context.Set<Enrollment>()
+    //        .Where(e => e.Student.CenterId == centerId && e.EnrolledAt >= startDate)
+    //        .GroupBy(e => e.EnrolledAt.Date)
+    //        .Select(g => new TrendPointDto(
+    //            DateOnly.FromDateTime(g.Key),
+    //            g.Count()
+    //        ))
+    //        .OrderBy(t => t.Date)
+    //        .ToListAsync();
+
+    //    return data;
+    //}
     public async Task<IEnumerable<TrendPointDto>> GetEnrollmentsTrendAsync(int centerId, int days)
     {
         var startDate = DateTime.UtcNow.Date.AddDays(-days);
@@ -91,16 +107,31 @@ public class DashboardRepository : IDashboardRepository
         var data = await _context.Set<Enrollment>()
             .Where(e => e.Student.CenterId == centerId && e.EnrolledAt >= startDate)
             .GroupBy(e => e.EnrolledAt.Date)
-            .Select(g => new TrendPointDto(
-                DateOnly.FromDateTime(g.Key),
-                g.Count()
-            ))
-            .OrderBy(t => t.Date)
+            .Select(g => new { Date = g.Key, Count = g.Count() })
+            .OrderBy(x => x.Date)
             .ToListAsync();
 
-        return data;
+        return data.Select(x => new TrendPointDto(DateOnly.FromDateTime(x.Date), x.Count));
     }
+    //public async Task<IEnumerable<TrendPointDto>> GetRevenueTrendAsync(int centerId, int days)
+    //{
+    //    var startDate = DateTime.UtcNow.Date.AddDays(-days);
 
+    //    var data = await _context.Set<Payment>()
+    //        .Where(p => p.Student.CenterId == centerId
+    //                 && p.Status == PaymentStatus.Completed
+    //                 && p.PaidAt.HasValue
+    //                 && p.PaidAt.Value >= startDate)
+    //        .GroupBy(p => p.PaidAt!.Value.Date)
+    //        .Select(g => new TrendPointDto(
+    //            DateOnly.FromDateTime(g.Key),
+    //            g.Sum(p => p.Amount)
+    //        ))
+    //        .OrderBy(t => t.Date)
+    //        .ToListAsync();
+
+    //    return data;
+    //}
     public async Task<IEnumerable<TrendPointDto>> GetRevenueTrendAsync(int centerId, int days)
     {
         var startDate = DateTime.UtcNow.Date.AddDays(-days);
@@ -111,16 +142,12 @@ public class DashboardRepository : IDashboardRepository
                      && p.PaidAt.HasValue
                      && p.PaidAt.Value >= startDate)
             .GroupBy(p => p.PaidAt!.Value.Date)
-            .Select(g => new TrendPointDto(
-                DateOnly.FromDateTime(g.Key),
-                g.Sum(p => p.Amount)
-            ))
-            .OrderBy(t => t.Date)
+            .Select(g => new { Date = g.Key, Total = g.Sum(p => p.Amount) })
+            .OrderBy(x => x.Date)
             .ToListAsync();
 
-        return data;
+        return data.Select(x => new TrendPointDto(DateOnly.FromDateTime(x.Date), x.Total));
     }
-
     public async Task<IEnumerable<TopCourseDto>> GetTopCoursesAsync(int centerId, int count)
     {
         return await _context.Set<Course>()
