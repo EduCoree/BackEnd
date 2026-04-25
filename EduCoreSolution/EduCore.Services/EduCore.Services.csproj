@@ -9,10 +9,12 @@
 		<ProjectReference Include="..\EduCore.Domain\EduCore.Domain.csproj" />
 		<ProjectReference Include="..\EduCore.Services Abstraction\EduCore.Services Abstraction.csproj" />
 		<PackageReference Include="AutoMapper" Version="14.0.0" />
+		<PackageReference Include="ClosedXML" Version="0.105.0" />
 		<PackageReference Include="Hangfire.Core" Version="1.8.23" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.25" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
 		<PackageReference Include="CloudinaryDotNet" Version="1.28.0" />
+		<PackageReference Include="QuestPDF" Version="2026.2.4" />
 		<PackageReference Include="RestSharp" Version="110.2.0" />
 	</ItemGroup>
 	

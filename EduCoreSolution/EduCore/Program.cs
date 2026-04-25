@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using QuestPDF.Infrastructure;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -134,10 +135,18 @@ namespace EduCore
                     }
                 });
             });
-            // ═══════════════════════════════════════════════════════════════════════════
-            //  — Configure Hangfire (put this anywhere BEFORE var app = builder.Build();)
-            // ═══════════════════════════════════════════════════════════════════════════
 
+
+
+           
+            // Set QuestPDF Community License
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            builder.Services.AddScoped<IPayoutExportService, PayoutExportService>();
+
+
+           
+            // Configure Hangfire 
             builder.Services.AddHangfire(configuration => configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
                 .UseSimpleAssemblyNameTypeSerializer()
