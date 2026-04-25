@@ -11,12 +11,7 @@ namespace EduCore.Persistencs.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "IsPublished",
-                table: "quizzes",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
+
 
             migrationBuilder.CreateTable(
                 name: "cash_payment_requests",
@@ -63,9 +58,7 @@ namespace EduCore.Persistencs.Data.Migrations
             migrationBuilder.DropTable(
                 name: "cash_payment_requests");
 
-            migrationBuilder.DropColumn(
-                name: "IsPublished",
-                table: "quizzes");
+
         }
     }
 }

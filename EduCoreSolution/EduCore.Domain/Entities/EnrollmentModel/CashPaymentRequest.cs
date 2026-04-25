@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EduCore.Domain.Entities.EnrollmentModel
 {
-    public class CashPaymentRequest
+    public class CashPaymentRequest:BaseEntity<int>
     {
         public int Id { get; set; }
         public string StudentId { get; set; } = string.Empty;
