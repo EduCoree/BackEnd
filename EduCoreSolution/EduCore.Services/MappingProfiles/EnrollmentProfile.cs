@@ -19,6 +19,16 @@ namespace EduCore.Services.MappingProfiles
             CreateMap<Payment, PaymentDto>()
                 .ForMember(d => d.CourseTitle,
                     o => o.MapFrom(s => s.Enrollment.Course.Title));
+            // CashPaymentRequest → CashPaymentRequestDto
+            CreateMap<CashPaymentRequest, CashPaymentRequestDto>()
+                .ForMember(d => d.StudentName,
+                    o => o.MapFrom(s => s.Student.Name))
+                .ForMember(d => d.CourseTitle,
+                    o => o.MapFrom(s => s.Course.Title))
+                .ForMember(d => d.Amount,
+                    o => o.MapFrom(s => s.Course.Price))
+                .ForMember(d => d.Status,
+                    o => o.MapFrom(s => s.Status.ToString()));
         }
     }
 }

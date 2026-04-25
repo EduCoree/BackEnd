@@ -339,6 +339,7 @@ namespace EduCore
                 builder.Configuration.GetSection("Paymob"));
             builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<ICashPaymentRequestService, CashPaymentRequestService>();
             //        builder.Services.AddControllers()
             //.AddApplicationPart(
             //    typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly);
