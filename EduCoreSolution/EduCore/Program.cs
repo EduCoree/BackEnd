@@ -8,9 +8,12 @@ using EduCore.Persistencs.Data.DbContexts;
 using EduCore.Persistencs.Repositories;
 using EduCore.Presentation.Hubs;
 using EduCore.Services;
+using EduCore.Services.Jobs;
 using EduCore.Services.MappingProfiles;
 using EduCore.Services_Abstraction;
 using EduCore.Shared.Settings;
+using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.DataProtection;
@@ -81,6 +84,14 @@ namespace EduCore
             builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
             builder.Services.AddScoped<ITeacherDashboardService, TeacherDashboardService>();
             builder.Services.AddScoped<IStudentDashboardService, StudentDashboardService>();
+           
+            builder.Services.AddScoped<ITeacherEarningService, TeacherEarningService>();        
+            builder.Services.AddScoped<IInvoiceGenerationService, InvoiceGenerationService>();  
+            builder.Services.AddScoped<MonthlyInvoiceJob>();
+
+            builder.Services.AddScoped<ITeacherPayoutService, TeacherPayoutService>();
+            builder.Services.AddScoped<IAdminPayoutService, AdminPayoutService>();
+            builder.Services.AddScoped<IPayoutSettingsService, PayoutSettingsService>();
 
             builder.Services.AddAuthentication(options =>
             {
@@ -123,27 +134,37 @@ namespace EduCore
                     }
                 });
             });
-            //Samir from 67 to 77
-            builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
-            builder.Services.AddScoped<ICourseRepository, CourseRepository>();
-            builder.Services.AddScoped<IImageService, ImageService>();
-            builder.Services.AddScoped<PaymobService>();
-            builder.Services.Configure<PaymobSettings>(
-                builder.Configuration.GetSection("Paymob"));
-            builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
-            builder.Services.AddScoped<IPaymentService, PaymentService>();
-            //        builder.Services.AddControllers()
-            //.AddApplicationPart(
-            //    typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly);
-            builder.Services.AddScoped<ICategoryService, CategoryService>();
-            builder.Services.AddDataProtection()
-                            .PersistKeysToFileSystem( new DirectoryInfo(@"D:\Sites\site62091\wwwroot\keys"))
-                            .SetApplicationName("EduCore");
-            builder.Services.AddControllers().AddApplicationPart(typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly).AddJsonOptions(options =>
+            // ═══════════════════════════════════════════════════════════════════════════
+            //  — Configure Hangfire (put this anywhere BEFORE var app = builder.Build();)
+            // ═══════════════════════════════════════════════════════════════════════════
+
+            builder.Services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(
+                    builder.Configuration.GetConnectionString("DefaultConnection"),
+                    new SqlServerStorageOptions
+                    {
+                        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                        QueuePollInterval = TimeSpan.Zero,
+                        UseRecommendedIsolationLevel = true,
+                        DisableGlobalLocks = true
+                    }));
+
+            // The server processes jobs in the background.
+            // WorkerCount = 1 is plenty for our use case (one monthly job).
+            builder.Services.AddHangfireServer(options =>
             {
-                options.JsonSerializerOptions.Converters
-                    .Add(new JsonStringEnumConverter());
+                options.WorkerCount = 1;
+                options.ServerName = "EduCore-JobServer";
             });
+
+
+            
+
+
             #region JWT Configuration
             // JWT
             //        builder.Services.AddAuthentication(options =>
@@ -290,6 +311,36 @@ namespace EduCore
             builder.Services.AddScoped<IForumRepository, ForumRepository>();
 
 
+
+
+            
+
+
+
+            //Samir from 67 to 77
+            builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
+            builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+            builder.Services.AddScoped<IImageService, ImageService>();
+            builder.Services.AddScoped<PaymobService>();
+            builder.Services.Configure<PaymobSettings>(
+                builder.Configuration.GetSection("Paymob"));
+            builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
+            //        builder.Services.AddControllers()
+            //.AddApplicationPart(
+            //    typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly);
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddDataProtection()
+                            .PersistKeysToFileSystem(new DirectoryInfo(@"D:\Sites\site62091\wwwroot\keys"))
+                            .SetApplicationName("EduCore");
+            builder.Services.AddControllers().AddApplicationPart(typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly).AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters
+                    .Add(new JsonStringEnumConverter());
+            });
+
+
+
             var app = builder.Build();
             app.UseMiddleware<ExceptionMiddleware>();
             //using var scope = app.Services.CreateScope();
@@ -313,20 +364,6 @@ namespace EduCore
                 await identityInit.InitializeAsync();
             }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             //using var scope = app.Services.CreateScope();
             //var IdentityDataInitializerService = scope.ServiceProvider.GetRequiredKeyedService<IDataInitializer>("Identity");
             //IdentityDataInitializerService.InitializeAsync().Wait();
@@ -336,6 +373,51 @@ namespace EduCore
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            // ═══════════════════════════════════════════════════════════════════════════
+            //  — Schedule the recurring job (AFTER var app = builder.Build();)
+            // ═══════════════════════════════════════════════════════════════════════════
+            //
+            // Place this RIGHT AFTER `var app = builder.Build();` and BEFORE any
+            // `app.Use...` middleware calls.
+
+            // Cron: run on day 1 of each month at 02:00 UTC (5 AM Cairo time)
+            // Format: "minute hour day month day-of-week"
+            //         "0 2 1 * *"  → minute 0, hour 2, day 1, every month, any day-of-week
+            using (var scope = app.Services.CreateScope())
+            {
+                var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
+
+                recurringJobManager.AddOrUpdate<MonthlyInvoiceJob>(
+                    recurringJobId: MonthlyInvoiceJob.JobId,
+                    methodCall: job => job.RunAsync(),
+                    cronExpression: "0 2 1 * *",
+                    options: new RecurringJobOptions
+                    {
+                        TimeZone = TimeZoneInfo.Utc
+                    });
+            }
+
+
+
+
+
+
+
+
+            // ═══════════════════════════════════════════════════════════════════════════
+            //  — Enable the Hangfire Dashboard (OPTIONAL but highly recommended)
+            // ═══════════════════════════════════════════════════════════════════════════
+            //
+            // Put this AFTER app.UseAuthorization() and BEFORE app.MapControllers()
+
+            // Dashboard URL: https://localhost:7275/hangfire
+            // In production, restrict access to admins only.
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                // For now: open to any authenticated user. Tighten after testing.
+                Authorization = new[] { new EduCore.Middlewares.HangfireDashboardAuthFilter() }
+            });
 
             app.UseHttpsRedirection();
             app.UseCors("AllowAngular");

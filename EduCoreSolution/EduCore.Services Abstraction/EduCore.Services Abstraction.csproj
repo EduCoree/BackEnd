@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EduCore.Domain\EduCore.Domain.csproj" />
     <ProjectReference Include="..\EduCore.Shared\EduCore.Shared.csproj" />
   </ItemGroup>
 
