@@ -3,6 +3,7 @@ using EduCore.Domain.Entities.CourseModel;
 using EduCore.Domain.Entities.EnrollmentModel;
 using EduCore.Domain.Entities.ForumModel;
 using EduCore.Domain.Entities.NotificationsModel;
+using EduCore.Domain.Entities.PayoutModel;
 using EduCore.Domain.Entities.ProgressModel;
 using EduCore.Domain.Entities.QuizModel;
 using Microsoft.AspNetCore.Identity;
@@ -44,5 +45,7 @@ namespace EduCore.Domain.Entities.AuthModel
         public ICollection<ForumReply> ForumReplies { get; set; } = new List<ForumReply>();
         public ICollection<PostUpvote> PostUpvotes { get; set; } = new List<PostUpvote>();
         public ICollection<PostReport> PostReports { get; set; } = new List<PostReport>();
+        public ICollection<TeacherEarning> Earnings { get; set; } = new List<TeacherEarning>();
+        public ICollection<TeacherInvoice> Invoices { get; set; } = new List<TeacherInvoice>();
     }
 }

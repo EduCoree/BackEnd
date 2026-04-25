@@ -20,11 +20,17 @@ namespace EduCore.Services
         private readonly IMapper _mapper;
         private readonly PaymobService _paymobService;
 
-        public EnrollmentService(IUnitOfWork uow, IMapper mapper, PaymobService paymobService)
+
+        // 👇 Earnings service — still needed, but no more DbContext dependency
+        private readonly ITeacherEarningService _teacherEarningService;
+
+        public EnrollmentService(IUnitOfWork uow, IMapper mapper, PaymobService paymobService,
+             ITeacherEarningService teacherEarningService) 
         {
             _uow = uow;
             _mapper = mapper;
             _paymobService = paymobService;
+            _teacherEarningService = teacherEarningService;
         }
 
         public async Task<EnrollmentDto> EnrollFreeAsync(string studentId, int courseId)
@@ -118,6 +124,100 @@ namespace EduCore.Services
             return "student@educore.com";
         }
 
+        //public async Task<EnrollmentDto> RecordCashPaymentAsync(CashPaymentDto dto)
+        //{
+        //    // ensure course avilable 
+        //    var course = await _uow.CourseRepository.GetByIdAsync(dto.CourseId);
+
+        //    if (course is null)
+        //        throw new NotFoundException("course not found");
+
+        //    // ensure student not enroll in course 
+        //    if (await _uow.EnrollmentRepository.IsEnrolledAsync(dto.StudentId, dto.CourseId))
+        //        throw new BadRequestException("The student is already enrolled in this course.");
+
+        //    // make payment + enrollment
+        //    var enrollment = new Enrollment
+        //    {
+        //        StudentId = dto.StudentId,
+        //        CourseId = dto.CourseId,
+        //        Type = EnrollmentType.Purchase,
+        //        Status = EnrollmentStatus.Active,
+        //        EnrolledAt = DateTime.UtcNow
+        //    };
+
+        //    await _uow.EnrollmentRepository.AddAsync(enrollment);
+        //    await _uow.SaveChangesAsync();
+
+        //    // payment recored
+        //    var payment = new Payment
+        //    {
+        //        EnrollmentId = enrollment.Id,
+        //        StudentId = dto.StudentId,
+        //        Amount = dto.Amount,
+        //        Currency = dto.Currency,
+        //        Method = PaymentMethod.CreditCard,
+        //        Status = PaymentStatus.Completed, 
+        //        PaidAt = DateTime.UtcNow
+        //    };
+
+        //    await _uow.PaymentRepository.AddAsync(payment);
+        //    await _uow.SaveChangesAsync();
+
+        //    return _mapper.Map<EnrollmentDto>(enrollment);
+        //}
+
+        //public async Task HandlePaymobWebhookAsync(PaymobWebhookDto webhook)
+        //{
+
+        //    var paymentIdStr = webhook.obj?.order?.merchant_order_id;
+        //    if (!int.TryParse(paymentIdStr, out int paymentId))
+        //    {
+        //        throw new BadRequestException("Invalid payment ID");
+        //    }
+        //    var payment = await _uow.PaymentRepository.GetByIdAsync(paymentId);
+
+        //    if (payment is null)
+        //    {
+        //        throw new NotFoundException("Payment not found");
+        //    }
+
+        //    if (payment.Status == PaymentStatus.Completed)
+        //    {
+        //        return;
+        //    }
+        //    var course = await GetCourseFromPayment(payment);
+
+        //    if (course == null)
+        //    {
+        //        throw new NotFoundException("Course not found");
+        //    }
+
+        //    // Create enrollment
+        //    var enrollment = new Enrollment
+        //    {
+        //        StudentId = payment.StudentId,
+        //        CourseId = course.Id,
+        //        Type = EnrollmentType.Purchase,
+        //        Status = EnrollmentStatus.Active,
+        //        EnrolledAt = DateTime.UtcNow
+        //    };
+
+        //    await _uow.EnrollmentRepository.AddAsync(enrollment);
+        //    await _uow.SaveChangesAsync();
+
+        //    // Update payment
+        //    payment.EnrollmentId = enrollment.Id;
+        //    payment.Status = PaymentStatus.Completed;
+        //    payment.PaidAt = DateTime.UtcNow;
+
+        //    _uow.PaymentRepository.Update(payment);
+        //    await _uow.SaveChangesAsync();
+        //}
+        // ══════════════════════════════════════════════════════════════════
+        //  🔧 MODIFIED — Cash payment now creates earning in a transaction
+        //                Transaction is managed through IUnitOfWork (not DbContext)
+        // ══════════════════════════════════════════════════════════════════
         public async Task<EnrollmentDto> RecordCashPaymentAsync(CashPaymentDto dto)
         {
             // ensure course avilable 
@@ -130,40 +230,60 @@ namespace EduCore.Services
             if (await _uow.EnrollmentRepository.IsEnrolledAsync(dto.StudentId, dto.CourseId))
                 throw new BadRequestException("The student is already enrolled in this course.");
 
-            // make payment + enrollment
-            var enrollment = new Enrollment
+            // 👇 Wrap enrollment + payment + earning in one transaction via IUnitOfWork
+            await _uow.BeginTransactionAsync();
+
+            try
             {
-                StudentId = dto.StudentId,
-                CourseId = dto.CourseId,
-                Type = EnrollmentType.Purchase,
-                Status = EnrollmentStatus.Active,
-                EnrolledAt = DateTime.UtcNow
-            };
+                // make payment + enrollment
+                var enrollment = new Enrollment
+                {
+                    StudentId = dto.StudentId,
+                    CourseId = dto.CourseId,
+                    Type = EnrollmentType.Purchase,
+                    Status = EnrollmentStatus.Active,
+                    EnrolledAt = DateTime.UtcNow
+                };
 
-            await _uow.EnrollmentRepository.AddAsync(enrollment);
-            await _uow.SaveChangesAsync();
+                await _uow.EnrollmentRepository.AddAsync(enrollment);
+                await _uow.SaveChangesAsync();
 
-            // payment recored
-            var payment = new Payment
+                // payment recored
+                var payment = new Payment
+                {
+                    EnrollmentId = enrollment.Id,
+                    StudentId = dto.StudentId,
+                    Amount = dto.Amount,
+                    Currency = dto.Currency,
+                    Method = PaymentMethod.CreditCard,
+                    Status = PaymentStatus.Completed,
+                    PaidAt = DateTime.UtcNow
+                };
+
+                await _uow.PaymentRepository.AddAsync(payment);
+                await _uow.SaveChangesAsync();
+
+                // 👇 Create teacher earning (80% / 20% split)
+                await _teacherEarningService.CreateEarningForPaymentAsync(payment, enrollment);
+                await _uow.SaveChangesAsync();
+
+                await _uow.CommitTransactionAsync();
+
+                return _mapper.Map<EnrollmentDto>(enrollment);
+            }
+            catch
             {
-                EnrollmentId = enrollment.Id,
-                StudentId = dto.StudentId,
-                Amount = dto.Amount,
-                Currency = dto.Currency,
-                Method = PaymentMethod.CreditCard,
-                Status = PaymentStatus.Completed, 
-                PaidAt = DateTime.UtcNow
-            };
-
-            await _uow.PaymentRepository.AddAsync(payment);
-            await _uow.SaveChangesAsync();
-
-            return _mapper.Map<EnrollmentDto>(enrollment);
+                await _uow.RollbackTransactionAsync();
+                throw; // re-throw so existing exception middleware handles it
+            }
         }
 
+        // ══════════════════════════════════════════════════════════════════
+        //  🔧 MODIFIED — Paymob webhook now creates earning in a transaction
+        //                Transaction is managed through IUnitOfWork (not DbContext)
+        // ══════════════════════════════════════════════════════════════════
         public async Task HandlePaymobWebhookAsync(PaymobWebhookDto webhook)
         {
-
             var paymentIdStr = webhook.obj?.order?.merchant_order_id;
             if (!int.TryParse(paymentIdStr, out int paymentId))
             {
@@ -187,26 +307,43 @@ namespace EduCore.Services
                 throw new NotFoundException("Course not found");
             }
 
-            // Create enrollment
-            var enrollment = new Enrollment
+            // 👇 Wrap enrollment + payment update + earning in one transaction
+            await _uow.BeginTransactionAsync();
+
+            try
             {
-                StudentId = payment.StudentId,
-                CourseId = course.Id,
-                Type = EnrollmentType.Purchase,
-                Status = EnrollmentStatus.Active,
-                EnrolledAt = DateTime.UtcNow
-            };
+                // Create enrollment
+                var enrollment = new Enrollment
+                {
+                    StudentId = payment.StudentId,
+                    CourseId = course.Id,
+                    Type = EnrollmentType.Purchase,
+                    Status = EnrollmentStatus.Active,
+                    EnrolledAt = DateTime.UtcNow
+                };
 
-            await _uow.EnrollmentRepository.AddAsync(enrollment);
-            await _uow.SaveChangesAsync();
+                await _uow.EnrollmentRepository.AddAsync(enrollment);
+                await _uow.SaveChangesAsync();
 
-            // Update payment
-            payment.EnrollmentId = enrollment.Id;
-            payment.Status = PaymentStatus.Completed;
-            payment.PaidAt = DateTime.UtcNow;
+                // Update payment
+                payment.EnrollmentId = enrollment.Id;
+                payment.Status = PaymentStatus.Completed;
+                payment.PaidAt = DateTime.UtcNow;
 
-            _uow.PaymentRepository.Update(payment);
-            await _uow.SaveChangesAsync();
+                _uow.PaymentRepository.Update(payment);
+                await _uow.SaveChangesAsync();
+
+                // 👇 Create teacher earning (80% / 20% split)
+                await _teacherEarningService.CreateEarningForPaymentAsync(payment, enrollment);
+                await _uow.SaveChangesAsync();
+
+                await _uow.CommitTransactionAsync();
+            }
+            catch
+            {
+                await _uow.RollbackTransactionAsync();
+                throw;
+            }
         }
         private async Task<Course> GetCourseFromPayment(Payment payment)
         {

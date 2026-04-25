@@ -31,5 +31,8 @@
     <ProjectReference Include="..\EduCore.Persistencs\EduCore.Persistencs.csproj" />
     <ProjectReference Include="..\EduCore.Presentation\EduCore.Presentation.csproj" />
   </ItemGroup>
-
+	<ItemGroup>
+		<PackageReference Include="Hangfire.AspNetCore" Version="1.8.*" />
+		<PackageReference Include="Hangfire.SqlServer" Version="1.8.*" />
+	</ItemGroup>
 </Project>
