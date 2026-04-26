@@ -1,6 +1,7 @@
 ﻿using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities.EnrollmentModel;
 using EduCore.Persistencs.Data.DbContexts;
+using EduCore.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,14 @@ namespace EduCore.Persistencs.Repositories
                 .Where(e => e.StudentId == studentId
                          && e.Status == EduCore.Shared.Enums.EnrollmentStatus.Active)
                 .OrderByDescending(e => e.EnrolledAt)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<string>> GetActiveStudentIdsByCourseAsync(int courseId)
+        {
+            return await _EduCoreDbContext.Set<Enrollment>() .AsNoTracking()
+                .Where(e=>e.CourseId == courseId && e.Status== EnrollmentStatus.Active)
+                .Select(e => e.StudentId)
                 .ToListAsync();
         }
     }

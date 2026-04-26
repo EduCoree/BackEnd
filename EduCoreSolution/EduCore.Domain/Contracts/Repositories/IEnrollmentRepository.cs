@@ -11,5 +11,6 @@ namespace EduCore.Domain.Contracts.Repositories
     {
         Task<bool> IsEnrolledAsync(string studentId, int courseId);
         Task<IEnumerable<Enrollment>> GetStudentEnrollmentsAsync(string studentId);
+        Task<IEnumerable<string>> GetActiveStudentIdsByCourseAsync(int courseId);
     }
 }

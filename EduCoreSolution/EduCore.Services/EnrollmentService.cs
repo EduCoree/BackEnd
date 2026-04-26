@@ -4,6 +4,7 @@ using EduCore.Domain.Entities.CourseModel;
 using EduCore.Domain.Entities.EnrollmentModel;
 using EduCore.Services_Abstraction;
 using EduCore.Shared.DTOs.EnrollmentDTOs;
+using EduCore.Shared.DTOs.Notifications;
 using EduCore.Shared.Enums;
 using EduCore.Shared.Exceptions;
 using System;
@@ -19,12 +20,16 @@ namespace EduCore.Services
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
         private readonly PaymobService _paymobService;
+        private readonly INotificationService _notificationService;
+        
 
-        public EnrollmentService(IUnitOfWork uow, IMapper mapper, PaymobService paymobService)
+        public EnrollmentService(IUnitOfWork uow, IMapper mapper, PaymobService paymobService,INotificationService notificationService)
         {
             _uow = uow;
             _mapper = mapper;
             _paymobService = paymobService;
+           _notificationService = notificationService;
+           
         }
 
         public async Task<EnrollmentDto> EnrollFreeAsync(string studentId, int courseId)
@@ -57,7 +62,7 @@ namespace EduCore.Services
 
             await _uow.EnrollmentRepository.AddAsync(enrollment);
             await _uow.SaveChangesAsync();
-
+            await _notificationService.SendNotificationAsync(studentId, "Enrolled Successfully", $"You have been enrolled in {course.Title}",NotificationType.Enrollment, courseId);
             var enrollmentWithCourse = await _uow.EnrollmentRepository
          .GetByIdAsync(enrollment.Id);
 
@@ -142,6 +147,7 @@ namespace EduCore.Services
 
             await _uow.EnrollmentRepository.AddAsync(enrollment);
             await _uow.SaveChangesAsync();
+            await _notificationService.SendNotificationAsync(dto.StudentId, "Payment Confirmed", $"Your Cash Payment Has Been Recorded", NotificationType.Enrollment, dto.CourseId);
 
             // payment recored
             var payment = new Payment
@@ -207,6 +213,8 @@ namespace EduCore.Services
 
             _uow.PaymentRepository.Update(payment);
             await _uow.SaveChangesAsync();
+            await _notificationService.SendNotificationAsync(payment.StudentId, "Payment Successful", $"You have been enrolled in {course.Title}", NotificationType.Enrollment, course.Id);
+            await _notificationService.SendNotificationAsync(course.TeacherId,"New Enrollment", $"A student enrolled in {course.Title}",NotificationType.Enrollment, course.Id);
         }
         private async Task<Course> GetCourseFromPayment(Payment payment)
         {
