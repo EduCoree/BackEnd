@@ -10,7 +10,8 @@ namespace EduCore.Shared.Enums
     {
         Enrollment,
         QuizResult,
-        LiveReminder,
+        LiveSession,
+        SessionCancelled,
         ForumReply,
         Certificate,
     }

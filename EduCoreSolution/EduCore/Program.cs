@@ -111,6 +111,28 @@ namespace EduCore
                     ValidAudience = builder.Configuration["JWTOptions:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTOptions:SecretKey"]))
                 };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>   // fires on EVERY incoming request, before auth runs
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        // read the token from query string instead of header
+
+                        var path = context.HttpContext.Request.Path;
+                        // get the request path e.g. "/hubs/notifications"
+
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            path.StartsWithSegments("/hubs"))
+                        // only do this for hub requests, not for your normal API endpoints
+                        {
+                            context.Token = accessToken;
+                            // manually hand the token to the JWT middleware
+                            // now it will validate it as if it came from the header
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
             builder.Services.AddSwaggerGen(c =>
             {

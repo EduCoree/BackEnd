@@ -17,10 +17,12 @@ namespace EduCore.Services
     public class LiveSessionService : ILiveSessionService
     {
         private readonly IUnitOfWork _uow;
+        private readonly INotificationService _notificationService;
 
-        public LiveSessionService(IUnitOfWork uow)
+        public LiveSessionService(IUnitOfWork uow,INotificationService notificationService)
         {
             _uow = uow;
+            _notificationService = notificationService;
         }
 
         // ── Teacher ──────────────────────────────────────
@@ -60,9 +62,17 @@ namespace EduCore.Services
                 Description = request.Description,
                 CreatedAt = DateTime.UtcNow
             };
-
             await _uow.GetRepository<LiveSession, int>().AddAsync(session);
             await _uow.SaveChangesAsync();
+            if (session.ScheduledAt >= DateTime.Now)
+            {
+
+                var ActiveStudents = await _uow.EnrollmentRepository.GetActiveStudentIdsByCourseAsync(courseId);
+                foreach (var studentid in ActiveStudents)
+                {
+                    await _notificationService.SendNotificationAsync(studentid, "New Live Session", $"A new session '{session.Title}' has been scheduled", NotificationType.LiveSession, session.Id);
+                }
+            }
 
             return MapToResponse(session);
         }
@@ -114,23 +124,31 @@ namespace EduCore.Services
                 .Select(e => e.StudentId)
                 .ToList();
 
-            var notifyRepo = _uow.GetRepository<Notification, int>();
-            var courseName = await _uow.CourseRepository.GetByIdAsync(courseId);
+            //var notifyRepo = _uow.GetRepository<Notification, int>();
+            //var courseName = await _uow.CourseRepository.GetByIdAsync(courseId);
 
-            foreach (var studentId in activeStudents)
-            {
-                await notifyRepo.AddAsync(new Notification
-                {
-                    UserId = studentId,
-                    Type = "session_cancelled",
-                    Title = "Live Session Cancelled",
-                    Message = $"The live session '{session.Title ?? "Scheduled Session"}' for course '{courseName?.Title}' has been cancelled.",
-                    CreatedAt = DateTime.UtcNow
-                });
-            }
-
+            //foreach (var studentId in activeStudents)
+            //{
+            //    await notifyRepo.AddAsync(new Notification
+            //    {
+            //        UserId = studentId,
+            //        Type = "session_cancelled",
+            //        Title = "Live Session Cancelled",
+            //        Message = $"The live session '{session.Title ?? "Scheduled Session"}' for course '{courseName?.Title}' has been cancelled.",
+            //        CreatedAt = DateTime.UtcNow
+            //    });
+            //}
+            
             _uow.GetRepository<LiveSession, int>().Remove(session);
             await _uow.SaveChangesAsync();
+            if (session.ScheduledAt >= DateTime.Now)
+            {
+                var ActiveStudents = await _uow.EnrollmentRepository.GetActiveStudentIdsByCourseAsync(courseId);
+                foreach (var studentid in ActiveStudents)
+                {
+                    await _notificationService.SendNotificationAsync(studentid, "Live Session Cancelled", $"The session '{session.Title}' has been Cancelled", NotificationType.SessionCancelled, session.Id);
+                }
+            }
         }
 
         public async Task UpdateRecordingAsync(
