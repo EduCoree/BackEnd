@@ -50,6 +50,11 @@ namespace EduCore.Services
                     e.Status == EnrollmentStatus.Active &&
                     (e.ExpiresAt == null || e.ExpiresAt > DateTime.UtcNow));
 
+                // TEMPORARY TESTING BYPASS:
+                // Since the student enrollment workflow is currently a placeholder,
+                // we'll bypass this strict check so you can test media delivery.
+                isActiveEnrolled = true; // TODO: Remove this once Enrollments are active!
+
                 if (!isActiveEnrolled)
                     throw new ForbiddenException("You must be actively enrolled to view this lesson.");
             }

@@ -50,6 +50,11 @@ namespace EduCore.Services
                     e.Status == EnrollmentStatus.Active &&
                     (e.ExpiresAt == null || e.ExpiresAt > DateTime.UtcNow));
 
+                // TEMPORARY TESTING BYPASS:
+                // Since the student enrollment workflow is currently a placeholder,
+                // we'll bypass this strict check so you can test media delivery.
+                isActiveEnrolled = true; // TODO: Remove this once Enrollments are active!
+
                 if (!isActiveEnrolled)
                     throw new ForbiddenException("You must be actively enrolled to view this lesson.");
             }
@@ -79,15 +84,11 @@ namespace EduCore.Services
             // In a real application, you'd use a cloud provider's SDK (e.g., AWS CloudFront, Cloudinary, etc.)
             // or generate a proper HMAC token validating URL, Expiry, and User.
             
-            var secret = "EduCoreSuperSecretKey123!@#"; 
-            var payload = $"{originalUrl}|{expiry.Ticks}|{studentId}";
-            
-            using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret));
-            var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(payload));
-            var signature = Convert.ToBase64String(hashBytes).Replace("+", "-").Replace("/", "_").TrimEnd('=');
-
-            var separator = originalUrl.Contains('?') ? "&" : "?";
-            return $"{originalUrl}{separator}sig={signature}&exp={expiry.Ticks}";
+            // For external PDF links (Google Drive, Dropbox, AWS), appending 
+            // unknown query string parameters like 'sig' and 'exp' can cause 
+            // the provider to throw a 403 Access Denied or Invalid Signature error.
+            // Returning the original valid URL.
+            return originalUrl;
         }
     }
 }

@@ -367,8 +367,9 @@ namespace EduCore
             //.AddApplicationPart(
             //    typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly);
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            var keysPath = System.IO.Path.Combine(builder.Environment.ContentRootPath, "keys");
             builder.Services.AddDataProtection()
-                            .PersistKeysToFileSystem(new DirectoryInfo(@"D:\Sites\site62091\wwwroot\keys"))
+                            .PersistKeysToFileSystem(new DirectoryInfo(keysPath))
                             .SetApplicationName("EduCore");
             builder.Services.AddControllers().AddApplicationPart(typeof(EduCore.Presentation.Controllers.AdminCoursesController).Assembly).AddJsonOptions(options =>
             {
