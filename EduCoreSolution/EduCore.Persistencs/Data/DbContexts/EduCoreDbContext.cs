@@ -6,8 +6,10 @@ using EduCore.Domain.Entities.CourseModel;
 using EduCore.Domain.Entities.EnrollmentModel;
 using EduCore.Domain.Entities.ForumModel;
 using EduCore.Domain.Entities.NotificationsModel;
+using EduCore.Domain.Entities.PayoutModel;
 using EduCore.Domain.Entities.ProgressModel;
 using EduCore.Domain.Entities.QuizModel;
+using EduCore.Domain.Entities.TranslationModel;
 using EduCore.Persistencs.Data.Configurations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -17,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using EduCore.Domain.Entities.TranslationModel;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -68,6 +69,7 @@ namespace EduCore.Persistencs.Data.DbContexts
         // Enrollment
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<CashPaymentRequest> CashPaymentRequests { get; set; }
 
         // Progress
         public DbSet<LessonProgress> LessonProgresses { get; set; }
@@ -90,6 +92,10 @@ namespace EduCore.Persistencs.Data.DbContexts
 
         public DbSet<Translation> Translations { get; set; }
 
+        // Payouts (Teacher earnings & invoices)
+        public DbSet<TeacherEarning> TeacherEarnings { get; set; }
+        public DbSet<TeacherInvoice> TeacherInvoices { get; set; }
+        public DbSet<PayoutSettings> PayoutSettings { get; set; }
         #endregion
     }
 }
