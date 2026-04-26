@@ -304,6 +304,7 @@ namespace EduCore
             builder.Services.AddScoped<ILessonService, LessonService>();
             builder.Services.AddScoped<ILiveSessionService, LiveSessionService>();
             builder.Services.AddScoped<IVideoLessonService, VideoLessonService>();
+            builder.Services.AddScoped<IPdfLessonService, PdfLessonService>();
             builder.Services.AddScoped<IProgressService, ProgressService>();
             builder.Services.AddScoped<ICertificateService, CertificateService>();
 
