@@ -1,4 +1,5 @@
 using EduCore.Domain.Contracts;
+using EduCore.Domain.Entities.AuthModel;
 using EduCore.Domain.Entities.CourseModel;
 using EduCore.Domain.Entities.EnrollmentModel;
 using EduCore.Domain.Entities.ProgressModel;
@@ -6,6 +7,7 @@ using EduCore.Services_Abstraction;
 using EduCore.Shared.DTOs.Progress;
 using EduCore.Shared.Enums;
 using EduCore.Shared.Exceptions;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +19,12 @@ namespace EduCore.Services
     public class ProgressService : IProgressService
     {
         private readonly IUnitOfWork _uow;
+        private readonly UserManager<User> _userManager;
 
-        public ProgressService(IUnitOfWork uow)
+        public ProgressService(IUnitOfWork uow, UserManager<User> userManager)
         {
             _uow = uow;
+            _userManager = userManager;
         }
 
         // ── Student ──────────────────────────────────────
@@ -244,10 +248,17 @@ namespace EduCore.Services
 
                 var percent = total == 0 ? 0 : Math.Round((completed / (double)total) * 100, 2);
 
+                var student = await _userManager.FindByIdAsync(enrollment.StudentId);
+                var displayName = !string.IsNullOrWhiteSpace(student?.Name)
+                    ? student.Name
+                    : !string.IsNullOrWhiteSpace(student?.UserName)
+                        ? student.UserName
+                        : student?.Email ?? enrollment.StudentId;
                 result.Add(new StudentProgressSummaryResponse
                 {
                     StudentId = enrollment.StudentId,
-                    StudentName = enrollment.StudentId,
+                    StudentName = displayName,
+                    Email = student?.Email ?? string.Empty,
                     CompletedLessons = completed,
                     TotalLessons = total,
                     PercentComplete = percent
@@ -284,10 +295,16 @@ namespace EduCore.Services
                 };
             }).ToList();
 
+            var student = await _userManager.FindByIdAsync(studentId);
+            var displayName = !string.IsNullOrWhiteSpace(student?.Name)
+                ? student.Name
+                : !string.IsNullOrWhiteSpace(student?.UserName)
+                    ? student.UserName
+                    : student?.Email ?? studentId;
             return new StudentLessonDetailResponse
             {
                 StudentId = studentId,
-                StudentName = studentId,
+                StudentName = displayName,
                 Lessons = lessons
             };
         }

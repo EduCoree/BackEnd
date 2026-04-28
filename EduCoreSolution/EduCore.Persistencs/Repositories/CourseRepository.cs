@@ -87,27 +87,58 @@ namespace EduCore.Persistencs.Repositories
         public async Task<IEnumerable<StudentEnrolledCourseDto>> GetStudentEnrolledCoursesAsync(
             string studentId)
         {
-            return await _EduCoreDbContext.Set<Enrollment>()
+            // Step 1: fetch enrollments with course/section/lesson data
+            var enrollments = await _EduCoreDbContext.Set<Enrollment>()
                 .AsNoTracking()
                 .Where(e => e.StudentId == studentId && e.Status == EnrollmentStatus.Active)
-                .Select(e => new StudentEnrolledCourseDto
-                {
-                    CourseId = e.CourseId,
-                    Title = e.Course.Title,
-                    CoverImage = e.Course.CoverImage,
-                    TeacherName = e.Course.Teacher.Name,
-                    EnrolledAt = e.EnrolledAt,
-                    TotalLessons = e.Course.Sections
-                        .SelectMany(s => s.Lessons).Count(),
-                    CompletedLessons = _EduCoreDbContext.Set<LessonProgress>()
-                        .Count(lp => lp.StudentId == studentId
-                            && lp.IsCompleted
-                            && e.Course.Sections
-                                .SelectMany(s => s.Lessons)
-                                .Select(l => l.Id)
-                                .Contains(lp.LessonId))
-                })
+                .Include(e => e.Course)
+                    .ThenInclude(c => c.Teacher)
+                .Include(e => e.Course)
+                    .ThenInclude(c => c.Sections)
+                        .ThenInclude(s => s.Lessons)
+                .AsSplitQuery()
                 .ToListAsync();
+
+            if (!enrollments.Any())
+                return Enumerable.Empty<StudentEnrolledCourseDto>();
+
+            // Step 2: collect all lesson IDs the student has completed
+            var allLessonIds = enrollments
+                .SelectMany(e => e.Course.Sections)
+                .SelectMany(s => s.Lessons)
+                .Select(l => l.Id)
+                .Distinct()
+                .ToList();
+
+            var completedLessonIds = await _EduCoreDbContext.Set<LessonProgress>()
+                .AsNoTracking()
+                .Where(lp => lp.StudentId == studentId
+                          && lp.IsCompleted
+                          && allLessonIds.Contains(lp.LessonId))
+                .Select(lp => lp.LessonId)
+                .ToListAsync();
+
+            var completedSet = completedLessonIds.ToHashSet();
+
+            // Step 3: project into DTOs in memory
+            return enrollments.Select(e =>
+            {
+                var lessonIds = e.Course.Sections
+                    .SelectMany(s => s.Lessons)
+                    .Select(l => l.Id)
+                    .ToList();
+
+                return new StudentEnrolledCourseDto
+                {
+                    CourseId    = e.CourseId,
+                    Title       = e.Course.Title,
+                    CoverImage  = e.Course.CoverImage,
+                    TeacherName = e.Course.Teacher?.Name ?? string.Empty,
+                    EnrolledAt  = e.EnrolledAt,
+                    TotalLessons     = lessonIds.Count,
+                    CompletedLessons = lessonIds.Count(id => completedSet.Contains(id))
+                };
+            }).ToList();
         }
 
         public async Task<string?> GetCourseTeacherIdAsync(int courseId)
