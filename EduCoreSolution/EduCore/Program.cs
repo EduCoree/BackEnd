@@ -466,9 +466,9 @@ namespace EduCore
             });
 
             app.UseHttpsRedirection();
-            //app.UseCors("AllowAngular");
+            app.UseCors("AllowAngular");
             app.UseRouting();
-            app.UseCors("AllowFrontend");
+            //app.UseCors("AllowFrontend");
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseStaticFiles();
