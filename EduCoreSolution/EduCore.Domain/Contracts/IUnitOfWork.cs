@@ -16,7 +16,7 @@ namespace EduCore.Domain.Contracts
         IQuizAttemptRepository QuizAttemptRepository { get; }
 
 
-
+        IReviewRepository ReviewRepository { get; }
         IPaymentRepository PaymentRepository { get; }
         ICourseRepository CourseRepository { get; }
 

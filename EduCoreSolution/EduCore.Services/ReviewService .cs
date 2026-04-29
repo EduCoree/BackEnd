@@ -5,6 +5,7 @@ using EduCore.Domain.Entities.ProgressModel;
 using EduCore.Services_Abstraction;
 using EduCore.Shared.DTOs.Reviews;
 using EduCore.Shared.Enums;
+using EduCore.Shared.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,6 @@ namespace EduCore.Services
                                   .OrderByDescending(r => r.CreatedAt);
             return _mapper.Map<IEnumerable<ReviewDto>>(filtered);
         }
-
 
 
         public async Task<(ReviewDto? Review, string? Error)> CreateReviewAsync(int courseId, string studentId, CreateReviewDto dto)
@@ -67,8 +67,6 @@ namespace EduCore.Services
             return (_mapper.Map<ReviewDto>(review), null);
         }
 
-
-
         public async Task<(ReviewDto? Review, string? Error)> UpdateReviewAsync(int courseId, int reviewId, string studentId, UpdateReviewDto dto)
         {
             var repo = _unitOfWork.GetRepository<CourseReview, int>();
@@ -89,12 +87,6 @@ namespace EduCore.Services
             return (_mapper.Map<ReviewDto>(review), null);
         }
 
-
-
-
-
-
-
         public async Task<(bool Success, string? Error)> DeleteReviewAsync(int courseId, int reviewId, string studentId, bool isAdmin)
         {
             var repo = _unitOfWork.GetRepository<CourseReview, int>();
@@ -112,7 +104,6 @@ namespace EduCore.Services
             await _unitOfWork.SaveChangesAsync();
             return (true, null);
         }
-
 
         public async Task<ReviewSummaryDto> GetReviewSummaryAsync(int courseId)
         {
@@ -152,5 +143,35 @@ namespace EduCore.Services
             };
         }
 
+        public async Task<IEnumerable<ReviewDto>> GetTeacherReviewsAsync(
+        string teacherId, int? courseId = null, int? minRating = null)
+        {
+            var reviews = await _unitOfWork.ReviewRepository.GetReviewsByTeacherAsync(
+                teacherId, courseId, minRating);
+            return _mapper.Map<IEnumerable<ReviewDto>>(reviews);
+        }
+
+        public async Task<IEnumerable<ReviewDto>> GetStudentReviewsAsync(string studentId)
+        {
+            var reviews = await _unitOfWork.ReviewRepository.GetReviewsByStudentAsync(studentId);
+            return _mapper.Map<IEnumerable<ReviewDto>>(reviews);
+        }
+
+        public async Task DeleteReviewByTeacherAsync(string teacherId, int reviewId)
+        {
+            var reviewRepo = _unitOfWork.GetRepository<CourseReview, int>();
+            var review = await reviewRepo.GetByIdAsync(reviewId);
+
+            if (review is null)
+                throw new NotFoundException("Review not found");
+
+            var courseTeacherId = await _unitOfWork.CourseRepository.GetCourseTeacherIdAsync(review.CourseId);
+
+            if (courseTeacherId != teacherId)
+                throw new UnauthorizedAccessException("You can only delete reviews on your own courses");
+
+            reviewRepo.Remove(review);
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }
