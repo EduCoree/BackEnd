@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="YoutubeExplode" Version="6.6.0" />
 		<ProjectReference Include="..\EduCore.Domain\EduCore.Domain.csproj" />
 		<ProjectReference Include="..\EduCore.Services Abstraction\EduCore.Services Abstraction.csproj" />
 		<PackageReference Include="AutoMapper" Version="14.0.0" />

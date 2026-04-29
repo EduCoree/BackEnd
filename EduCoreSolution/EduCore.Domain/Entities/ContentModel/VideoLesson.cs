@@ -1,4 +1,4 @@
-﻿using EduCore.Domain.Entities.CourseModel;
+using EduCore.Domain.Entities.CourseModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +13,8 @@ namespace EduCore.Domain.Entities.ContentModel
         public string VideoUrl { get; set; } = null!;
         public string? VideoProvider { get; set; }  // "youtube","vimeo","bunny"
         public string? ThumbnailUrl { get; set; }
+        public string? Transcript { get; set; }     // AI-generated via Whisper
+        public DateTime? TranscribedAt { get; set; }
 
         // Navigation
         public Lesson Lesson { get; set; } = null!;

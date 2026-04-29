@@ -4,6 +4,7 @@ using EduCore.Persistencs.Data.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EduCore.Persistencs.Data.Migrations
 {
     [DbContext(typeof(EduCoreDbContext))]
-    partial class EduCoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260428195828_AddVideoTranscript")]
+    partial class AddVideoTranscript
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -706,6 +709,9 @@ namespace EduCore.Persistencs.Data.Migrations
                         .IsRequired()
                         .HasColumnType("NVARCHAR(MAX)");
 
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -715,9 +721,6 @@ namespace EduCore.Persistencs.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
-
-                    b.Property<int>("LessonId")
-                        .HasColumnType("int");
 
                     b.Property<string>("StudentId")
                         .IsRequired()
@@ -735,7 +738,7 @@ namespace EduCore.Persistencs.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LessonId");
+                    b.HasIndex("CourseId");
 
                     b.HasIndex("StudentId");
 
@@ -1794,9 +1797,9 @@ namespace EduCore.Persistencs.Data.Migrations
 
             modelBuilder.Entity("EduCore.Domain.Entities.ForumModel.ForumPost", b =>
                 {
-                    b.HasOne("EduCore.Domain.Entities.CourseModel.Lesson", "Lesson")
+                    b.HasOne("EduCore.Domain.Entities.CourseModel.Course", "Course")
                         .WithMany("ForumPosts")
-                        .HasForeignKey("LessonId")
+                        .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1806,7 +1809,7 @@ namespace EduCore.Persistencs.Data.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Lesson");
+                    b.Navigation("Course");
 
                     b.Navigation("Student");
                 });
@@ -2196,6 +2199,8 @@ namespace EduCore.Persistencs.Data.Migrations
 
                     b.Navigation("Enrollments");
 
+                    b.Navigation("ForumPosts");
+
                     b.Navigation("LiveSessions");
 
                     b.Navigation("Quizzes");
@@ -2207,8 +2212,6 @@ namespace EduCore.Persistencs.Data.Migrations
 
             modelBuilder.Entity("EduCore.Domain.Entities.CourseModel.Lesson", b =>
                 {
-                    b.Navigation("ForumPosts");
-
                     b.Navigation("LiveSession");
 
                     b.Navigation("PdfLesson");
