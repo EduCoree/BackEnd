@@ -342,6 +342,10 @@ namespace EduCore
 
             // End
 
+            // ── Lesson AI ────────────────────────────────
+            builder.Services.Configure<GroqSettings>(builder.Configuration.GetSection("Groq"));
+            builder.Services.AddScoped<ILessonAiService, LessonAiService>();
+
             // ── Forum ─────────────────────────────────────
             builder.Services.AddScoped<IForumService, ForumService>();
             builder.Services.AddScoped<IForumRepository, ForumRepository>();
