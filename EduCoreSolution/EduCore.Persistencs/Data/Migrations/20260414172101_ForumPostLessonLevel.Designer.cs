@@ -4,6 +4,7 @@ using EduCore.Persistencs.Data.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EduCore.Persistencs.Data.Migrations
 {
     [DbContext(typeof(EduCoreDbContext))]
-    partial class EduCoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260414172101_ForumPostLessonLevel")]
+    partial class ForumPostLessonLevel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -552,42 +555,6 @@ namespace EduCore.Persistencs.Data.Migrations
                     b.ToTable("sections", (string)null);
                 });
 
-            modelBuilder.Entity("EduCore.Domain.Entities.EnrollmentModel.CashPaymentRequest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("RequestedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasDefaultValue("Pending");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("cash_payment_requests", (string)null);
-                });
-
             modelBuilder.Entity("EduCore.Domain.Entities.EnrollmentModel.Enrollment", b =>
                 {
                     b.Property<int>("Id")
@@ -856,9 +823,6 @@ namespace EduCore.Persistencs.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.Property<int>("EntityId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsRead")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -867,9 +831,6 @@ namespace EduCore.Persistencs.Data.Migrations
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("NVARCHAR(MAX)");
-
-                    b.Property<string>("Metadata")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -890,230 +851,6 @@ namespace EduCore.Persistencs.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("notifications", (string)null);
-                });
-
-            modelBuilder.Entity("EduCore.Domain.Entities.PayoutModel.PayoutSettings", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)")
-                        .HasDefaultValue("EGP");
-
-                    b.Property<decimal>("TeacherCommissionRate")
-                        .HasColumnType("DECIMAL(5,4)");
-
-                    b.Property<decimal>("Tier1Bonus")
-                        .HasColumnType("DECIMAL(10,2)");
-
-                    b.Property<int>("Tier1Threshold")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Tier2Bonus")
-                        .HasColumnType("DECIMAL(10,2)");
-
-                    b.Property<int>("Tier2Threshold")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Tier3Bonus")
-                        .HasColumnType("DECIMAL(10,2)");
-
-                    b.Property<int>("Tier3Threshold")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("payout_settings", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Currency = "EGP",
-                            TeacherCommissionRate = 0.80m,
-                            Tier1Bonus = 500m,
-                            Tier1Threshold = 10,
-                            Tier2Bonus = 1500m,
-                            Tier2Threshold = 30,
-                            Tier3Bonus = 3000m,
-                            Tier3Threshold = 50,
-                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        });
-                });
-
-            modelBuilder.Entity("EduCore.Domain.Entities.PayoutModel.TeacherEarning", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("CommissionRate")
-                        .HasColumnType("DECIMAL(5,4)");
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)")
-                        .HasDefaultValue("EGP");
-
-                    b.Property<DateTime>("EarnedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("EnrollmentId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("GrossAmount")
-                        .HasColumnType("DECIMAL(10,2)");
-
-                    b.Property<int?>("InvoiceId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("NetAmount")
-                        .HasColumnType("DECIMAL(10,2)");
-
-                    b.Property<int>("PaymentId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("PlatformFee")
-                        .HasColumnType("DECIMAL(10,2)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("TeacherId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("EnrollmentId")
-                        .IsUnique();
-
-                    b.HasIndex("InvoiceId");
-
-                    b.HasIndex("PaymentId")
-                        .IsUnique();
-
-                    b.HasIndex("TeacherId", "EarnedAt");
-
-                    b.HasIndex("TeacherId", "Status");
-
-                    b.ToTable("teacher_earnings", (string)null);
-                });
-
-            modelBuilder.Entity("EduCore.Domain.Entities.PayoutModel.TeacherInvoice", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)")
-                        .HasDefaultValue("EGP");
-
-                    b.Property<decimal>("EarningsTotal")
-                        .HasColumnType("DECIMAL(12,2)");
-
-                    b.Property<string>("InvoiceNumber")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<DateTime?>("IssuedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime?>("PaidAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PaidEnrollmentsCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PayoutMethod")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("PayoutReference")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("PeriodEnd")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("PeriodStart")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasDefaultValue("Draft");
-
-                    b.Property<string>("TeacherId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<decimal>("TierBonus")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DECIMAL(10,2)")
-                        .HasDefaultValue(0m);
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("DECIMAL(12,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InvoiceNumber")
-                        .IsUnique();
-
-                    b.HasIndex("Status");
-
-                    b.HasIndex("TeacherId", "PeriodStart", "PeriodEnd")
-                        .IsUnique();
-
-                    b.ToTable("teacher_invoices", (string)null);
                 });
 
             modelBuilder.Entity("EduCore.Domain.Entities.ProgressModel.AttendanceRecord", b =>
@@ -1358,12 +1095,6 @@ namespace EduCore.Persistencs.Data.Migrations
 
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsPublished")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsRandomized")
                         .ValueGeneratedOnAdd()
@@ -1730,25 +1461,6 @@ namespace EduCore.Persistencs.Data.Migrations
                     b.Navigation("Course");
                 });
 
-            modelBuilder.Entity("EduCore.Domain.Entities.EnrollmentModel.CashPaymentRequest", b =>
-                {
-                    b.HasOne("EduCore.Domain.Entities.CourseModel.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EduCore.Domain.Entities.AuthModel.User", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("EduCore.Domain.Entities.EnrollmentModel.Enrollment", b =>
                 {
                     b.HasOne("EduCore.Domain.Entities.CourseModel.Course", "Course")
@@ -1871,59 +1583,6 @@ namespace EduCore.Persistencs.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("EduCore.Domain.Entities.PayoutModel.TeacherEarning", b =>
-                {
-                    b.HasOne("EduCore.Domain.Entities.CourseModel.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("EduCore.Domain.Entities.EnrollmentModel.Enrollment", "Enrollment")
-                        .WithOne()
-                        .HasForeignKey("EduCore.Domain.Entities.PayoutModel.TeacherEarning", "EnrollmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("EduCore.Domain.Entities.PayoutModel.TeacherInvoice", "Invoice")
-                        .WithMany("Earnings")
-                        .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("EduCore.Domain.Entities.EnrollmentModel.Payment", "Payment")
-                        .WithOne()
-                        .HasForeignKey("EduCore.Domain.Entities.PayoutModel.TeacherEarning", "PaymentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("EduCore.Domain.Entities.AuthModel.User", "Teacher")
-                        .WithMany("Earnings")
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Enrollment");
-
-                    b.Navigation("Invoice");
-
-                    b.Navigation("Payment");
-
-                    b.Navigation("Teacher");
-                });
-
-            modelBuilder.Entity("EduCore.Domain.Entities.PayoutModel.TeacherInvoice", b =>
-                {
-                    b.HasOne("EduCore.Domain.Entities.AuthModel.User", "Teacher")
-                        .WithMany("Invoices")
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("EduCore.Domain.Entities.ProgressModel.AttendanceRecord", b =>
@@ -2142,15 +1801,11 @@ namespace EduCore.Persistencs.Data.Migrations
 
                     b.Navigation("CourseReviews");
 
-                    b.Navigation("Earnings");
-
                     b.Navigation("Enrollments");
 
                     b.Navigation("ForumPosts");
 
                     b.Navigation("ForumReplies");
-
-                    b.Navigation("Invoices");
 
                     b.Navigation("LessonProgresses");
 
@@ -2229,11 +1884,6 @@ namespace EduCore.Persistencs.Data.Migrations
                     b.Navigation("Reports");
 
                     b.Navigation("Upvotes");
-                });
-
-            modelBuilder.Entity("EduCore.Domain.Entities.PayoutModel.TeacherInvoice", b =>
-                {
-                    b.Navigation("Earnings");
                 });
 
             modelBuilder.Entity("EduCore.Domain.Entities.QuizModel.AnswerOption", b =>

@@ -6,7 +6,7 @@ namespace EduCore.Shared.DTOs.Forum
     public class ForumPostDetailDto
     {
         public int Id { get; set; }
-        public int CourseId { get; set; }
+        public int LessonId { get; set; }
         public string StudentId { get; set; } = null!;
         public string StudentName { get; set; } = null!;
         public string Title { get; set; } = null!;

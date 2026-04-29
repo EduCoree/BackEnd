@@ -1,4 +1,5 @@
 using EduCore.Domain.Entities.ContentModel;
+using EduCore.Domain.Entities.ForumModel;
 using EduCore.Domain.Entities.ProgressModel;
 using EduCore.Shared.Enums;
 using System;
@@ -31,5 +32,8 @@ namespace EduCore.Domain.Entities.CourseModel
 
         // Navigation — Progress
         public ICollection<LessonProgress> Progresses { get; set; } = new List<LessonProgress>();
+
+        // Navigation — Forum
+        public ICollection<ForumPost> ForumPosts { get; set; } = new List<ForumPost>();
     }
 }

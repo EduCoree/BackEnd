@@ -1,6 +1,7 @@
 using AutoMapper;
 using EduCore.Domain.Contracts;
 using EduCore.Domain.Entities.AuthModel;
+using EduCore.Domain.Entities.CourseModel;
 using EduCore.Domain.Entities.EnrollmentModel;
 using EduCore.Domain.Entities.ForumModel;
 using EduCore.Domain.Entities.NotificationsModel;
@@ -42,18 +43,27 @@ namespace EduCore.Services
             return _mapper.Map<ForumPostDetailDto>(post);
         }
 
-        public async Task<IEnumerable<ForumPostDto>> GetPostsAsync(int courseId, string? sort)
+        public async Task<IEnumerable<ForumPostDto>> GetPostsAsync(int lessonId, string? sort)
         {
-            var posts = await _unitOfWork.ForumRepository.GetPostsByCourseAsync(courseId, sort);
+            var posts = await _unitOfWork.ForumRepository.GetPostsByLessonAsync(lessonId, sort);
             return _mapper.Map<IEnumerable<ForumPostDto>>(posts);
         }
 
-        public async Task<ForumPostDto> CreatePostAsync(int courseId, string studentId, CreateForumPostDto dto)
+        public async Task<ForumPostDto> CreatePostAsync(int lessonId, string studentId, CreateForumPostDto dto)
         {
-            // Check active enrollment
+            // Get lesson to find its parent course for enrollment check
+            var lesson = await _unitOfWork.GetRepository<Lesson, int>().GetByIdAsync(lessonId);
+            if (lesson == null)
+                throw new NotFoundException("Lesson not found");
+
+            var section = await _unitOfWork.GetRepository<Section, int>().GetByIdAsync(lesson.SectionId);
+            if (section == null)
+                throw new NotFoundException("Section not found");
+
+            // Check active enrollment in the parent course
             var isEnrolled = await _unitOfWork.GetRepository<Enrollment, int>()
                 .AnyAsync(e => e.StudentId == studentId
-                            && e.CourseId == courseId
+                            && e.CourseId == section.CourseId
                             && e.Status == EnrollmentStatus.Active);
 
             if (!isEnrolled)
@@ -61,7 +71,7 @@ namespace EduCore.Services
 
             var post = new ForumPost
             {
-                CourseId = courseId,
+                LessonId = lessonId,
                 StudentId = studentId,
                 Title = dto.Title,
                 Body = dto.Body,

@@ -1,7 +1,6 @@
 using EduCore.Domain.Entities.AuthModel;
 using EduCore.Domain.Entities.ContentModel;
 using EduCore.Domain.Entities.EnrollmentModel;
-using EduCore.Domain.Entities.ForumModel;
 using EduCore.Domain.Entities.ProgressModel;
 using EduCore.Domain.Entities.QuizModel;
 using System;
@@ -36,7 +35,6 @@ namespace EduCore.Domain.Entities.CourseModel
         public ICollection<LiveSession> LiveSessions { get; set; } = new List<LiveSession>();
         public ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
         public ICollection<CourseReview> Reviews { get; set; } = new List<CourseReview>();
-        public ICollection<ForumPost> ForumPosts { get; set; } = new List<ForumPost>();
         public ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
     }
 }
