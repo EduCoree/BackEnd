@@ -13,7 +13,14 @@ namespace EduCore.Services.MappingProfiles
     {
         public ReviewMappingProfile()
         {
-            CreateMap<CourseReview, ReviewDto>();
+            CreateMap<CourseReview, ReviewDto>()
+             .ForMember(dest => dest.StudentName,
+                 opt => opt.MapFrom(src => src.Student.Name))  
+             .ForMember(dest => dest.CourseName,
+                 opt => opt.MapFrom(src => src.Course.Title)); 
+
+            CreateMap<CreateReviewDto, CourseReview>();
+            CreateMap<UpdateReviewDto, CourseReview>();
         }
     }
 }

@@ -9,8 +9,10 @@ namespace EduCore.Shared.DTOs.Reviews
     public class ReviewDto
     {
         public int Id { get; set; }
-        public string StudentId { get; set; } = null!;
+        public string StudentId { get; set; }
+        public string StudentName { get; set; } 
         public int CourseId { get; set; }
+        public string CourseName { get; set; }   
         public byte Rating { get; set; }
         public string? Comment { get; set; }
         public DateTime CreatedAt { get; set; }

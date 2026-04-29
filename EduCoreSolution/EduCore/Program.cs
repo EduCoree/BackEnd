@@ -1,4 +1,5 @@
 
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using EduCore.Domain.Contracts;
 using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities.AuthModel;
@@ -363,13 +364,15 @@ namespace EduCore
             builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<ICashPaymentRequestService, CashPaymentRequestService>();
+            builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+            builder.Services.AddScoped<IReviewService, ReviewService>();
             //builder.Services.AddCors(options =>
             //{
             //    options.AddPolicy("AllowFrontend",
             //        policy =>
             //        {
             //            policy
-                            //.WithOrigins("https://front-end-6u71.vercel.app")
+            //.WithOrigins("https://front-end-6u71.vercel.app")
             //                .AllowAnyHeader()
             //                .AllowAnyMethod();
             //        });

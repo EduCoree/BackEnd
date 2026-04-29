@@ -41,6 +41,7 @@ namespace EduCore.Persistencs.Repositories
             TeacherEarningRepository = new TeacherEarningRepository(_eduCoreDbContext);
             TeacherInvoiceRepository = new TeacherInvoiceRepository(_eduCoreDbContext);
             PayoutSettingsRepository = new PayoutSettingsRepository(_eduCoreDbContext);
+            ReviewRepository = new ReviewRepository(_eduCoreDbContext);
         }
 
         public IQuizRepository QuizRepository { get; }
@@ -61,7 +62,7 @@ namespace EduCore.Persistencs.Repositories
         public ITeacherEarningRepository TeacherEarningRepository { get; }
         public ITeacherInvoiceRepository TeacherInvoiceRepository { get; }
         public IPayoutSettingsRepository PayoutSettingsRepository { get; }
-
+        public IReviewRepository ReviewRepository { get; }
         // 👇 NEW — Transaction management
         // The DbContext stays encapsulated inside this class. Services only see
         // the IUnitOfWork methods and have no knowledge of EF Core.
