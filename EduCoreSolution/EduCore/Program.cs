@@ -74,8 +74,7 @@ namespace EduCore
                 .AddDefaultTokenProviders();
 
             //Hala from 56 to 66
-            builder.Services.AddKeyedScoped<IDataInitializer, IdentityDataInitializer>("Identity");
-            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+            builder.Services.AddScoped<IDataInitializer, EduCore.Persistencs.Data.DataSeed.DatabaseInitializer>(); builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -402,19 +401,12 @@ namespace EduCore
             //var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             //await  QuizDataSeed.SeedAsync(context, userManager);
             //ahmed samir 137-147
-            using (var seederScope = app.Services.CreateScope())
-            {
-                var seederUserManager = seederScope.ServiceProvider.GetRequiredService<UserManager<User>>();
-                var seederRoleManager = seederScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var seederContext = seederScope.ServiceProvider.GetRequiredService<EduCoreDbContext>();
 
-                await DataSeeder.SeedAsync(seederUserManager, seederRoleManager, seederContext);
-            }
-            using (var initScope = app.Services.CreateScope())
+            // Database initialization (migrations + seeding) — runs once on startup
+            using (var seedScope = app.Services.CreateScope())
             {
-                var identityInit = initScope.ServiceProvider
-                    .GetRequiredKeyedService<IDataInitializer>("Identity");
-                await identityInit.InitializeAsync();
+                var initializer = seedScope.ServiceProvider.GetRequiredService<IDataInitializer>();
+                await initializer.InitializeAsync();
             }
 
             //using var scope = app.Services.CreateScope();
