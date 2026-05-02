@@ -292,9 +292,11 @@ namespace EduCore.Services
         public async Task HandlePaymobWebhookAsync(PaymobWebhookDto webhook)
         {
             var paymentIdStr = webhook.obj?.order?.merchant_order_id;
+            if (paymentIdStr?.Contains('_') == true)
+                paymentIdStr = paymentIdStr.Split('_')[0];
             if (!int.TryParse(paymentIdStr, out int paymentId))
             {
-                throw new BadRequestException("Invalid payment ID");
+                throw new BadRequestException($"Invalid payment ID: '{paymentIdStr}'");
             }
             var payment = await _uow.PaymentRepository.GetByIdAsync(paymentId);
 
