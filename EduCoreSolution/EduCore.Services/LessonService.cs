@@ -103,11 +103,10 @@ namespace EduCore.Services
             await EnsureCourseOwnership(courseId, teacherId);
             var lesson = await GetLessonInCourse(courseId, lessonId);
 
-            // 1:1 rule — check for duplicate
+            // 1:1 rule — Upsert if already exists
             var videoRepo = _uow.GetRepository<VideoLesson, int>();
-            var exists = await videoRepo.AnyAsync(v => v.LessonId == lessonId);
-            if (exists)
-                throw new ConflictException("This lesson already has a video attached.");
+            var allVideos = await videoRepo.GetAllAsync();
+            var existingVideo = allVideos.FirstOrDefault(v => v.LessonId == lessonId);
 
             // Validate URL per provider
             if (!IsValidVideoUrl(request.VideoUrl, request.VideoProvider))
@@ -118,29 +117,36 @@ namespace EduCore.Services
             var thumbnail = request.ThumbnailUrl
                 ?? GenerateThumbnail(request.VideoUrl, request.VideoProvider);
 
-            var video = new VideoLesson
+            if (existingVideo != null)
             {
-                LessonId = lessonId,
-                VideoUrl = request.VideoUrl,
-                VideoProvider = request.VideoProvider,
-                ThumbnailUrl = thumbnail
-            };
-
-            await videoRepo.AddAsync(video);
-
-            // Update lesson type flags
-            lesson.Type |= LessonType.Video;
-            _uow.GetRepository<Lesson, int>().Update(lesson);
+                existingVideo.VideoUrl = request.VideoUrl;
+                existingVideo.VideoProvider = request.VideoProvider;
+                existingVideo.ThumbnailUrl = thumbnail;
+                videoRepo.Update(existingVideo);
+            }
+            else
+            {
+                existingVideo = new VideoLesson
+                {
+                    LessonId = lessonId,
+                    VideoUrl = request.VideoUrl,
+                    VideoProvider = request.VideoProvider,
+                    ThumbnailUrl = thumbnail
+                };
+                await videoRepo.AddAsync(existingVideo);
+                lesson.Type |= LessonType.Video;
+                _uow.GetRepository<Lesson, int>().Update(lesson);
+            }
 
             await _uow.SaveChangesAsync();
 
             return new VideoLessonResponse
             {
-                Id = video.Id,
-                LessonId = video.LessonId,
-                VideoUrl = video.VideoUrl,
-                VideoProvider = video.VideoProvider ?? string.Empty,
-                ThumbnailUrl = video.ThumbnailUrl
+                Id = existingVideo.Id,
+                LessonId = existingVideo.LessonId,
+                VideoUrl = existingVideo.VideoUrl,
+                VideoProvider = existingVideo.VideoProvider ?? string.Empty,
+                ThumbnailUrl = existingVideo.ThumbnailUrl
             };
         }
 
@@ -174,33 +180,38 @@ namespace EduCore.Services
             await EnsureCourseOwnership(courseId, teacherId);
             var lesson = await GetLessonInCourse(courseId, lessonId);
 
-            // 1:1 rule
+            // 1:1 rule - Upsert
             var pdfRepo = _uow.GetRepository<PdfLesson, int>();
-            var exists = await pdfRepo.AnyAsync(p => p.LessonId == lessonId);
-            if (exists)
-                throw new ConflictException("This lesson already has a PDF attached.");
+            var allPdfs = await pdfRepo.GetAllAsync();
+            var existingPdf = allPdfs.FirstOrDefault(p => p.LessonId == lessonId);
 
-            var pdf = new PdfLesson
+            if (existingPdf != null)
             {
-                LessonId = lessonId,
-                FileUrl = request.FileUrl,
-                FileSizeKb = request.FileSizeKb
-            };
-
-            await pdfRepo.AddAsync(pdf);
-
-            // Update lesson type flags
-            lesson.Type |= LessonType.Pdf;
-            _uow.GetRepository<Lesson, int>().Update(lesson);
+                existingPdf.FileUrl = request.FileUrl;
+                existingPdf.FileSizeKb = request.FileSizeKb;
+                pdfRepo.Update(existingPdf);
+            }
+            else
+            {
+                existingPdf = new PdfLesson
+                {
+                    LessonId = lessonId,
+                    FileUrl = request.FileUrl,
+                    FileSizeKb = request.FileSizeKb
+                };
+                await pdfRepo.AddAsync(existingPdf);
+                lesson.Type |= LessonType.Pdf;
+                _uow.GetRepository<Lesson, int>().Update(lesson);
+            }
 
             await _uow.SaveChangesAsync();
 
             return new PdfLessonResponse
             {
-                Id = pdf.Id,
-                LessonId = pdf.LessonId,
-                FileUrl = pdf.FileUrl,
-                FileSizeKb = pdf.FileSizeKb
+                Id = existingPdf.Id,
+                LessonId = existingPdf.LessonId,
+                FileUrl = existingPdf.FileUrl,
+                FileSizeKb = existingPdf.FileSizeKb
             };
         }
 
