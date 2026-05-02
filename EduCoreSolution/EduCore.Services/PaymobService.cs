@@ -58,6 +58,7 @@ namespace EduCore.Services
 
         private async Task<int> CreateOrderAsync(string authToken, decimal amount, string currency, int paymentId)
         {
+            var uniqueOrderId = $"{paymentId}_{DateTime.UtcNow.Ticks}";
             var request = new RestRequest("/ecommerce/orders", Method.Post);
             request.AddJsonBody(new
             {
@@ -65,14 +66,14 @@ namespace EduCore.Services
                 delivery_needed = false,
                 amount_cents = (int)(amount * 100), // Convert to cents
                 currency = currency.ToUpper(),
-                merchant_order_id = paymentId.ToString(), 
+                merchant_order_id = uniqueOrderId,
                 items = new object[] { }
             });
 
             var response = await _client.ExecuteAsync(request);
 
             if (!response.IsSuccessful)
-                throw new Exception($"Order creation failed: {response.ErrorMessage}");
+                throw new Exception($"Order creation failed: {response.Content} | Status: {response.StatusCode}");
 
             var result = JsonSerializer.Deserialize<JsonElement>(response.Content!);
             return result.GetProperty("id").GetInt32();
