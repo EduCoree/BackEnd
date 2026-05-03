@@ -13,7 +13,7 @@ namespace EduCore.Services
     public class AdminDashboardService : IAdminDashboardService
     {
         private readonly IDashboardRepository _dashboardRepository;
-        private const int DefaultCenterId = 11;
+        private const int DefaultCenterId = 1;
 
         public AdminDashboardService(IDashboardRepository dashboardRepository)
         {
