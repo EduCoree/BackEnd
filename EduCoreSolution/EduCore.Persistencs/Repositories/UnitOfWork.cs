@@ -25,6 +25,7 @@ namespace EduCore.Persistencs.Repositories
             CourseRepository = new CourseRepository(eduCoreDbContext);
             QuizRepository = new QuizRepository(_eduCoreDbContext);
             QuizAttemptRepository = new QuizAttemptRepository(_eduCoreDbContext);
+            questionRepository = new QuestiionRepository(_eduCoreDbContext);
 
             EnrollmentRepository = new EnrollmentRepository(_eduCoreDbContext);
             PaymentRepository = new PaymentRepository(_eduCoreDbContext);
@@ -108,6 +109,9 @@ namespace EduCore.Persistencs.Repositories
         }
 
         public INotificationRepository NotificationRepository { get; }
+
+        public IQuestionRepository questionRepository { get; }
+
         public IGenericRepository<TEntity, Tkey> GetRepository<TEntity, Tkey>() where TEntity : BaseEntity<Tkey>
         {
             var EntityType = typeof(TEntity);

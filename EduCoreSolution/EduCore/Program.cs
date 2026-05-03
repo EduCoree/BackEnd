@@ -262,7 +262,6 @@ namespace EduCore
 
             // Tawfik from 78 to 88
             builder.Services.AddScoped<IQuestionService, QuestionService>();
-            builder.Services.AddScoped<IAnswerOptionService, AnswerOptionService>();
             builder.Services.AddScoped<IstudentQuizService, StudentQuizService>();
             builder.Services.AddScoped<IQuizAttemptRepository, QuizAttemptRepository>();
             builder.Services.AddScoped<IEmailService, EmailService>();
@@ -272,6 +271,7 @@ namespace EduCore
             builder.Services.AddScoped<INotificationSender, SignalRNotificationSender>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
+            builder.Services.AddScoped<IQuestionRepository, QuestiionRepository>();
             builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
             {
                 opt.TokenLifespan = TimeSpan.FromMinutes(10); 
@@ -290,7 +290,8 @@ namespace EduCore
             //    options.JsonSerializerOptions.Converters
             //        .Add(new JsonStringEnumConverter());
             //});
-
+            builder.Services.AddHttpClient("Gemini");
+            builder.Services.AddScoped<IAiQuizService, AiQuizService>();
 
 
 

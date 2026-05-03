@@ -1,7 +1,8 @@
-﻿using AutoMapper;
+using AutoMapper;
 using EduCore.Domain.Entities.QuizModel;
 using EduCore.Shared.DTOs.Quiz.Student;
 using EduCore.Shared.DTOs.Quiz.Teacher;
+using EduCore.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,17 +18,24 @@ namespace EduCore.Services.MappingProfiles
             CreateMap<CreateQuizDto, Quiz>();
             CreateMap<UpdateQuizDto, Quiz>()
                 .ForAllMembers(o => o.Condition((src, dest, member) => member != null)); ;
-            CreateMap<Quiz, QuizDto>();
-            CreateMap<Quiz, QuizDetailsDto>();
+            CreateMap<Quiz, QuizDto>()
+                  .ForMember(dest => dest.CourseTitle, opt => opt.MapFrom(src => src.Course.Title));
+            CreateMap<Quiz, QuizDetailsDto>()
+                 .ForMember(dest => dest.CourseTitle, opt => opt.MapFrom(src => src.Course.Title));
 
-            CreateMap<CreateQuestionDto, Question>();
+            CreateMap<CreateQuestionDto, Question>()
+                .ForMember(dest => dest.AnswerOptions, opt => opt.MapFrom(src => src.AnswerOptions));
             CreateMap<UpdateQuestionDto, Question>()
-                .ForAllMembers(o => o.Condition((src, dest, member) => member != null)); ;
+              .ForMember(dest => dest.AnswerOptions, opt => opt.Ignore())
+              .ForAllMembers(o => o.Condition((src, dest, member) => member != null));
             CreateMap<Question, QuestionDto>();
 
             CreateMap<CreateAnswerOptionDto, AnswerOption>();
             CreateMap<UpdateAnswerOptionDto, AnswerOption>()
-                .ForAllMembers(o => o.Condition((src, dest, member) => member != null)); ;
+      .ForMember(dest => dest.Id, opt => opt.Ignore())
+      .ForMember(dest => dest.QuestionId, opt => opt.Ignore())
+      .ForAllMembers(o => o.Condition((src, dest, member) => member != null));
+
             CreateMap<AnswerOption, AnswerOptionDto>();
 
             CreateMap<Quiz, StudentQuizDto>();
@@ -44,12 +52,21 @@ namespace EduCore.Services.MappingProfiles
               : 0
             ));
 
+
+            //quiz ai
             CreateMap<Quiz, AvailableQuizzesDto>()
     .ForMember(dest => dest.CourseTitle, opt => opt.MapFrom(src => src.Course.Title));
+
+            CreateMap<AiGeneratedQuestionDto, Question>()
+                .ForMember(dest => dest.QuizId, opt => opt.Ignore())
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => Enum.Parse<QuestionType>(src.Type, true)));
+            CreateMap<AiGeneratedOptionDto, AnswerOption>()
+    .ForMember(dest => dest.QuestionId, opt => opt.Ignore());
 
         }
 
 
 
     }
+   
 }
