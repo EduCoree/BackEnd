@@ -370,17 +370,17 @@ namespace EduCore
             builder.Services.AddScoped<ICashPaymentRequestService, CashPaymentRequestService>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
             builder.Services.AddScoped<IReviewService, ReviewService>();
-            //builder.Services.AddCors(options =>
-            //{
-            //    options.AddPolicy("AllowFrontend",
-            //        policy =>
-            //        {
-            //            policy
-            //.WithOrigins("https://front-end-6u71.vercel.app")
-            //                .AllowAnyHeader()
-            //                .AllowAnyMethod();
-            //        });
-            //});
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend",
+                    policy =>
+                    {
+                        policy
+            .WithOrigins("https://front-end-6u71.vercel.app")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+            });
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             var keysPath = System.IO.Path.Combine(builder.Environment.ContentRootPath, "keys");
             builder.Services.AddDataProtection()
@@ -466,9 +466,9 @@ namespace EduCore
             });
 
             app.UseHttpsRedirection();
-            app.UseCors("AllowAngular");
+            //app.UseCors(policyName: "AllowAngular");
             app.UseRouting();
-            //app.UseCors("AllowFrontend");
+            app.UseCors("AllowFrontend");
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseStaticFiles();
