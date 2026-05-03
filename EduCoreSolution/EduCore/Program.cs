@@ -376,7 +376,7 @@ namespace EduCore
                     policy =>
                     {
                         policy
-            .WithOrigins("https://front-end-6u71.vercel.app")
+            .WithOrigins("https://front-end-nu-silk-55.vercel.app")
                             .AllowAnyHeader()
                             .AllowAnyMethod();
                     });
