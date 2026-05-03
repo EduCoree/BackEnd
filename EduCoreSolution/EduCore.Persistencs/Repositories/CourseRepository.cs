@@ -23,10 +23,14 @@ namespace EduCore.Persistencs.Repositories
             CourseFilterDto filter, PaginationParams pagination)
         {
             var query = _EduCoreDbContext.Set<Course>()
-                .AsNoTracking()                    
+                .AsNoTracking()
                 .Include(c => c.Category)
                 .Include(c => c.Teacher)
+                .Include(c => c.Enrollments)
+                .Include(c => c.Sections)
+                    .ThenInclude(s => s.Lessons)
                 .Where(c => c.Status == CourseStatus.Published)
+                .AsSplitQuery()
                 .AsQueryable();
 
             if (filter.CategoryId.HasValue)
@@ -44,13 +48,49 @@ namespace EduCore.Persistencs.Repositories
             var totalCount = await query.CountAsync();
 
             var courses = await query
-                .OrderByDescending(c => c.CreatedAt) 
+                .OrderByDescending(c => c.CreatedAt)
                 .Skip((pagination.PageNumber - 1) * pagination.PageSize)
                 .Take(pagination.PageSize)
                 .ToListAsync();
 
             return (courses, totalCount);
         }
+        public async Task<(IEnumerable<Course> Courses, int TotalCount)> GetAdminFilteredPagedAsync(
+            CourseFilterDto filter, PaginationParams pagination)
+        {
+            var query = _EduCoreDbContext.Set<Course>()
+                .AsNoTracking()
+                .Include(c => c.Category)
+                .Include(c => c.Teacher)
+                .Include(c => c.Enrollments)
+                .Include(c => c.Sections)
+                    .ThenInclude(s => s.Lessons)
+                .AsSplitQuery()
+                .AsQueryable();
+
+            if (filter.CategoryId.HasValue)
+                query = query.Where(c => c.CategoryId == filter.CategoryId.Value);
+
+            if (filter.Level.HasValue)
+                query = query.Where(c => c.Level == filter.Level.Value);
+
+            if (filter.PricingType.HasValue)
+                query = query.Where(c => c.PricingType == filter.PricingType.Value);
+
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+                query = query.Where(c => c.Title.Contains(filter.Search));
+
+            var totalCount = await query.CountAsync();
+
+            var courses = await query
+                .OrderByDescending(c => c.CreatedAt)
+                .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .ToListAsync();
+
+            return (courses, totalCount);
+        }
+
         //GetWithSectionsAsync
         public async Task<Course?> GetWithSectionsAsync(int courseId)
         {
@@ -73,8 +113,13 @@ namespace EduCore.Persistencs.Repositories
             return await _EduCoreDbContext.Set<Course>()
                 .AsNoTracking()
                 .Include(c => c.Category)
+                .Include(c => c.Teacher)
+                .Include(c => c.Enrollments)
+                .Include(c => c.Sections)
+                    .ThenInclude(s => s.Lessons)
                 .Where(c => c.TeacherId == teacherId)
                 .OrderByDescending(c => c.CreatedAt)
+                .AsSplitQuery()
                 .ToListAsync();
         }
         //HasEnrollmentsAsync

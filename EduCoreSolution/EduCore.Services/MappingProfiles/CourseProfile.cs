@@ -16,8 +16,13 @@ namespace EduCore.Services.MappingProfiles
             {
                 // Course → CourseSummaryDto (للقوايم)
                 CreateMap<Course, CourseSummaryDto>()
-                    .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category.Name))
-                    .ForMember(d => d.TeacherName, o => o.MapFrom(s => s.Teacher.Name));
+                    .ForMember(d => d.CategoryName,   o => o.MapFrom(s => s.Category.Name))
+                    .ForMember(d => d.TeacherName,    o => o.MapFrom(s => s.Teacher.Name))
+                    .ForMember(d => d.TotalStudents,  o => o.MapFrom(s => s.Enrollments != null ? s.Enrollments.Count : 0))
+                    .ForMember(d => d.TotalSections,  o => o.MapFrom(s => s.Sections   != null ? s.Sections.Count   : 0))
+                    .ForMember(d => d.TotalLessons,   o => o.MapFrom(s => s.Sections   != null
+                        ? s.Sections.Sum(sec => sec.Lessons != null ? sec.Lessons.Count : 0)
+                        : 0));
 
                 // Course → CourseDetailDto 
                 CreateMap<Course, CourseDetailDto>()

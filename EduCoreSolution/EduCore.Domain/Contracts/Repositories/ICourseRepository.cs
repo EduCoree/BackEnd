@@ -13,6 +13,10 @@ namespace EduCore.Domain.Contracts.Repositories
     {
         Task<(IEnumerable<Course> Courses, int TotalCount)> GetFilteredPagedAsync(
             CourseFilterDto filter, PaginationParams pagination);
+
+        Task<(IEnumerable<Course> Courses, int TotalCount)> GetAdminFilteredPagedAsync(
+            CourseFilterDto filter, PaginationParams pagination);
+
         Task<Course?> GetWithSectionsAsync(int courseId);
         Task<IEnumerable<Course>> GetByTeacherAsync(string teacherId);
         Task<bool> HasEnrollmentsAsync(int courseId);

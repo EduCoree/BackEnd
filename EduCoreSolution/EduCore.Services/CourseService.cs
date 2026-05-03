@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using EduCore.Domain.Contracts;
 using EduCore.Domain.Entities.CourseModel;
 using EduCore.Services_Abstraction;
@@ -313,31 +313,13 @@ namespace EduCore.Services
         public async Task<PagedResult<CourseSummaryDto>> GetAllCoursesAdminAsync(
             CourseFilterDto filter, PaginationParams pagination)
         {
-            var query = _uow.CourseRepository;
-            //Draft, Published, Archived
-            var all = await _uow.CourseRepository.GetAllAsync();
-
-            if (filter.CategoryId.HasValue)
-                all = all.Where(c => c.CategoryId == filter.CategoryId.Value);
-
-            if (filter.Level.HasValue)
-                all = all.Where(c => c.Level == filter.Level.Value);
-
-            if (filter.PricingType.HasValue)
-                all = all.Where(c => c.PricingType == filter.PricingType.Value);
-
-            if (!string.IsNullOrWhiteSpace(filter.Search))
-                all = all.Where(c => c.Title.Contains(filter.Search));
-
-            var total = all.Count();
-            var paged = all
-                .Skip((pagination.PageNumber - 1) * pagination.PageSize)
-                .Take(pagination.PageSize);
+            var (courses, totalCount) = await _uow.CourseRepository
+                .GetAdminFilteredPagedAsync(filter, pagination);
 
             return new PagedResult<CourseSummaryDto>
             {
-                Items = _mapper.Map<IEnumerable<CourseSummaryDto>>(paged),
-                TotalCount = total,
+                Items = _mapper.Map<IEnumerable<CourseSummaryDto>>(courses),
+                TotalCount = totalCount,
                 PageNumber = pagination.PageNumber,
                 PageSize = pagination.PageSize
             };

@@ -1,4 +1,4 @@
-﻿using EduCore.Shared.Enums;
+using EduCore.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,5 +19,8 @@ namespace EduCore.Shared.DTOs.CourseDTOs
         public CourseStatus Status { get; set; }
         public string CategoryName { get; set; } = string.Empty;
         public string TeacherName { get; set; } = string.Empty;
+        public int TotalStudents { get; set; }
+        public int TotalLessons { get; set; }
+        public int TotalSections { get; set; }
     }
 }
