@@ -1,4 +1,4 @@
-﻿using EduCore.Shared.Enums;
+using EduCore.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -19,5 +19,9 @@ namespace EduCore.Shared.DTOs.Quiz.Teacher
 
         [Range(1, 100, ErrorMessage = "Points must be between 1 and 100.")]
         public int Points { get; init; }
+
+        [Required]
+        [MinLength(2, ErrorMessage = "A question must have at least 2 answer options.")]
+        public List<CreateAnswerOptionDto> AnswerOptions { get; init; } = new();
     }
 }

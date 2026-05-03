@@ -14,9 +14,10 @@ namespace EduCore.Shared.DTOs.Quiz.Teacher
         public string? Text { get; init; } 
 
         [EnumDataType(typeof(QuestionType), ErrorMessage = "Invalid question type.")]
-        public QuestionType? Type { get; init; }
+        public QuestionType Type { get; init; }
 
         [Range(1, 100, ErrorMessage = "Points must be between 1 and 100.")]
         public int? Points { get; init; }
+        public List<UpdateAnswerOptionDto> AnswerOptions { get; init; } = new();
     }
 }

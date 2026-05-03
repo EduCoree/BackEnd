@@ -10,6 +10,7 @@ namespace EduCore.Shared.DTOs.Quiz.Teacher
     {
         public int Id { get; init; }
         public int CourseId { get; init; }
+        public string CourseTitle { get; set; }
         public string Title { get; init; } = string.Empty;
         public int? TimeLimitMins { get; init; }
         public int PassScore { get; init; }
