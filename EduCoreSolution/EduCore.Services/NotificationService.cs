@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using EduCore.Domain.Contracts;
+using EduCore.Domain.Entities.AuthModel;
 using EduCore.Domain.Entities.NotificationsModel;
 using EduCore.Services_Abstraction;
 using EduCore.Shared.Common;
 using EduCore.Shared.DTOs.Notifications;
 using EduCore.Shared.Enums;
 using EduCore.Shared.Exceptions;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,12 +22,14 @@ namespace EduCore.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationSender _sender;
+        private readonly UserManager<User> _userManager;
 
-        public NotificationService(IUnitOfWork unitOfWork,IMapper mapper,INotificationSender sender)
+        public NotificationService(IUnitOfWork unitOfWork,IMapper mapper,INotificationSender sender, UserManager<User> userManager)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
              _sender = sender;
+           _userManager = userManager;
         }
 
         public async Task DeleteAsync(int notificationId)
@@ -91,6 +95,21 @@ namespace EduCore.Services
             await _sender.SendAsync(userId, dto);
 
 
+        }
+        public async Task SendNotificationToAdminsAsync(string title, string message, NotificationType notificationType, int entityId)
+        {
+            var admins = await _userManager.GetUsersInRoleAsync("Admin");
+
+            foreach (var admin in admins)
+            {
+                await SendNotificationAsync(
+                    userId: admin.Id,
+                    title: title,
+                    message: message,
+                    notificationType: notificationType,
+                    entityId: entityId
+                );
+            }
         }
     }
 }
