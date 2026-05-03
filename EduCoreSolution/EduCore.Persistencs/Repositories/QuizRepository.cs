@@ -20,6 +20,7 @@ namespace EduCore.Persistencs.Repositories
         public async Task<Quiz?> GetQuizWithDetails(int quizId)
         {
             return await _EduCoreDbContext.Quizzes
+                .Include(q=>q.Course)
                 .Include(q => q.Questions)
                 .ThenInclude(q => q.AnswerOptions)
                 .FirstOrDefaultAsync(q => q.Id == quizId);
@@ -28,6 +29,7 @@ namespace EduCore.Persistencs.Repositories
         public async Task<(IEnumerable<Quiz>,int totalCount)> GetQuizzesByCourseAsync(int courseId,PaginationParams pagination)
         {
             var query =  _EduCoreDbContext.Set<Quiz>()
+                .Include(q=>q.Course)
                 .Where(q => q.CourseId == courseId)
                 .OrderByDescending(q => q.CreatedAt);
 
