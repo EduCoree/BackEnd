@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using EduCore.Domain.Contracts;
 using EduCore.Domain.Entities.CourseModel;
 using EduCore.Domain.Entities.EnrollmentModel;
@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using EduCore.Domain.Entities.AuthModel;
 
 namespace EduCore.Services
 {
@@ -26,16 +28,17 @@ namespace EduCore.Services
 
         // 👇 Earnings service — still needed, but no more DbContext dependency
         private readonly ITeacherEarningService _teacherEarningService;
+        private readonly UserManager<User> _userManager;
 
         public EnrollmentService(IUnitOfWork uow, IMapper mapper, PaymobService paymobService,
-             ITeacherEarningService teacherEarningService,INotificationService notificationService) 
+             ITeacherEarningService teacherEarningService, INotificationService notificationService, UserManager<User> userManager) 
         {
             _uow = uow;
             _mapper = mapper;
             _paymobService = paymobService;
-           _notificationService = notificationService;
-           
+            _notificationService = notificationService;
             _teacherEarningService = teacherEarningService;
+            _userManager = userManager;
         }
 
         public async Task<EnrollmentDto> EnrollFreeAsync(string studentId, int courseId)
@@ -126,7 +129,8 @@ namespace EduCore.Services
 
         private async Task<string> GetStudentEmailAsync(string studentId)
         {
-            return "student@educore.com";
+            var user = await _userManager.FindByIdAsync(studentId);
+            return user?.Email ?? "student@educore.com";
         }
 
         //public async Task<EnrollmentDto> RecordCashPaymentAsync(CashPaymentDto dto)
@@ -291,12 +295,16 @@ namespace EduCore.Services
         // ══════════════════════════════════════════════════════════════════
         public async Task HandlePaymobWebhookAsync(PaymobWebhookDto webhook)
         {
-            var paymentIdStr = webhook.obj?.order?.merchant_order_id;
-            if (paymentIdStr?.Contains('_') == true)
-                paymentIdStr = paymentIdStr.Split('_')[0];
+            var merchantOrderId = webhook.obj?.order?.merchant_order_id;
+            if (string.IsNullOrEmpty(merchantOrderId))
+                throw new BadRequestException("Invalid webhook: Missing merchant_order_id");
+
+            // Extract the payment ID part, disregarding the timestamp suffix if present
+            var paymentIdStr = merchantOrderId.Contains("_") ? merchantOrderId.Split('_')[0] : merchantOrderId;
+
             if (!int.TryParse(paymentIdStr, out int paymentId))
             {
-                throw new BadRequestException($"Invalid payment ID: '{paymentIdStr}'");
+                throw new BadRequestException($"Invalid payment ID format: '{merchantOrderId}'");
             }
             var payment = await _uow.PaymentRepository.GetByIdAsync(paymentId);
 

@@ -64,7 +64,7 @@ namespace EduCore.Services
             };
             await _uow.GetRepository<LiveSession, int>().AddAsync(session);
             await _uow.SaveChangesAsync();
-            if (session.ScheduledAt >= DateTime.Now)
+            if (session.ScheduledAt >= DateTime.UtcNow)
             {
 
                 var ActiveStudents = await _uow.EnrollmentRepository.GetActiveStudentIdsByCourseAsync(courseId);
@@ -141,7 +141,7 @@ namespace EduCore.Services
             
             _uow.GetRepository<LiveSession, int>().Remove(session);
             await _uow.SaveChangesAsync();
-            if (session.ScheduledAt >= DateTime.Now)
+            if (session.ScheduledAt >= DateTime.UtcNow)
             {
                 var ActiveStudents = await _uow.EnrollmentRepository.GetActiveStudentIdsByCourseAsync(courseId);
                 foreach (var studentid in ActiveStudents)
@@ -158,7 +158,7 @@ namespace EduCore.Services
 
             var session = await GetSessionInCourse(courseId, sessionId);
             
-            if (session.ScheduledAt > DateTime.Now)
+            if (session.ScheduledAt > DateTime.UtcNow)
                 throw new BadRequestException("Cannot add recording to a future session.");
 
             session.RecordingUrl = recordingUrl;
@@ -183,7 +183,7 @@ namespace EduCore.Services
             var allSessions = await sessionRepo.GetAllAsync();
             
             var upcomingSessions = allSessions
-                .Where(s => enrolledCourseIds.Contains(s.CourseId) && s.ScheduledAt >= DateTime.Now.AddHours(-2)) 
+                .Where(s => enrolledCourseIds.Contains(s.CourseId) && s.ScheduledAt >= DateTime.UtcNow.AddHours(-2)) 
                 .OrderBy(s => s.ScheduledAt)
                 .ToList();
 
@@ -221,9 +221,9 @@ namespace EduCore.Services
             if (!isActiveEnrolled)
                 throw new ForbiddenException("You must be enrolled in the course to join this session.");
 
-            // 15 min rule
-            if (DateTime.Now < session.ScheduledAt.AddMinutes(-15))
-                throw new ForbiddenException("Session has not started yet.");
+            // 15 min rule — compare in UTC to avoid server timezone offset bugs
+            if (DateTime.UtcNow < session.ScheduledAt.AddMinutes(-15))
+                throw new ForbiddenException("Session has not started yet. You can join up to 15 minutes before the start time.");
 
             return new JoinSessionResponse
             {

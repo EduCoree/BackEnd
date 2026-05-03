@@ -1,4 +1,4 @@
-﻿using EduCore.Services_Abstraction;
+using EduCore.Services_Abstraction;
 using EduCore.Shared.DTOs.EnrollmentDTOs;
 using EduCore.Shared.Responses;
 using Microsoft.AspNetCore.Authorization;
@@ -9,19 +9,21 @@ namespace EduCore.Presentation.Controllers
 {
     [ApiController]
     [Route("api/enrollments")]
-    [Authorize(Roles = "Student")]
     public class EnrollmentController : ControllerBase
     {
         private readonly IEnrollmentService _enrollmentService;
+        private readonly IConfiguration _configuration;
 
-        public EnrollmentController(IEnrollmentService enrollmentService)
+        public EnrollmentController(IEnrollmentService enrollmentService, IConfiguration configuration)
         {
             _enrollmentService = enrollmentService;
+            _configuration = configuration;
         }
 
         private string StudentId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
         [HttpPost("free/{courseId:int}")]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> EnrollFree(int courseId)
         {
             if (!User.Identity.IsAuthenticated)
@@ -35,6 +37,7 @@ namespace EduCore.Presentation.Controllers
         }
 
         [HttpPost("checkout")]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> Checkout([FromBody] CheckoutDto dto)
         {
             if (!User.Identity.IsAuthenticated)
@@ -116,6 +119,7 @@ namespace EduCore.Presentation.Controllers
         }
 
         [HttpPost("complete-payment/{paymentId:int}")]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> CompletePayment(int paymentId)
         {
             try
@@ -158,7 +162,7 @@ namespace EduCore.Presentation.Controllers
         [AllowAnonymous]
         public IActionResult PaymentRedirect([FromQuery] bool success)
         {
-            var frontendUrl = "http://localhost:4200";
+            var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:4200";
 
             if (success)
                 return Redirect($"{frontendUrl}/#/payment/success?fromCard=true");
