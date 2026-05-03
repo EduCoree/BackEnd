@@ -135,13 +135,14 @@ namespace EduCore.Services
             // Notify post author (if replier is not the author)
             if (post.StudentId != userId)
             {
-                var replierName = _userService.GetUserNameAsync(userId);
+                var replierName =await _userService.GetUserNameAsync(userId);
                 await _notificationService.SendNotificationAsync(
                 userId: post.StudentId,  
                 title: "New Reply to Your Post",
                 message: $"{replierName} replied to your post: \"{post.Title}\"",
                 notificationType: NotificationType.ForumReply,
-                entityId: postId  
+                entityId: postId ,
+                new { lessonId = post.LessonId }
         );
             }
 
@@ -245,18 +246,12 @@ namespace EduCore.Services
             if (reportCount >= 3)
             {
                 var adminIds = await _unitOfWork.ForumRepository.GetAdminUserIdsAsync();
-                foreach (var adminId in adminIds)
-                {
-                    var notification = new Notification
-                    {
-                        UserId = adminId,
-                        Type = "post_reported",
-                        Title = "Post reported multiple times",
-                        Message = $"Post \"{post.Title}\" has been reported {reportCount} times and may need review",
-                        CreatedAt = DateTime.UtcNow
-                    };
-                    await _unitOfWork.GetRepository<Notification, int>().AddAsync(notification);
-                }
+                await _notificationService.SendNotificationToAdminsAsync(
+                    title: "Post Reported Multiple Times",
+                    message: $"Post \"{post.Title}\" has been reported {reportCount} times and may need review.",
+                    notificationType: NotificationType.PostReported,
+                    entityId: postId
+                );
                 await _unitOfWork.SaveChangesAsync();
             }
 

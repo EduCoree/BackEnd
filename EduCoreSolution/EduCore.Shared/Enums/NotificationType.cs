@@ -14,5 +14,8 @@ namespace EduCore.Shared.Enums
         SessionCancelled,
         ForumReply,
         Certificate,
+        CashPaymentRequest,
+        PostReported
+
     }
 }

@@ -18,6 +18,7 @@ namespace EduCore.Services_Abstraction
         Task DeleteAsync(int notificationId);
 
         Task SendNotificationAsync(string userId, string title, string message, NotificationType notificationType,int entityId, object? extraData = null);
+        Task SendNotificationToAdminsAsync(string title, string message, NotificationType notificationType, int entityId);
 
     }
 }

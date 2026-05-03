@@ -5,6 +5,7 @@ using EduCore.Services_Abstraction;
 using EduCore.Shared.DTOs.EnrollmentDTOs;
 using EduCore.Shared.Enums;
 using EduCore.Shared.Exceptions;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,19 +18,22 @@ namespace EduCore.Services
     {
         private readonly IUnitOfWork _uow;
         private readonly IEnrollmentService _enrollmentService;
+        private readonly INotificationService _notificationService;
         private readonly IMapper _mapper;
 
         public CashPaymentRequestService(
             IUnitOfWork uow,
             IEnrollmentService enrollmentService,
+            INotificationService notificationService,
             IMapper mapper)
         {
             _uow = uow;
             _enrollmentService = enrollmentService;
+            _notificationService = notificationService;
             _mapper = mapper;
         }
 
-        public async Task<CashPaymentRequestDto> CreateRequestAsync(string studentId, int courseId)
+        public async Task<CashPaymentRequestDto> CreateRequestAsync(string studentId, int courseId)   // notification
         {
             var repo = _uow.GetRepository<CashPaymentRequest, int>();
 
@@ -54,6 +58,12 @@ namespace EduCore.Services
 
             await repo.AddAsync(request);
             await _uow.SaveChangesAsync();
+            await _notificationService.SendNotificationToAdminsAsync(
+                title: "New Cash Payment Request",
+                message: $"A student requested cash payment for \"{course.Title}\"",
+                notificationType: NotificationType.CashPaymentRequest,
+                entityId: request.Id
+            );
 
             return new CashPaymentRequestDto
             {

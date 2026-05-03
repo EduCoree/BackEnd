@@ -20,11 +20,13 @@ namespace EduCore.Services
     {
         private readonly IUnitOfWork _uow;
         private readonly UserManager<User> _userManager;
+        private readonly INotificationService _notificationService;
 
-        public ProgressService(IUnitOfWork uow, UserManager<User> userManager)
+        public ProgressService(IUnitOfWork uow, UserManager<User> userManager,INotificationService notificationService)
         {
             _uow = uow;
             _userManager = userManager;
+            _notificationService = notificationService;
         }
 
         // ── Student ──────────────────────────────────────
@@ -128,6 +130,14 @@ namespace EduCore.Services
                         CertificateUrl = $"/certificates/{Guid.NewGuid():N}"
                     });
                     await _uow.SaveChangesAsync();
+
+                    await _notificationService.SendNotificationAsync(
+                    userId: studentId,
+                    title: "Certificate Earned!",
+                    message: "Congratulations! You've completed the course and earned your certificate.",
+                    notificationType: NotificationType.Certificate,
+                    entityId: courseId
+    );
                 }
             }
 
