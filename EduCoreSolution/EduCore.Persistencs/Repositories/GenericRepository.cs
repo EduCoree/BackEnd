@@ -1,4 +1,4 @@
-﻿using EduCore.Domain.Contracts;
+using EduCore.Domain.Contracts;
 using EduCore.Domain.Entities;
 using EduCore.Persistencs.Data.DbContexts;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +23,8 @@ namespace EduCore.Persistencs.Repositories
 
 
         public async Task<IEnumerable<TEntity>> GetAllAsync() => await _EduCoreDbContext.Set<TEntity>().ToListAsync();
+
+        public IQueryable<TEntity> GetAllAsQueryable() => _EduCoreDbContext.Set<TEntity>().AsQueryable();
 
         public async Task<TEntity?> GetByIdAsync(Tkey id) => await _EduCoreDbContext.Set<TEntity>().FindAsync(id);
 

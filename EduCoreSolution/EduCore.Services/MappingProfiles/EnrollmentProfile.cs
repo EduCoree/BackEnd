@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using EduCore.Domain.Entities.EnrollmentModel;
 using EduCore.Shared.DTOs.EnrollmentDTOs;
 
@@ -18,7 +18,9 @@ namespace EduCore.Services.MappingProfiles
             // Payment → PaymentDto
             CreateMap<Payment, PaymentDto>()
                 .ForMember(d => d.CourseTitle,
-                    o => o.MapFrom(s => s.Enrollment.Course.Title));
+                    o => o.MapFrom(s => s.Enrollment.Course.Title))
+                .ForMember(d => d.StudentName,
+                    o => o.MapFrom(s => s.Enrollment.Student.Name));
             // CashPaymentRequest → CashPaymentRequestDto
             CreateMap<CashPaymentRequest, CashPaymentRequestDto>()
                 .ForMember(d => d.StudentName,

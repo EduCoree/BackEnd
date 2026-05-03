@@ -1,4 +1,4 @@
-﻿using EduCore.Domain.Contracts.Repositories;
+using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities.EnrollmentModel;
 using EduCore.Persistencs.Data.DbContexts;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +29,15 @@ namespace EduCore.Persistencs.Repositories
         {
             return await _EduCoreDbContext.Set<Payment>()
                 .FirstOrDefaultAsync(p => p.Reference == reference);
+        }
+        public IQueryable<Payment> GetAllWithDetailsAsQueryable()
+        {
+            return _EduCoreDbContext.Set<Payment>()
+                .AsNoTracking()
+                .Include(p => p.Enrollment)
+                    .ThenInclude(e => e.Course)
+                .Include(p => p.Enrollment)
+                    .ThenInclude(e => e.Student);
         }
     }
 }

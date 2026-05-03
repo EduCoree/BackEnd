@@ -1,4 +1,4 @@
-﻿using EduCore.Shared.Enums;
+using EduCore.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +17,6 @@ namespace EduCore.Shared.DTOs.EnrollmentDTOs
         public string? Reference { get; set; }
         public DateTime? PaidAt { get; set; }
         public string CourseTitle { get; set; } = string.Empty;
+        public string StudentName { get; set; } = string.Empty;
     }
 }

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using EduCore.Domain.Contracts;
 using EduCore.Domain.Entities.EnrollmentModel;
 using EduCore.Services_Abstraction;
@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduCore.Services
 {
@@ -74,28 +75,24 @@ namespace EduCore.Services
         //}
         public async Task<IEnumerable<CashPaymentRequestDto>> GetAllRequestsAsync()
         {
-            var requests = await _uow.GetRepository<CashPaymentRequest, int>().GetAllAsync();
+            var requests = await _uow.GetRepository<CashPaymentRequest, int>()
+                .GetAllAsQueryable()
+                .Include(r => r.Student)
+                .Include(r => r.Course)
+                .AsNoTracking()
+                .ToListAsync();
 
-            var result = new List<CashPaymentRequestDto>();
-
-            foreach (var request in requests)
+            return requests.Select(request => new CashPaymentRequestDto
             {
-                var course = await _uow.CourseRepository.GetByIdAsync(request.CourseId);
-
-                result.Add(new CashPaymentRequestDto
-                {
-                    Id = request.Id,
-                    StudentId = request.StudentId,
-                    StudentName = request.Student?.Name ?? "Unknown",
-                    CourseId = request.CourseId,
-                    CourseTitle = course?.Title ?? "Unknown",
-                    Amount = course?.Price ?? 0,
-                    Status = request.Status.ToString(),
-                    RequestedAt = request.RequestedAt
-                });
-            }
-
-            return result;
+                Id = request.Id,
+                StudentId = request.StudentId,
+                StudentName = request.Student?.Name ?? "Unknown",
+                CourseId = request.CourseId,
+                CourseTitle = request.Course?.Title ?? "Unknown",
+                Amount = request.Course?.Price ?? 0,
+                Status = request.Status.ToString(),
+                RequestedAt = request.RequestedAt
+            }).ToList();
         }
         public async Task<CashPaymentRequestDto> ConfirmRequestAsync(int requestId)
         {

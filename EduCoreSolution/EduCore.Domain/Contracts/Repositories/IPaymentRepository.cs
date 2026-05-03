@@ -1,4 +1,4 @@
-﻿using EduCore.Domain.Entities.EnrollmentModel;
+using EduCore.Domain.Entities.EnrollmentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +11,6 @@ namespace EduCore.Domain.Contracts.Repositories
     {
         Task<IEnumerable<Payment>> GetStudentPaymentsAsync(string studentId);
         Task<Payment?> GetByReferenceAsync(string reference);
+        IQueryable<Payment> GetAllWithDetailsAsQueryable();
     }
 }

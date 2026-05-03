@@ -1,8 +1,9 @@
-﻿using AutoMapper;
+using AutoMapper;
 using EduCore.Domain.Contracts;
 using EduCore.Services_Abstraction;
 using EduCore.Shared.Common;
 using EduCore.Shared.DTOs.EnrollmentDTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduCore.Services
 {
@@ -25,13 +26,14 @@ namespace EduCore.Services
 
         public async Task<PagedResult<PaymentDto>> GetAllPaymentsAsync(PaginationParams pagination)
         {
-            var allPayments = await _uow.PaymentRepository.GetAllAsync();
-            var total = allPayments.Count();
+            var allPayments = _uow.PaymentRepository.GetAllWithDetailsAsQueryable();
+            var total = await allPayments.CountAsync();
 
-            var pagedPayments = allPayments
+            var pagedPayments = await allPayments
                 .OrderByDescending(p => p.PaidAt ?? DateTime.UtcNow)
                 .Skip((pagination.PageNumber - 1) * pagination.PageSize)
-                .Take(pagination.PageSize);
+                .Take(pagination.PageSize)
+                .ToListAsync();
 
             var paymentDtos = _mapper.Map<IEnumerable<PaymentDto>>(pagedPayments);
 
