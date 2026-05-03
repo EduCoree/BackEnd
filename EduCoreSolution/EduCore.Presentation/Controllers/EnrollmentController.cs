@@ -3,6 +3,7 @@ using EduCore.Shared.DTOs.EnrollmentDTOs;
 using EduCore.Shared.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System.Security.Claims;
 
 namespace EduCore.Presentation.Controllers
