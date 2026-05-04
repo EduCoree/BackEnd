@@ -161,11 +161,15 @@ namespace EduCore.Presentation.Controllers
 
         [HttpGet("payment-redirect")]
         [AllowAnonymous]
-        public IActionResult PaymentRedirect([FromQuery] bool success)
+        public IActionResult PaymentRedirect()
         {
             var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:4200";
 
-            if (success)
+            // Defensively evaluate Request Query safely bypassing boolean model binding limitations
+            var successParam = Request.Query["success"].ToString().ToLower();
+            bool isSuccess = successParam == "true";
+
+            if (isSuccess)
                 return Redirect($"{frontendUrl}/#/payment/success?fromCard=true");
             else
                 return Redirect($"{frontendUrl}/#/payment/failed");
