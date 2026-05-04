@@ -7,6 +7,10 @@ namespace EduCore.Shared.DTOs.Content.Validators
     {
         private static readonly string[] ValidProviders = { "zoom", "microsoftteams", "googlemeet", "jitsi" };
 
+        // Cairo timezone for "must be in the future" validation
+        private static readonly TimeZoneInfo CairoTz =
+            TimeZoneInfo.FindSystemTimeZoneById("Africa/Cairo");
+
         public CreateLiveSessionRequestValidator()
         {
             RuleFor(x => x.Provider)
@@ -21,7 +25,8 @@ namespace EduCore.Shared.DTOs.Content.Validators
                 .WithMessage("Meeting URL must not exceed 255 characters.");
 
             RuleFor(x => x.ScheduledAt)
-                .GreaterThan(DateTime.UtcNow).WithMessage("Scheduled time must be in the future.");
+                .GreaterThan(TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, CairoTz))
+                .WithMessage("Scheduled time must be in the future.");
 
             RuleFor(x => x.Title)
                 .MaximumLength(200).When(x => x.Title != null)

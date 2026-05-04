@@ -1,4 +1,4 @@
-﻿using EduCore.Domain.Contracts.Repositories;
+using EduCore.Domain.Contracts.Repositories;
 using EduCore.Domain.Entities.AuthModel;
 using EduCore.Domain.Entities.ContentModel;
 using EduCore.Domain.Entities.CourseModel;
@@ -9,12 +9,19 @@ using EduCore.Persistencs.Data.DbContexts;
 using EduCore.Shared.DTOs.Dashboard;
 using EduCore.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace EduCore.Persistencs.Repositories;
 
 public class DashboardRepository : IDashboardRepository
 {
     private readonly EduCoreDbContext _context;
+
+    // Cairo timezone — sessions are stored in Cairo local time
+    private static readonly TimeZoneInfo CairoTz =
+        TimeZoneInfo.FindSystemTimeZoneById("Africa/Cairo");
+    private static DateTime CairoNow =>
+        TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, CairoTz);
 
     public DashboardRepository(EduCoreDbContext context)
     {
@@ -200,7 +207,7 @@ public class DashboardRepository : IDashboardRepository
     public async Task<IEnumerable<UpcomingSessionDto>> GetTeacherUpcomingSessionsAsync(
         string teacherId, int count)
     {
-        var now = DateTime.UtcNow;
+        var now = CairoNow;
 
         return await _context.Set<LiveSession>()
             .Where(s => s.Lesson.Section.Course.TeacherId == teacherId
@@ -289,7 +296,7 @@ public class DashboardRepository : IDashboardRepository
     public async Task<IEnumerable<UpcomingSessionDto>> GetStudentUpcomingSessionsAsync(
         string studentId, int count)
     {
-        var now = DateTime.UtcNow;
+        var now = CairoNow;
 
         var enrolledCourseIds = await _context.Set<Enrollment>()
             .Where(e => e.StudentId == studentId)

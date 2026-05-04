@@ -19,7 +19,17 @@ namespace EduCore.Services
         private readonly IUnitOfWork _uow;
         private readonly INotificationService _notificationService;
 
-        public LiveSessionService(IUnitOfWork uow,INotificationService notificationService)
+        // ── Cairo Timezone ─────────────────────────────────────────────────────
+        // All session times (ScheduledAt) are stored in Cairo local time.
+        // The server may run in UTC, so we use this helper for all comparisons.
+        private static readonly TimeZoneInfo CairoTz =
+            TimeZoneInfo.FindSystemTimeZoneById("Africa/Cairo");
+
+        /// <summary>Current date/time in Cairo (handles DST automatically).</summary>
+        private static DateTime CairoNow =>
+            TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, CairoTz);
+
+        public LiveSessionService(IUnitOfWork uow, INotificationService notificationService)
         {
             _uow = uow;
             _notificationService = notificationService;
@@ -57,16 +67,16 @@ namespace EduCore.Services
                 CourseId = courseId,
                 Provider = providerEnum,
                 MeetingUrl = meetingUrl,
-                ScheduledAt = request.ScheduledAt,
+                ScheduledAt = request.ScheduledAt,   // stored as Cairo local time
                 Title = request.Title,
                 Description = request.Description,
                 CreatedAt = DateTime.UtcNow
             };
             await _uow.GetRepository<LiveSession, int>().AddAsync(session);
             await _uow.SaveChangesAsync();
-            if (session.ScheduledAt >= DateTime.UtcNow)
-            {
 
+            if (session.ScheduledAt >= CairoNow)
+            {
                 var ActiveStudents = await _uow.EnrollmentRepository.GetActiveStudentIdsByCourseAsync(courseId);
                 foreach (var studentid in ActiveStudents)
                 {
@@ -124,24 +134,10 @@ namespace EduCore.Services
                 .Select(e => e.StudentId)
                 .ToList();
 
-            //var notifyRepo = _uow.GetRepository<Notification, int>();
-            //var courseName = await _uow.CourseRepository.GetByIdAsync(courseId);
-
-            //foreach (var studentId in activeStudents)
-            //{
-            //    await notifyRepo.AddAsync(new Notification
-            //    {
-            //        UserId = studentId,
-            //        Type = "session_cancelled",
-            //        Title = "Live Session Cancelled",
-            //        Message = $"The live session '{session.Title ?? "Scheduled Session"}' for course '{courseName?.Title}' has been cancelled.",
-            //        CreatedAt = DateTime.UtcNow
-            //    });
-            //}
-            
             _uow.GetRepository<LiveSession, int>().Remove(session);
             await _uow.SaveChangesAsync();
-            if (session.ScheduledAt >= DateTime.UtcNow)
+
+            if (session.ScheduledAt >= CairoNow)
             {
                 var ActiveStudents = await _uow.EnrollmentRepository.GetActiveStudentIdsByCourseAsync(courseId);
                 foreach (var studentid in ActiveStudents)
@@ -158,7 +154,7 @@ namespace EduCore.Services
 
             var session = await GetSessionInCourse(courseId, sessionId);
             
-            if (session.ScheduledAt > DateTime.UtcNow)
+            if (session.ScheduledAt > CairoNow)
                 throw new BadRequestException("Cannot add recording to a future session.");
 
             session.RecordingUrl = recordingUrl;
@@ -182,8 +178,9 @@ namespace EduCore.Services
             var sessionRepo = _uow.GetRepository<LiveSession, int>();
             var allSessions = await sessionRepo.GetAllAsync();
             
+            var now = CairoNow;
             var upcomingSessions = allSessions
-                .Where(s => enrolledCourseIds.Contains(s.CourseId) && s.ScheduledAt >= DateTime.UtcNow.AddHours(-2)) 
+                .Where(s => enrolledCourseIds.Contains(s.CourseId) && s.ScheduledAt >= now.AddHours(-2)) 
                 .OrderBy(s => s.ScheduledAt)
                 .ToList();
 
@@ -221,8 +218,8 @@ namespace EduCore.Services
             if (!isActiveEnrolled)
                 throw new ForbiddenException("You must be enrolled in the course to join this session.");
 
-            // 15 min rule — compare in UTC to avoid server timezone offset bugs
-            if (DateTime.UtcNow < session.ScheduledAt.AddMinutes(-15))
+            // 15 min rule — compare using Cairo local time (same TZ as stored ScheduledAt)
+            if (CairoNow < session.ScheduledAt.AddMinutes(-15))
                 throw new ForbiddenException("Session has not started yet. You can join up to 15 minutes before the start time.");
 
             return new JoinSessionResponse
