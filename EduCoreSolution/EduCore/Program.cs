@@ -247,16 +247,7 @@ namespace EduCore
             //        });
             #endregion
             //api with angular
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAngular", policy =>
-                {
-                    policy.WithOrigins("http://localhost:4200")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod()
-                          .AllowCredentials();
-                });
-            });
+            // (Moved and consolidated below into AllowFrontend)
 
 
 
@@ -376,9 +367,10 @@ namespace EduCore
                     policy =>
                     {
                         policy
-            .WithOrigins("https://front-end-nu-silk-55.vercel.app")
+                            .WithOrigins("http://localhost:4200", "https://front-end-nu-silk-55.vercel.app")
                             .AllowAnyHeader()
-                            .AllowAnyMethod();
+                            .AllowAnyMethod()
+                            .AllowCredentials();
                     });
             });
             builder.Services.AddScoped<ICategoryService, CategoryService>();
