@@ -165,14 +165,15 @@ namespace EduCore.Presentation.Controllers
         {
             var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:4200";
 
-            // Defensively evaluate Request Query safely bypassing boolean model binding limitations
             var successParam = Request.Query["success"].ToString().ToLower();
             bool isSuccess = successParam == "true";
+            var rawQuery = Request.QueryString.Value; // Capture exactly what Paymob sent
 
             if (isSuccess)
                 return Redirect($"{frontendUrl}/#/payment/success?fromCard=true");
             else
-                return Redirect($"{frontendUrl}/#/payment/failed");
+                // Append the raw query string so we can physically see the URL parameters on the failed page
+                return Redirect($"{frontendUrl}/#/payment/failed{rawQuery}");
         }
 
 
