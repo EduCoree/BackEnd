@@ -18,8 +18,13 @@ public class DashboardRepository : IDashboardRepository
     private readonly EduCoreDbContext _context;
 
     // Cairo timezone — sessions are stored in Cairo local time
-    private static readonly TimeZoneInfo CairoTz =
-        TimeZoneInfo.FindSystemTimeZoneById("Africa/Cairo");
+    private static TimeZoneInfo GetCairoTimeZone()
+    {
+        try { return TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time"); }
+        catch (TimeZoneNotFoundException) { return TimeZoneInfo.FindSystemTimeZoneById("Africa/Cairo"); }
+    }
+
+    private static readonly TimeZoneInfo CairoTz = GetCairoTimeZone();
     private static DateTime CairoNow =>
         TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, CairoTz);
 

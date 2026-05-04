@@ -7,9 +7,13 @@ namespace EduCore.Shared.DTOs.Content.Validators
     {
         private static readonly string[] ValidProviders = { "zoom", "microsoftteams", "googlemeet", "jitsi" };
 
-        // Cairo timezone for "must be in the future" validation
-        private static readonly TimeZoneInfo CairoTz =
-            TimeZoneInfo.FindSystemTimeZoneById("Africa/Cairo");
+        private static TimeZoneInfo GetCairoTimeZone()
+        {
+            try { return TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time"); }
+            catch (TimeZoneNotFoundException) { return TimeZoneInfo.FindSystemTimeZoneById("Africa/Cairo"); }
+        }
+
+        private static readonly TimeZoneInfo CairoTz = GetCairoTimeZone();
 
         public CreateLiveSessionRequestValidator()
         {

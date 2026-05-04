@@ -22,8 +22,13 @@ namespace EduCore.Services
         // ── Cairo Timezone ─────────────────────────────────────────────────────
         // All session times (ScheduledAt) are stored in Cairo local time.
         // The server may run in UTC, so we use this helper for all comparisons.
-        private static readonly TimeZoneInfo CairoTz =
-            TimeZoneInfo.FindSystemTimeZoneById("Africa/Cairo");
+        private static TimeZoneInfo GetCairoTimeZone()
+        {
+            try { return TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time"); }
+            catch (TimeZoneNotFoundException) { return TimeZoneInfo.FindSystemTimeZoneById("Africa/Cairo"); }
+        }
+
+        private static readonly TimeZoneInfo CairoTz = GetCairoTimeZone();
 
         /// <summary>Current date/time in Cairo (handles DST automatically).</summary>
         private static DateTime CairoNow =>
