@@ -224,8 +224,13 @@ namespace EduCore.Services
                 throw new ForbiddenException("You must be enrolled in the course to join this session.");
 
             // 15 min rule — compare using Cairo local time (same TZ as stored ScheduledAt)
-            if (CairoNow < session.ScheduledAt.AddMinutes(-15))
+            var timeDiff = session.ScheduledAt - CairoNow;
+            
+            if (timeDiff.TotalMinutes > 15)
                 throw new ForbiddenException("Session has not started yet. You can join up to 15 minutes before the start time.");
+                
+            if (timeDiff.TotalMinutes < -15)
+                throw new ForbiddenException("Session is locked. You can only join up to 15 minutes after the start time.");
 
             return new JoinSessionResponse
             {
